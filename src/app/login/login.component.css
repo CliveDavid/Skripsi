@@ -1,0 +1,113 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.container-full-height {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.align-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 1rem; 
+}
+
+.company-logo {
+  max-width: 150px; 
+  margin-bottom: 0.5rem;
+}
+
+.login-heading {
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+.btn-login {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+  width: 50%; 
+  margin: 0 auto; 
+  margin-top: 1rem;
+  border-radius: 2rem; 
+}
+
+.password-toggle {
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.input-group-prepend {
+    display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-right: 0;
+  border-radius: 0.5rem 0 0 0.5rem; 
+}
+
+.input-group-text {
+  background-color: transparent;
+  border: 0;
+  color: #3498db;
+}
+
+.form-control {
+  border-radius: 0 0.5rem 0.5rem 0;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  box-shadow: none !important;
+
+  &:focus {
+    box-shadow: none !important; 
+    border-color: #ced4da;
+    background-color: #ffffff;
+  }
+
+  &:filled {
+    background-color: #ffffff;
+  }
+}
+
+.no-active-state:focus {
+  border-color: #ced4da !important;
+  box-shadow: none !important; 
+}
+
+.form-label {
+  font-size: 0.875rem; 
+  margin-bottom: 0.5rem; 
+}
+
+.form-control::placeholder {
+  font-size: 0.875rem; 
+}
+
+.input-group .form-control {
+  border-left: 0;
+}
+
+.mb-3.position-relative {
+  margin-bottom: 1.5rem;
+}
+
+.sign-up-link {
+  color: black; /* Make link text black */
+  text-decoration: none; /* Remove underline */
+}

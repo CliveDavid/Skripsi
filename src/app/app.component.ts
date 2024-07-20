@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { AuthService } from '../app/services/auth.service'
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,51 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'distributor-order-system';
+  pageTitle: string = '';
+  showSidebar: boolean = true;
+  username: string | null = '';
+
+  constructor(private authService: AuthService, private router: Router) { 
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.updatePageTitle();
+      this.updateSidebarVisibility();
+      this.username = this.authService.getUsername();
+    });
+  }
+
+  ngOnInit(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+    }
+    this.updateSidebarVisibility();
+    this.username = this.authService.getUsername();
+  }
+
+  updatePageTitle() {
+    const route = this.router.url;
+    if (route.includes('dashboard')) {
+      this.pageTitle = 'Dashboard';
+    } else if (route.includes('organization')) {
+      this.pageTitle = 'Organization';
+    }
+    // add more conditions for other pages
+  }
+
+  getCurrentDate(): string {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    return today.toLocaleDateString('en-US', options);
+  }
+
+
+  updateSidebarVisibility() {
+    const route = this.router.url;
+    this.showSidebar = !(route.includes('login') || route.includes('signup'));
+  }
+
+  logout() {
+    this.authService.logout();
+  }
 }

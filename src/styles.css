@@ -1,1 +1,54 @@
-/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-color: #012160; /* Dark Blue */
+    --secondary-color: #ff6600; /* Orange */
+    --background-color: #f4f4f4; /* Light gray */
+    --font-family: 'Poppins', sans-serif; 
+    --base-font-size: 100%; 
+
+    /* table */
+    --table-header-bg: #f1f1f1; 
+    --table-header-color: #333; 
+    --table-row-bg: #ffffff; 
+    --table-row-hover-bg: #f1f1f1;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: var(--font-family); 
+    font-size: var(--base-font-size);
+    background-color: var(--background-color); 
+}
+
+.card {
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: none !important;
+}
+
+.card-header {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background-color: transparent !important;
+    border-bottom: none !important;
+}
+
+table {
+    margin: 20px 0;
+}
+
+table th, table td {
+    padding: 12px;
+    text-transform: uppercase;
+}
+
+table tr:hover {
+    background-color: rgba(255, 166, 0, 0.2);
+}
