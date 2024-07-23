@@ -55,4 +55,54 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Login route
+router.post('/login', async (req, res) => {
+    try {
+        const {
+            username,
+            password
+        } = req.body;
+
+        // Find the admin by username
+        const admin = await Admin.findOne({
+            where: {
+                username
+            }
+        });
+
+        // Check if the admin exists
+        if (!admin) {
+            return res.status(401).json({
+                message: 'Invalid username'
+            });
+        }
+
+        // Verify the password
+        const isMatch = await bcrypt.compare(password, admin.password_hash);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                message: 'Invalid password'
+            });
+        }
+
+        // Send response
+        res.json({
+            message: 'Login successful',
+            admin: {
+                id: admin.admin_id,
+                username: admin.username
+            }
+        });
+
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({
+            message: 'Internal server error'
+        });
+    }
+});
+
+
+
 module.exports = router;

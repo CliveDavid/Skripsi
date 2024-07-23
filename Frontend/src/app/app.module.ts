@@ -9,6 +9,8 @@ import { AuthService } from './services/auth.service';
 import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { HttpClientModule } from '@angular/common/http';
+import { AutoLogoutService } from './services/auto-logout-service';
 
 @NgModule({
   declarations: [
@@ -23,8 +25,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, AutoLogoutService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

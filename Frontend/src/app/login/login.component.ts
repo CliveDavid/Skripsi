@@ -32,11 +32,15 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      if (this.authService.login(username, password)) {
-        this.router.navigateByUrl('/dashboard', {replaceUrl: true});
-      } else {
-        alert('Invalid username or password');
-      }
+      this.authService.login(username, password).subscribe(response => {
+        if (response.success) {
+          this.router.navigateByUrl('/dashboard', { replaceUrl: true });
+        } else {
+          alert('Invalid username or password');
+        }
+      }, () => {
+        alert('Login failed. Please try again.');
+      });
     } else {
       alert('Please fill in all required fields.');
     }

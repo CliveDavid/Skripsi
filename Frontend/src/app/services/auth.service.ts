@@ -1,22 +1,42 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { BASE_URL } from '../constants';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    constructor(private router: Router) { }
-    private username: string | null = null;
+    private apiUrl = BASE_URL;
 
-    login(username: string, password: string): boolean {
-        if (username === 'test' && password === 'test') {
-            this.username = username
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('username', username);
-            return true;
-        }
-        return false;
+    constructor(private router: Router, private http: HttpClient) { }
+   
+    login(username: string, password: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/admin/login`, { username, password })
+          .pipe(
+            map((response: any) => {
+              if (response.message === 'Login successful') {
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('username', username);
+                return { success: true };
+              }
+              return { success: false };
+            }),
+            catchError(() => of({ success: false }))
+          );
     }
+
+    signup(data: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/admin/signup`, data)
+          .pipe(
+            map((response: any) => {
+              return { success: true };
+            }),
+            catchError(() => of({ success: false }))
+          );
+      }
 
     logout(): void {
         localStorage.removeItem('isAuthenticated');

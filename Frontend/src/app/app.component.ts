@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from '../app/services/auth.service'
+import { AuthService } from './services/auth.service'
+import { AutoLogoutService } from './services/auto-logout-service';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -13,7 +14,11 @@ export class AppComponent {
   showSidebar: boolean = true;
   username: string | null = '';
 
-  constructor(private authService: AuthService, private router: Router) { 
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private autoLogoutService: AutoLogoutService
+  ) { 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
