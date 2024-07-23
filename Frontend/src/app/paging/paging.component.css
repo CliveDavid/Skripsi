@@ -1,0 +1,89 @@
+table {
+  margin: 0 0;
+  width: 100%;
+  border-collapse: collapse;
+  /* border: 1px solid #ddd; */
+}
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+table th,
+table td {
+  padding: 12px 20px;
+  text-align: left;
+  width: 150px;
+  /* border: 1px solid #ddd; */
+}
+
+table th {
+  text-transform: uppercase;
+}
+
+
+/* Fixed width for the "No" column */
+table th:first-child,
+table td:first-child {
+  width: 50px;
+}
+
+/* Fixed widths based on the type of data */
+table th.string,
+table td.string {
+  width: 150px;
+}
+
+table th.date,
+table td.date {
+  width: 100px;
+}
+
+table th.currency,
+table td.currency {
+  width: 100px;
+}
+
+table th.link,
+table td.link {
+  width: 150px;
+}
+
+tr:hover {
+  background-color: rgba(255, 166, 0, 0.11) !important;
+}
+
+.card .table th.center,
+.card .table td.center {
+  text-align: center;
+}
+
+.card .table th.left,
+.card .table td.left {
+  text-align: left;
+}
+
+.card .table th.right,
+.card .table td.right {
+  text-align: right;
+}
+
+/* Add Button Styles */
+.btn-add {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50px;
+  padding: 8px 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-add:hover {
+  background-color: lightgray;
+  color: black;
+}
+
+.btn-add i {
+  margin-right: 5px;
+}

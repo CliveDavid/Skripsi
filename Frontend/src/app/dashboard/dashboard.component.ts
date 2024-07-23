@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BASE_URL } from '../constants';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  tableData: any[] = [];
 
-  ngOnInit(): void {
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.fetchTableData();
+  }
+
+  fetchTableData() {
+    this.http.get<any[]>(BASE_URL+"/admin").subscribe(data => {
+      this.tableData = data;
+    });
   }
 
 }

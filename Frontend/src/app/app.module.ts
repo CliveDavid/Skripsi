@@ -11,6 +11,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AutoLogoutService } from './services/auto-logout-service';
+import { PagingComponent } from './paging/paging.component';
+import { DateFormatPipe } from './date-format.pipe';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { AutoLogoutService } from './services/auto-logout-service';
     LoginComponent,
     SignupComponent,
     DashboardComponent,
-    SidebarComponent
+    SidebarComponent,
+    PagingComponent,
+    DateFormatPipe
   ],
   imports: [
     BrowserModule,
