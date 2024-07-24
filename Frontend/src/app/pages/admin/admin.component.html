@@ -1,7 +1,7 @@
-<app-paging [tableTitle]="'Admin Table'" [addButton]="true" [columns]="[
+<app-paging [tableTitle]="'Admin Records'" [addButton]="true" [columns]="[
     { header: 'Admin ID', field: 'admin_id', alignment: 'left', type: 'text' },
     { header: 'Username', field: 'username', alignment: 'left', type: 'text' },
     { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
     { header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' }
-  ]" [data]="tableData">
+  ]" [url]="'admin'" [editButton]="true" [primaryKey]="'admin_id'">
 </app-paging>

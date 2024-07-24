@@ -9,18 +9,9 @@ import { BASE_URL } from 'src/app/constants';
 })
 export class AdminComponent implements OnInit {
 
-  tableData: any[] = [];
-
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
-    this.fetchTableData();
-  }
-
-  fetchTableData() {
-    this.http.get<any[]>(BASE_URL + "/admin").subscribe(data => {
-      this.tableData = data;
-    });
   }
 
 }

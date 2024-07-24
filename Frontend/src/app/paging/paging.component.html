@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <span>{{ tableTitle }}</span>
+    <span class="table-title">{{ tableTitle }}</span>
     <a *ngIf="addButton" [routerLink]="['/form', { id: 0 }]" class="btn btn-add btn-sm">
       <i class="fas fa-plus"></i> Add
     </a>
@@ -17,6 +17,7 @@
               'fa-sort-down': sortOrder === 'desc'
             }"></i>
           </th>
+          <th *ngIf="editButton">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -29,6 +30,12 @@
               <span *ngSwitchCase="'date'">{{ row[column.field] | dateFormat }}</span>
               <a *ngSwitchCase="'link'" [href]="row[column.field]">{{ row[column.field] }}</a>
             </ng-container>
+          </td>
+          <td *ngIf="editButton">
+            <a [routerLink]="[currentRoute + '/edit']" [queryParams]="{ id: row[primaryKey] }"
+              class="btn btn-edit btn-sm">
+              <i class="fas fa-edit"></i>
+            </a>
           </td>
         </tr>
       </tbody>

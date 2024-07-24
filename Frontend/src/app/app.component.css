@@ -1,59 +1,62 @@
 .container-fluid {
-    height: 100%;
-    padding-left: 240px; /* Ensure the main content starts after the sidebar */
+  height: 100%;
+  padding-left: 240px;
+  /* Ensure the main content starts after the sidebar */
 }
 
 .main-content {
-    padding: 20px;
-    background-color: #f4f4f4 !important;
-    min-height:100vh;
-    padding-left:40px;
+  padding: 20px;
+  background-color: #f4f4f4 !important;
+  min-height: 100vh;
+  padding-left: 44px;
+  padding-right: 32px;
 }
 
 .d-flex.align-items-center {
-    min-height: 50px;
+  min-height: 50px;
 }
 
 .btn-toolbar {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .text-end {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .navbar-text {
-    font-weight: bold;
-    margin-right: 5px;
+  font-weight: bold;
+  margin-right: 5px;
 }
 
 .text-muted {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .logout-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    font-size: 14px; /* Adjust icon size */
-    background-color: orange;
-    border-radius: 50%;
-    color: white;
-    border: none; 
-    transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  /* Adjust icon size */
+  background-color: orange;
+  border-radius: 50%;
+  color: white;
+  border: none;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .logout-button:hover {
-    background-color: #cccfd2;
-    color: black;
+  background-color: #cccfd2;
+  color: black;
 }
 
 h2.h4.font-weight-bold {
-    font-size: 1.3rem; 
-    font-weight: 700; 
+  font-size: 26px;
+  font-weight: 700;
 }

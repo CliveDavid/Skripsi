@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         password_hash: {
             type: DataTypes.STRING(255),
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     }, {
         tableName: 'admin'

@@ -2,6 +2,7 @@ table {
   margin: 0 0;
   width: 100%;
   border-collapse: collapse;
+  font-size: 16px;
   /* border: 1px solid #ddd; */
 }
 
@@ -11,22 +12,34 @@ table {
   padding: 20px;
 }
 
+.table-title {
+  margin-left: 10px;
+  font-size: 22px;
+}
+
+thead {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
 table th,
 table td {
   padding: 12px 20px;
   text-align: left;
   width: 150px;
+  border-bottom: 1px solid #dddddd95;
   /* border: 1px solid #ddd; */
 }
 
 table th {
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
 
 /* Fixed width for the "No" column */
 table th:first-child,
-table td:first-child {
+table td:first-child,
+table th:last-child,
+table td:last-child {
   width: 50px;
 }
 
@@ -52,7 +65,8 @@ table td.link {
 }
 
 tr:hover {
-  background-color: rgba(255, 166, 0, 0.11) !important;
+  /* background-color: rgba(255, 166, 0, 0.11) !important; */
+  background-color: rgba(0, 0, 0, 0.03) !important;
 }
 
 .card .table th.center,
@@ -86,4 +100,21 @@ tr:hover {
 
 .btn-add i {
   margin-right: 5px;
+}
+
+/* Edit Button Styles - Minimalistic */
+.btn-edit {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-edit:hover {
+  color: var(--secondary-color);
+}
+
+.btn-edit i {
+  margin: 0;
 }

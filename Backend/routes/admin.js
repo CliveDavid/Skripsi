@@ -8,7 +8,11 @@ const bcrypt = require('bcrypt');
 // Get all admins
 router.get('/', async (req, res) => {
     try {
-        const admins = await Admin.findAll();
+        const admins = await Admin.findAll({
+            where: {
+                is_active: true
+            }
+        });
         res.json(admins);
     } catch (err) {
         res.status(500).json({
@@ -70,7 +74,6 @@ router.post('/login', async (req, res) => {
             }
         });
 
-        // Check if the admin exists
         if (!admin) {
             return res.status(401).json({
                 message: 'Invalid username'
