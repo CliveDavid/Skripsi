@@ -7,12 +7,13 @@ import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
 import { SignupComponent } from './signup/signup.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AutoLogoutService } from './services/auto-logout-service';
 import { PagingComponent } from './paging/paging.component';
-import { DateFormatPipe } from './date-format.pipe';
+import { DateFormatPipe } from './services/date-format/date-format.pipe';
+import { AdminComponent } from './pages/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DateFormatPipe } from './date-format.pipe';
     DashboardComponent,
     SidebarComponent,
     PagingComponent,
-    DateFormatPipe
+    DateFormatPipe,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

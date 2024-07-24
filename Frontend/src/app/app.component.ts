@@ -15,10 +15,10 @@ export class AppComponent {
   username: string | null = '';
 
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private router: Router,
     private autoLogoutService: AutoLogoutService
-  ) { 
+  ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -40,8 +40,8 @@ export class AppComponent {
     const route = this.router.url;
     if (route.includes('dashboard')) {
       this.pageTitle = 'Dashboard';
-    } else if (route.includes('organization')) {
-      this.pageTitle = 'Organization';
+    } else if (route.includes('admin')) {
+      this.pageTitle = 'Admin';
     }
     // add more conditions for other pages
   }

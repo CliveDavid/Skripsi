@@ -11,7 +11,8 @@ import { filter } from 'rxjs/operators';
 export class SidebarComponent implements OnInit {
   sidebarItems: SidebarItem[] = [
     { label: 'Dashboard', icon: 'fa-chart-line', route: '/dashboard' },
-    { label: 'Organization', icon: 'fa-building', route: '/organization' },
+    { label: 'Admin', icon: 'fa-user', route: '/admin' },
+    { label: 'Products', icon: 'fa-building', route: '/organization' },
     // Add more items as needed
   ];
 
