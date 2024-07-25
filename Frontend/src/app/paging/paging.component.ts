@@ -27,6 +27,11 @@ export class PagingComponent implements OnInit {
   sortedColumn: string | null = null;
   sortOrder: 'asc' | 'desc' = 'asc';
   currentRoute: string = '';
+  searchText: string = '';
+  filteredData: any[] = [];
+
+  currentPage: number = 1;
+  rowsPerPage: number = 20;
 
   constructor(
     private http: HttpClient,
@@ -44,15 +49,14 @@ export class PagingComponent implements OnInit {
   fetchData() {
     this.http.get<any[]>(BASE_URL + "/" + this.url).subscribe(data => {
       this.data = data;
+      this.filteredData = data;
     });
   }
 
   setCurrentRoute() {
     this.currentRoute = this.router.url;
   }
-  
-  
-  //#region Sort
+
   sortData(column: TableColumn) {
     if (this.sortedColumn === column.field) {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
@@ -60,7 +64,7 @@ export class PagingComponent implements OnInit {
       this.sortedColumn = column.field;
       this.sortOrder = 'asc';
     }
-    this.data.sort((a, b) => {
+    this.filteredData.sort((a, b) => {
       const valueA = a[column.field];
       const valueB = b[column.field];
       let comparison = 0;
@@ -74,5 +78,34 @@ export class PagingComponent implements OnInit {
       return this.sortOrder === 'asc' ? comparison : -comparison;
     });
   }
-  //#endregion
+
+  filterData() {
+    this.filteredData = this.data.filter(row => 
+      this.columns
+        .filter(column => column.type === 'text')
+        .some(column => row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase()))
+    );
+    this.currentPage = 1;
+  }
+
+  paginatedData() {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredData.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+
+  totalPages() {
+    return Math.ceil(this.filteredData.length / this.rowsPerPage);
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages()) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
 }

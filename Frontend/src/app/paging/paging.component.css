@@ -3,12 +3,12 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-size: 16px;
-  /* border: 1px solid #ddd; */
 }
 
 .table-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
 }
 
@@ -27,15 +27,12 @@ table td {
   text-align: left;
   width: 150px;
   border-bottom: 1px solid #dddddd95;
-  /* border: 1px solid #ddd; */
 }
 
 table th {
-  /* text-transform: uppercase; */
+  cursor: pointer;
 }
 
-
-/* Fixed width for the "No" column */
 table th:first-child,
 table td:first-child,
 table th:last-child,
@@ -43,7 +40,6 @@ table td:last-child {
   width: 50px;
 }
 
-/* Fixed widths based on the type of data */
 table th.string,
 table td.string {
   width: 150px;
@@ -65,7 +61,6 @@ table td.link {
 }
 
 tr:hover {
-  /* background-color: rgba(255, 166, 0, 0.11) !important; */
   background-color: rgba(0, 0, 0, 0.03) !important;
 }
 
@@ -84,7 +79,6 @@ tr:hover {
   text-align: right;
 }
 
-/* Add Button Styles */
 .btn-add {
   background-color: var(--primary-color);
   color: white;
@@ -102,7 +96,6 @@ tr:hover {
   margin-right: 5px;
 }
 
-/* Edit Button Styles - Minimalistic */
 .btn-edit {
   background: none;
   border: none;
@@ -117,4 +110,51 @@ tr:hover {
 
 .btn-edit i {
   margin: 0;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.search-input {
+  border-radius: 25px;
+  padding: 5px 20px;
+  padding-right: 35px;
+  border: 1px solid #ddd;
+  width: 200px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination-container button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.pagination-container button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
