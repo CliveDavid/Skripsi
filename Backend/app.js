@@ -16,10 +16,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
-
-
-// Use routes
-
+const adminRoutes = require('./routes/adminRoutes');
+app.use('/api/admin', adminRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {

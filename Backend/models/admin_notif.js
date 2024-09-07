@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
     const AdminNotif = sequelize.define('admin_notif', {
+        notif_id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
         admin_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
