@@ -1,0 +1,8 @@
+<app-paging [tableTitle]="'Product Records'" [addButton]="true" [columns]="[
+    { header: 'Admin ID', field: 'admin_id', alignment: 'left', type: 'text' },
+    { header: 'Username', field: 'username', alignment: 'left', type: 'text' },
+    { header: 'Active', field: 'is_active', alignment: 'left', type: 'boolean' },
+    { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
+    { header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' }
+  ]" [url]="'product'" [editButton]="true" [primaryKey]="'admin_id'">
+</app-paging>

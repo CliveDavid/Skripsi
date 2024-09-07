@@ -1,0 +1,6 @@
+<app-forms [formTitle]="'Admin Form'" [columns]="[
+{ header: 'Username', field: 'username', type: 'text', editDisabled: true },
+{ header: 'Password', field: 'password', type: 'text', fullWidth: true },
+{ header: 'Active', field: 'is_active', type: 'boolean', fullWidth: true },
+]" [submitUrl]="BASE_URL + '/admin'" [submitButtonText]="'Save'" [fetchUrl]="BASE_URL + '/admin'">
+</app-forms>

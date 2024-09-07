@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
+        password: {
+            type: DataTypes.STRING(255),
+            allowNull: false
+        },
         phone: {
             type: DataTypes.STRING(20),
             allowNull: false
@@ -22,17 +26,20 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
+        addr_details: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
         city: {
             type: DataTypes.STRING(100),
             allowNull: false
         },
-        postal_code: {
-            type: DataTypes.STRING(20),
+        province: {
+            type: DataTypes.STRING(100),
             allowNull: false
         },
-        created_at: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
+        zipcode: {
+            type: DataTypes.STRING(20),
             allowNull: false
         }
     }, {

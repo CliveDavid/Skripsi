@@ -37,3 +37,10 @@ body {
   background-color: transparent !important;
   border-bottom: none !important;
 }
+
+.btn {
+  border-radius: 50px !important;
+  padding: 8px 16px !important;
+  transition: background-color 0.3s, color 0.3s !important;
+  border: none !important;
+}

@@ -1,42 +1,91 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../config/database');
 
-const Product = require('./product')(sequelize, Sequelize);
-const Distributor = require('./distributor')(sequelize, Sequelize);
-const Order = require('./orders')(sequelize, Sequelize);
-const OrderItem = require('./orderitem')(sequelize, Sequelize);
-const Admin = require('./admin')(sequelize, Sequelize);
-const Notification = require('./notification')(sequelize, Sequelize);
-const Promotion = require('./promotion')(sequelize, Sequelize);
-const Wishlist = require('./wishlist')(sequelize, Sequelize);
+//#region Import
+const Admin = require('./admin')(sequelize, Sequelize.DataTypes);
+const Distributor = require('./distributor')(sequelize, Sequelize.DataTypes);
+const AdminNotif = require('./admin_notif')(sequelize, Sequelize.DataTypes);
+const Company = require('./company')(sequelize, Sequelize.DataTypes);
+const Product = require('./product')(sequelize, Sequelize.DataTypes);
+const ProductType = require('./product_type')(sequelize, Sequelize.DataTypes);
+const BoxType = require('./box_type')(sequelize, Sequelize.DataTypes);
+const Order = require('./order')(sequelize, Sequelize.DataTypes);
+const OrderItem = require('./order_items')(sequelize, Sequelize.DataTypes);
+const Price = require('./price')(sequelize, Sequelize.DataTypes);
+const Invoice = require('./invoice')(sequelize, Sequelize.DataTypes);
+const ShipmentMethod = require('./shipment_method')(sequelize, Sequelize.DataTypes);
+//#endregion
 
-// Define associations here
-Distributor.hasMany(Order);
-Order.belongsTo(Distributor);
 
-Order.hasMany(OrderItem);
-OrderItem.belongsTo(Order);
+//#region Relation (foreign keys) 
+Order.belongsTo(Distributor, {
+    foreignKey: 'distributor_id'
+});
 
-Product.hasMany(OrderItem);
-OrderItem.belongsTo(Product);
+OrderItem.belongsTo(Order, {
+    foreignKey: 'order_id'
+});
+OrderItem.belongsTo(Product, {
+    foreignKey: 'product_id'
+});
 
-Distributor.hasMany(Notification);
-Notification.belongsTo(Distributor);
+Product.belongsTo(ProductType, {
+    foreignKey: 'prod_type_code'
+});
 
-Distributor.hasMany(Wishlist);
-Wishlist.belongsTo(Distributor);
+Order.hasMany(OrderItem, {
+    foreignKey: 'order_id'
+});
 
-Product.hasMany(Wishlist);
-Wishlist.belongsTo(Product);
+Invoice.belongsTo(Order, {
+    foreignKey: 'order_id'
+});
+
+ShipmentMethod.hasMany(Order, {
+    foreignKey: 'shipment_code'
+});
+
+AdminNotif.belongsTo(Admin, {
+    foreignKey: 'admin_id'
+});
+
+Price.belongsTo(ProductType, {
+    foreignKey: 'prod_type_code'
+});
+Price.belongsTo(BoxType, {
+    foreignKey: 'box_type_code'
+});
+//#endregion
+
+// sync models with database
+const syncDatabase = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+        await sequelize.sync({
+            alter: true
+        }); // Sync in the order defined by associations
+        console.log('Database & tables created!');
+    } catch (error) {
+        console.error('Unable to sync the database:', error.message || error);
+        process.exit(1); // Optionally, exit the process on failure
+    }
+};
+
+// Call the sync function
+syncDatabase();
 
 module.exports = {
-    sequelize,
     Product,
-    Distributor,
+    ProductType,
+    BoxType,
     Order,
     OrderItem,
+    Invoice,
+    ShipmentMethod,
+    Distributor,
+    Company,
     Admin,
-    Notification,
-    Promotion,
-    Wishlist
+    AdminNotif,
+    Price
 };

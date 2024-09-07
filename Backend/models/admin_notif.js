@@ -1,12 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
-    const Notification = sequelize.define('notification', {
-        distributor_id: {
+    const AdminNotif = sequelize.define('admin_notif', {
+        admin_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'distributor',
-                key: 'distributor_id'
+                model: 'admin',
+                key: 'admin_id'
             }
+        },
+        header: {
+            type: DataTypes.STRING(200),
+            allowNull: false
         },
         message: {
             type: DataTypes.TEXT,
@@ -17,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'unread'
         }
     }, {
-        tableName: 'notification'
+        tableName: 'admin_notif'
     });
-    return Notification;
+    return AdminNotif;
 };

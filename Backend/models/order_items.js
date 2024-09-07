@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const OrderItem = sequelize.define('orderitem', {
+    const OrderItem = sequelize.define('order_item', {
         order_item_id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'orders',
+                model: 'order',
                 key: 'order_id'
             }
         },
@@ -18,19 +18,28 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             references: {
                 model: 'product',
-                key: 'product_id'
+                key: 'prod_id'
             }
         },
-        quantity: {
+        box_type_code: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            references: {
+                model: 'box_type',
+                key: 'box_type_code'
+            }
+        },
+        qty: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        price: {
-            type: DataTypes.INTEGER,
+        total_item_price: {
+            type: DataTypes.DECIMAL(10, 2),
             allowNull: false
         }
     }, {
-        tableName: 'orderitem'
+        tableName: 'order_items'
     });
+
     return OrderItem;
 };

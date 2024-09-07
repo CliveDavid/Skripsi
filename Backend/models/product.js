@@ -1,36 +1,37 @@
 module.exports = (sequelize, DataTypes) => {
     const Product = sequelize.define('product', {
-        product_id: {
+        prod_id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        product_name: {
-            type: DataTypes.STRING(100),
-            allowNull: false
-        },
-        retail_price: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        box_type: {
+        prod_code: {
             type: DataTypes.STRING(50),
             allowNull: false
         },
-        box_price: {
-            type: DataTypes.INTEGER,
+        prod_name: {
+            type: DataTypes.STRING(100),
             allowNull: false
         },
-        box_quantity: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+        prod_type_code: {
+            type: DataTypes.STRING(20),
+            allowNull: false,
+            references: {
+                model: 'product_type',
+                key: 'prod_type_code'
+            }
         },
-        stock: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+        descr: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        image: {
+            type: DataTypes.STRING(255),
+            allowNull: true
         }
     }, {
         tableName: 'product'
     });
+
     return Product;
 };

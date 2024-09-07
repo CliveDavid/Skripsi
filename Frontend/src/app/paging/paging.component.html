@@ -7,7 +7,7 @@
           (input)="filterData()">
         <i class="fas fa-search search-icon"></i>
       </div>
-      <a *ngIf="addButton" [routerLink]="['/form', { id: 0 }]" class="btn btn-add btn-sm">
+      <a *ngIf="addButton" [routerLink]="[currentRoute + '/form']" class="btn btn-add btn-sm">
         <i class="fas fa-plus"></i> Add
       </a>
     </div>
@@ -32,14 +32,17 @@
           <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
           <td *ngFor="let column of columns" [ngClass]="column.alignment">
             <ng-container [ngSwitch]="column.type">
-              <span *ngSwitchCase="'text'">{{ row[column.field] }}</span>
-              <span *ngSwitchCase="'currency'">{{ row[column.field] | currency }}</span>
-              <span *ngSwitchCase="'date'">{{ row[column.field] | dateFormat }}</span>
-              <a *ngSwitchCase="'link'" [href]="row[column.field]">{{ row[column.field] }}</a>
+              <span *ngSwitchCase="'text'" [ngClass]="column.alignment">{{ row[column.field] }}</span>
+              <span *ngSwitchCase="'currency'" [ngClass]="column.alignment">{{ row[column.field] | currency }}</span>
+              <span *ngSwitchCase="'date'" [ngClass]="column.alignment">{{ row[column.field] | dateFormat }}</span>
+              <a *ngSwitchCase="'link'" [href]="row[column.field]"
+                [ngClass]="column.alignment">{{ row[column.field] }}</a>
+              <span *ngSwitchCase="'boolean'"
+                [ngClass]="[column.alignment, row[column.field] ? 'boolean-yes' : 'boolean-no']">{{ row[column.field] ? 'yes' : 'no' }}</span>
             </ng-container>
           </td>
           <td *ngIf="editButton">
-            <a [routerLink]="[currentRoute + '/edit']" [queryParams]="{ id: row[primaryKey] }"
+            <a [routerLink]="[currentRoute + '/form']" [queryParams]="{ id: row[primaryKey] }"
               class="btn btn-edit btn-sm">
               <i class="fas fa-edit"></i>
             </a>

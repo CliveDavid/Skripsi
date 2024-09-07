@@ -1,0 +1,33 @@
+<div class="card">
+  <div class="card-header">
+    <h2>{{ formTitle }}</h2>
+  </div>
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()" #dynamicForm="ngForm">
+      <div class="form-row" *ngFor="let column of columns; let i = index">
+        <div class="form-group"
+          [ngClass]="{'full-width': column.fullWidth !== false, 'half-width': column.fullWidth === false}">
+          <label [for]="column.field">{{ column.header }}</label>
+          <ng-container [ngSwitch]="column.type">
+            <input *ngSwitchCase="'text'" type="text" class="form-control" [id]="column.field" required
+              [(ngModel)]="formData[column.field]" [name]="column.field"
+              [disabled]="isEditMode && (column.editDisabled || false)">
+            <input *ngSwitchCase="'date'" type="date" class="form-control" [id]="column.field" required
+              [(ngModel)]="formData[column.field]" [name]="column.field"
+              [disabled]="isEditMode && (column.editDisabled || false)">
+            <label *ngSwitchCase="'boolean'" class="switch">
+              <input type="checkbox" [(ngModel)]="formData[column.field]" [name]="column.field"
+                [disabled]="isEditMode && (column.editDisabled || false)">
+              <span class="slider round"></span>
+            </label>
+          </ng-container>
+        </div>
+        <div *ngIf="!column.fullWidth && columns[i + 1] && !columns[i + 1].fullWidth" class="spacer"></div>
+      </div>
+      <div class="form-buttons">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn btn-primary">{{ submitButtonText }}</button>
+      </div>
+    </form>
+  </div>
+</div>

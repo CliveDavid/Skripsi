@@ -14,6 +14,10 @@ import { AutoLogoutService } from './services/auto-logout-service';
 import { PagingComponent } from './paging/paging.component';
 import { DateFormatPipe } from './services/date-format/date-format.pipe';
 import { AdminComponent } from './pages/admin/admin.component';
+import { FormsComponent } from './forms/forms.component';
+import { AdminFormComponent } from './pages/admin-form/admin-form.component';
+import { ProductComponent } from './pages/product/product.component';
+import { ProductFormComponent } from './pages/product-form/product-form.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +28,11 @@ import { AdminComponent } from './pages/admin/admin.component';
     SidebarComponent,
     PagingComponent,
     DateFormatPipe,
-    AdminComponent
+    AdminComponent,
+    FormsComponent,
+    AdminFormComponent,
+    ProductComponent,
+    ProductFormComponent
   ],
   imports: [
     BrowserModule,
