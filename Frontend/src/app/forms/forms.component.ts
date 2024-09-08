@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 interface FormColumn {
   header: string;
@@ -26,7 +27,7 @@ export class FormsComponent implements OnInit {
   isEditMode: boolean = false;
   id: any;
 
-  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { }
+  constructor(private http: HttpClient, private location: Location, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.queryParamMap.get('id');
@@ -46,13 +47,13 @@ export class FormsComponent implements OnInit {
   onSubmit(): void {
     if (this.isEditMode) {
       this.http.post(`${this.submitUrl}/update`, this.formData).subscribe(() => {
-        this.router.navigate(['/admin']); // wrong here
+        this.location.back(); // Go back to the previous page
       }, error => {
         console.error('Error updating data', error);
       });
     } else {
       this.http.post(`${this.submitUrl}/create`, this.formData).subscribe(() => {
-        this.router.navigate(['/admin']);
+        this.location.back(); // Go back to the previous page
       }, error => {
         console.error('Error creating data', error);
       });
@@ -60,6 +61,6 @@ export class FormsComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/admin']);
+    this.location.back(); // Go back to the previous page
   }
 }
