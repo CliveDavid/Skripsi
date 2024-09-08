@@ -6,8 +6,8 @@ interface FormColumn {
   header: string;
   field: string;
   type: 'text' | 'date' | 'boolean' | 'currency' | 'link';
-  fullWidth?: boolean; 
-  editDisabled?: boolean; 
+  fullWidth?: boolean;
+  editDisabled?: boolean;
 }
 
 @Component({
@@ -37,25 +37,26 @@ export class FormsComponent implements OnInit {
   }
 
   fetchData(id: string): void {
-    this.http.get(`${this.fetchUrl}/${id}`).subscribe(data => {
+    const body = { id: id };
+    this.http.post<any>(this.fetchUrl, body).subscribe(data => {
       this.formData = data;
     });
   }
 
- onSubmit(): void {
-  if (this.isEditMode) {
-    this.http.put(`${this.submitUrl}/${this.id}`, this.formData).subscribe(() => {
-      this.router.navigate(['/admin']);
-    }, error => {
-      console.error('Error updating data', error);
-    });
-  } else {
-    this.http.post(this.submitUrl, this.formData).subscribe(() => {
-      this.router.navigate(['/admin']);
-    }, error => {
-      console.error('Error creating data', error);
-    });
-  }
+  onSubmit(): void {
+    if (this.isEditMode) {
+      this.http.post(`${this.submitUrl}/update`, this.formData).subscribe(() => {
+        this.router.navigate(['/admin']); // wrong here
+      }, error => {
+        console.error('Error updating data', error);
+      });
+    } else {
+      this.http.post(`${this.submitUrl}/create`, this.formData).subscribe(() => {
+        this.router.navigate(['/admin']);
+      }, error => {
+        console.error('Error creating data', error);
+      });
+    }
   }
 
   onCancel(): void {

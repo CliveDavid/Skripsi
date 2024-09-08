@@ -50,7 +50,7 @@ router.post('/logout', (req, res) => {
 // Get all admins
 router.post('/get-all', asyncHandler(async (req, res) => {
     const admins = await Admin.findAll({
-        attributes: ['admin_id', 'username', 'is_active']
+        attributes: ['admin_id', 'username', 'is_active', 'createdAt', 'updatedAt']
     });
     res.json(admins);
 }));
@@ -58,9 +58,9 @@ router.post('/get-all', asyncHandler(async (req, res) => {
 // Get admin by ID
 router.post('/get-by-id', asyncHandler(async (req, res) => {
     const {
-        admin_id
+        id
     } = req.body;
-    const admin = await Admin.findByPk(admin_id, {
+    const admin = await Admin.findByPk(id, {
         attributes: ['admin_id', 'username', 'is_active']
     });
     if (!admin) {
@@ -78,6 +78,11 @@ router.post('/create', asyncHandler(async (req, res) => {
         password,
         is_active
     } = req.body;
+
+      // Set default value for is_active if not provided
+      if (typeof is_active === 'undefined') {
+        is_active = true;
+    }
 
     // Check if username already exists
     const existingAdmin = await Admin.findOne({

@@ -47,7 +47,8 @@ export class PagingComponent implements OnInit {
   }
 
   fetchData() {
-    this.http.get<any[]>(BASE_URL + "/" + this.url).subscribe(data => {
+    const body = {}; // Add the request body if needed
+    this.http.post<any[]>(BASE_URL + "/" + this.url, body).subscribe(data => {
       this.data = data;
       this.filteredData = data;
     });
@@ -80,7 +81,7 @@ export class PagingComponent implements OnInit {
   }
 
   filterData() {
-    this.filteredData = this.data.filter(row => 
+    this.filteredData = this.data.filter(row =>
       this.columns
         .filter(column => column.type === 'text')
         .some(column => row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase()))
