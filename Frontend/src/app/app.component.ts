@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from './services/auth.service'
 import { AutoLogoutService } from './services/auto-logout-service';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,27 +14,35 @@ export class AppComponent {
   pageTitle: string = '';
   showSidebar: boolean = true;
   username: string | null = '';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private autoLogoutService: AutoLogoutService
-  ) {
+  ) { }
+
+  ngOnInit(): void {
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
     ).subscribe(() => {
       this.updatePageTitle();
       this.updateSidebarVisibility();
-      this.username = this.authService.getUsername();
+      this.updateUsername();
     });
-  }
 
-  ngOnInit(): void {
+    this.updateSidebarVisibility();
+    this.updateUsername();
+
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
     }
-    this.updateSidebarVisibility();
-    this.username = this.authService.getUsername();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updatePageTitle() {
@@ -52,10 +61,13 @@ export class AppComponent {
     return today.toLocaleDateString('en-US', options);
   }
 
-
   updateSidebarVisibility() {
     const route = this.router.url;
     this.showSidebar = !(route.includes('login') || route.includes('signup'));
+  }
+
+  updateUsername() {
+    this.username = this.authService.getUsername();
   }
 
   logout() {

@@ -1,13 +1,51 @@
 const express = require('express');
 const router = express.Router();
-const {
-    Admin
-} = require('../models'); // Adjust the path as needed
+const { Admin } = require('../models');
 const bcrypt = require('bcrypt');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
     Promise.resolve(fn(req, res, next)).catch(next);
+
+//#region Admin Login, Logout
+//Admin Login
+router.post('/login', asyncHandler(async (req, res) => {
+    const { username, password } = req.body;
+    const admin = await Admin.findOne({ where: { username } });
+
+    if (!admin) {
+        return res.status(401).json({ message: 'Invalid user' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+
+    if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    // Set session data
+    req.session.admin = {
+        admin_id: admin.admin_id,
+        username: admin.username
+    };
+
+    res.json({
+        message: 'Logged in successfully',
+        admin_id: admin.admin_id,
+        username: admin.username
+    });
+}));
+
+// Admin Logout
+router.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Could not log out, please try again' });
+        }
+        res.json({ message: 'Logged out successfully' });
+    });
+});
+//#endregion
 
 // Get all admins
 router.post('/get-all', asyncHandler(async (req, res) => {
@@ -40,6 +78,19 @@ router.post('/create', asyncHandler(async (req, res) => {
         password,
         is_active
     } = req.body;
+
+    // Check if username already exists
+    const existingAdmin = await Admin.findOne({
+        where: {
+            username
+        }
+    });
+    if (existingAdmin) {
+        return res.status(400).json({
+            message: 'Username already exists'
+        });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newAdmin = await Admin.create({
         username,

@@ -57,24 +57,6 @@ Price.belongsTo(BoxType, {
 });
 //#endregion
 
-// sync models with database
-const syncDatabase = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-        await sequelize.sync({
-            alter: true
-        }); // Sync in the order defined by associations
-        console.log('Database & tables created!');
-    } catch (error) {
-        console.error('Unable to sync the database:', error.message || error);
-        process.exit(1); // Optionally, exit the process on failure
-    }
-};
-
-// Call the sync function
-syncDatabase();
-
 module.exports = {
     Product,
     ProductType,

@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // If already logged in, redirect to dashboard
     if (this.authService.isLoggedIn()) {
       this.router.navigateByUrl('/dashboard');
     }
@@ -32,15 +33,19 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      this.authService.login(username, password).subscribe(response => {
-        if (response.success) {
-          this.router.navigateByUrl('/dashboard', { replaceUrl: true });
-        } else {
-          alert('Invalid username or password');
+      this.authService.login(username, password).subscribe(
+        response => {
+          if (response.success) {
+            this.router.navigateByUrl('/dashboard', { replaceUrl: true });
+          } else {
+            alert('Invalid username or password');
+          }
+        },
+        error => {
+          console.error('Login error:', error);
+          alert('Login failed. Please try again.');
         }
-      }, () => {
-        alert('Login failed. Please try again.');
-      });
+      );
     } else {
       alert('Please fill in all required fields.');
     }

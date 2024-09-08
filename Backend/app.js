@@ -1,6 +1,10 @@
+require('dotenv').config();
 const express = require('express');
-const sequelize = require('./config/database');
 const cors = require('cors');
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const sequelize = require('./config/database');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -12,38 +16,55 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
+// Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Routes
+// Session middleware
+const sessionStore = new SequelizeStore({
+    db: sequelize,
+});
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to true if using HTTPS
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
+
+// Create the session table if it doesn't exist
+sessionStore.sync();
+
+// Import Routes
 const adminRoutes = require('./routes/adminRoutes');
-app.use('/api/admin', adminRoutes);
+
+// Routes
+app.use('/admin', adminRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {
-    res.status(404).send({
-        message: 'Route not found'
-    });
+    res.status(404).send({ message: 'Route not found' });
 });
 
 // Error handler middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send({
-        message: 'Something broke!',
-        error: err.message
-    });
+    res.status(500).send({ message: 'Something broke!', error: err.message});
 });
 
-// Sync with database and start server
-sequelize.sync({
-        alter: true
-    })
+// Start the server
+sequelize.authenticate()
     .then(() => {
+        console.log('Database connection has been established successfully.');
         app.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
         });
     })
     .catch(err => {
-        console.log('Error: ' + err);
+        console.error('Unable to connect to the database:', err);
     });

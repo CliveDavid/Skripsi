@@ -19,55 +19,18 @@ async function syncModels() {
 
     try {
         // Synchronize the models in order
-        await Admin.sync({
-            alter: true,
-            transaction
-        });
-        await AdminNotif.sync({
-            alter: true,
-            transaction
-        });
-        await Distributor.sync({
-            alter: true,
-            transaction
-        });
-        await Company.sync({
-            alter: true,
-            transaction
-        });
-        await BoxType.sync({
-            alter: true,
-            transaction
-        });
-        await ProductType.sync({
-            alter: true,
-            transaction
-        });
-        await Product.sync({
-            alter: true,
-            transaction
-        });
-        await ShipmentMethod.sync({
-            alter: true,
-            transaction
-        });
-        await Order.sync({
-            alter: true,
-            transaction
-        });
-        await OrderItem.sync({
-            alter: true,
-            transaction
-        });
-        await Invoice.sync({
-            alter: true,
-            transaction
-        });
-
-        await Price.sync({
-            alter: true,
-            transaction
-        });
+        await Admin.sync({ alter: true, transaction });
+        await AdminNotif.sync({ alter: true, transaction });
+        await Distributor.sync({ alter: true, transaction });
+        await Company.sync({ alter: true, transaction });
+        await BoxType.sync({ alter: true, transaction });
+        await ProductType.sync({ alter: true, transaction });
+        await Product.sync({ alter: true, transaction });
+        await ShipmentMethod.sync({ alter: true, transaction });
+        await Order.sync({ alter: true, transaction });
+        await OrderItem.sync({ alter: true, transaction });
+        await Invoice.sync({ alter: true, transaction });
+        await Price.sync({ alter: true, transaction });
 
 
         await transaction.commit(); // Commit the transaction if all syncs are successful
