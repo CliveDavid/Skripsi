@@ -10,19 +10,66 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
-  signupForm: FormGroup = this.fb.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-    confirmPassword: ['', Validators.required]
-  }, );
+  signupForm: FormGroup;
+  passwordVisible: boolean = false;
+  apiError: any = null;
 
-  passwordVisible = false;
-
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
-
-  ngOnInit(): void {
-   
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.signupForm = this.formBuilder.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
+    }, { validator: this.passwordMatchValidator });
   }
 
- 
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    return password && confirmPassword && password.value === confirmPassword.value
+      ? null : { mismatch: true };
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
+  onSubmit(): void {
+    if (this.signupForm.valid) {
+      const { username, password } = this.signupForm.value;
+      this.authService.signup({ username, password }).subscribe(
+        response => {
+          if (response.success) {
+            console.log('Signup successful');
+            this.router.navigate(['/login']);
+          } else {
+            this.apiError = response.error || 'Signup failed. Please try again.';
+          }
+        },
+        error => {
+          console.error('Signup error:', error);
+          this.apiError = error;
+        }
+      );
+    } else {
+      this.apiError = 'Please correct the errors in the form.';
+      Object.keys(this.signupForm.controls).forEach(key => {
+        const control = this.signupForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+    }
+  }
+
+
 }

@@ -18,10 +18,13 @@ import { FormsComponent } from './forms/forms.component';
 import { AdminFormComponent } from './pages/admin-form/admin-form.component';
 import { ProductComponent } from './pages/product/product.component';
 import { ProductFormComponent } from './pages/product-form/product-form.component';
+import { ErrorMessageComponent } from './shared/components/error-message/error-message.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    ErrorMessageComponent,
     LoginComponent,
     SignupComponent,
     DashboardComponent,

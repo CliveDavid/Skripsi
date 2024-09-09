@@ -72,42 +72,36 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 }));
 
 // Create new admin
-router.post('/create', asyncHandler(async (req, res) => {
-    const {
-        username,
-        password,
-        is_active
-    } = req.body;
+router.post('/create', async (req, res) => {
+    try {
+        let { username, password, is_active } = req.body;
 
-      // Set default value for is_active if not provided
-      if (typeof is_active === 'undefined') {
-        is_active = true;
-    }
+        // Set default value for is_active if not provided
+        is_active = typeof is_active === 'undefined' ? true : is_active;
 
-    // Check if username already exists
-    const existingAdmin = await Admin.findOne({
-        where: {
-            username
+        // Check if username already exists
+        const existingAdmin = await Admin.findOne({ where: { username } });
+        if (existingAdmin) {
+            return res.status(400).json({ message: 'Username already exists' });
         }
-    });
-    if (existingAdmin) {
-        return res.status(400).json({
-            message: 'Username already exists'
-        });
-    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newAdmin = await Admin.create({
-        username,
-        password: hashedPassword,
-        is_active
-    });
-    res.status(201).json({
-        admin_id: newAdmin.admin_id,
-        username: newAdmin.username,
-        is_active: newAdmin.is_active
-    });
-}));
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newAdmin = await Admin.create({
+            username,
+            password: hashedPassword,
+            is_active
+        });
+
+        res.status(201).json({
+            admin_id: newAdmin.admin_id,
+            username: newAdmin.username,
+            is_active: newAdmin.is_active
+        });
+    } catch (error) {
+        console.error('Error creating admin:', error);
+        res.status(500).json({ message: 'An error occurred while creating the admin', error: error.message });
+    }
+});
 
 // Update admin
 router.post('/update', asyncHandler(async (req, res) => {
