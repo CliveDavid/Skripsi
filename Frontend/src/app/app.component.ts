@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from './services/auth.service'
+import { AuthService } from './services/auth.service';
 import { AutoLogoutService } from './services/auto-logout-service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -10,7 +10,7 @@ import { Subject } from 'rxjs';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   pageTitle: string = '';
   showSidebar: boolean = true;
   username: string | null = '';
@@ -35,9 +35,19 @@ export class AppComponent {
     this.updateSidebarVisibility();
     this.updateUsername();
 
-    if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/login']);
-    }
+    // Check login state and redirect if necessary
+    this.checkLoginState();
+
+    // Start the auto logout service
+    this.autoLogoutService.initTimer();
+
+    // Subscribe to auth state changes
+    this.authService.authState$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.updateUsername();
+      this.updateSidebarVisibility();
+    });
   }
 
   ngOnDestroy(): void {
@@ -63,7 +73,7 @@ export class AppComponent {
 
   updateSidebarVisibility() {
     const route = this.router.url;
-    this.showSidebar = !(route.includes('login') || route.includes('signup'));
+    this.showSidebar = this.authService.isLoggedIn() && !(route.includes('login') || route.includes('signup'));
   }
 
   updateUsername() {
@@ -71,6 +81,24 @@ export class AppComponent {
   }
 
   logout() {
-    this.authService.logout();
+    this.authService.logout().subscribe(
+      (result) => {
+        if (result.success) {
+          console.log('Logged out successfully');
+          this.router.navigate(['/login']);
+        } else {
+          console.error('Logout failed:', result.error);
+        }
+      }
+    );
+  }
+
+  private checkLoginState() {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+    } else {
+      // Verify token validity here if you're using tokens
+      // If invalid, logout and redirect to login
+    }
   }
 }

@@ -1,34 +1,33 @@
-// src/app/auto-logout.service.ts
 import { Injectable } from '@angular/core';
+import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AutoLogoutService {
-  private timeoutId: any;
+  private autoLogoutTimer: any;
 
-  constructor(private router: Router) {
-    this.startTimer();
-    this.setupListeners();
+  constructor(private authService: AuthService, private router: Router) { }
+
+  initTimer() {
+    this.resetTimer();
+    // Set up event listeners for user activity
+    ['click', 'mousedown', 'keypress', 'scroll', 'touchstart'].forEach(evt =>
+      document.addEventListener(evt, () => this.resetTimer(), false)
+    );
   }
 
-  startTimer(): void {
-    this.timeoutId = setTimeout(() => this.logout(), 30 * 60 * 1000); // 30 minutes
+  resetTimer() {
+    if (this.autoLogoutTimer) {
+      clearTimeout(this.autoLogoutTimer);
+    }
+    this.autoLogoutTimer = setTimeout(() => this.autoLogout(), 30 * 60 * 1000); // 30 minutes
   }
 
-  resetTimer(): void {
-    clearTimeout(this.timeoutId);
-    this.startTimer();
-  }
-
-  setupListeners(): void {
-    document.addEventListener('mousemove', () => this.resetTimer());
-    document.addEventListener('keypress', () => this.resetTimer());
-  }
-
-  logout(): void {
-    localStorage.removeItem('username');
-    this.router.navigate(['/login']);
+  private autoLogout() {
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }
