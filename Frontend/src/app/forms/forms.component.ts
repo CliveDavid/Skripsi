@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { ToastrService } from '../shared/services/toastr.service';
 
 interface FormColumn {
   header: string;
@@ -27,7 +28,13 @@ export class FormsComponent implements OnInit {
   isEditMode: boolean = false;
   id: any;
 
-  constructor(private http: HttpClient, private location: Location, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private http: HttpClient,
+    private location: Location,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.queryParamMap.get('id');
@@ -39,24 +46,37 @@ export class FormsComponent implements OnInit {
 
   fetchData(id: string): void {
     const body = { id: id };
-    this.http.post<any>(this.fetchUrl, body).subscribe(data => {
-      this.formData = data;
-    });
+    this.http.post<any>(this.fetchUrl, body).subscribe(
+      data => {
+        this.formData = data;
+      },
+      error => {
+        this.toastr.error('Error fetching data. Please try again.');
+      }
+    );
   }
 
   onSubmit(): void {
     if (this.isEditMode) {
-      this.http.post(`${this.submitUrl}/update`, this.formData).subscribe(() => {
-        this.location.back(); // Go back to the previous page
-      }, error => {
-        console.error('Error updating data', error);
-      });
+      this.http.post(`${this.submitUrl}/update`, this.formData).subscribe(
+        () => {
+          this.toastr.success('Data updated successfully');
+          setTimeout(() => this.location.back(), 1500); // Go back to the previous page after 2 seconds
+        },
+        error => {
+          this.toastr.error('Error updating data. Please try again.');
+        }
+      );
     } else {
-      this.http.post(`${this.submitUrl}/create`, this.formData).subscribe(() => {
-        this.location.back(); // Go back to the previous page
-      }, error => {
-        console.error('Error creating data', error);
-      });
+      this.http.post(`${this.submitUrl}/create`, this.formData).subscribe(
+        () => {
+          this.toastr.success('Data created successfully');
+          setTimeout(() => this.location.back(), 1500); // Go back to the previous page after 2 seconds
+        },
+        error => {
+          this.toastr.error('Error creating data. Please try again.');
+        }
+      );
     }
   }
 
