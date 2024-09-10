@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from '../shared/services/toastr.service';
+
 
 @Component({
   selector: 'app-login',
@@ -15,7 +17,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -36,18 +39,19 @@ export class LoginComponent implements OnInit {
       this.authService.login(username, password).subscribe(
         response => {
           if (response.success) {
-            this.router.navigateByUrl('/dashboard', { replaceUrl: true });
+            this.toastr.success();
+            setTimeout(() => this.router.navigateByUrl('/dashboard', { replaceUrl: true }), 1500);
           } else {
-            alert('Invalid username or password');
+            this.toastr.error('Invalid username or password');
           }
         },
         error => {
           console.error('Login error:', error);
-          alert('Login failed. Please try again.');
+          this.toastr.error('Login failed. Please try again.');
         }
       );
     } else {
-      alert('Please fill in all required fields.');
+      this.toastr.error('Please fill in all required fields.');
     }
   }
 
