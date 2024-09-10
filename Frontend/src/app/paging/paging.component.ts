@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { BASE_URL } from '../constants';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from '../shared/services/toastr.service';
 
 interface TableColumn {
   header: string;
@@ -36,7 +37,8 @@ export class PagingComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
@@ -48,10 +50,20 @@ export class PagingComponent implements OnInit {
 
   fetchData() {
     const body = {}; // Add the request body if needed
-    this.http.post<any[]>(BASE_URL + "/" + this.url, body).subscribe(data => {
-      this.data = data;
-      this.filteredData = data;
-    });
+    this.http.post<any[]>(BASE_URL + "/" + this.url, body).subscribe(
+      (data) => {
+        this.data = data;
+        this.filteredData = data;
+      },
+      (error: HttpErrorResponse) => {
+        console.error('Error fetching data:', error);
+        if (error.status === 0) {
+          this.toastr.error('Unable to connect to the server.');
+        } else {
+          this.toastr.error('Error fetching data. Please try again later.');
+        }
+      }
+    );
   }
 
   setCurrentRoute() {
