@@ -2,22 +2,28 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+export interface MessageData {
+    text: string;
+    type: 'success' | 'error';
+}
+
 @Component({
-    selector: 'app-error-message',
-    templateUrl: './error-message.component.html',
-    styleUrls: ['./error-message.component.css']
+    selector: 'app-message',
+    templateUrl: './message.component.html',
+    styleUrls: ['./message.component.css']
 })
-export class ErrorMessageComponent implements OnInit, OnDestroy {
-    @Input() set error(value: any) {
+export class MessageComponent implements OnInit, OnDestroy {
+    @Input() set message(value: MessageData | null) {
         if (value) {
-            this.setErrorMessage(value);
+            this.setMessage(value);
             this.show();
         }
     }
 
     @Input() duration: number = 5000; // Duration in milliseconds
 
-    errorMessage: string = '';
+    messageText: string = '';
+    messageType: 'success' | 'error' = 'success';
     isVisible: boolean = false;
     private destroy$ = new Subject<void>();
 
@@ -28,16 +34,9 @@ export class ErrorMessageComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    private setErrorMessage(error: any) {
-        if (typeof error === 'string') {
-            this.errorMessage = error;
-        } else if (error.error && error.error.message) {
-            this.errorMessage = error.error.message;
-        } else if (error.message) {
-            this.errorMessage = error.message;
-        } else {
-            this.errorMessage = 'An unknown error occurred';
-        }
+    private setMessage(message: MessageData) {
+        this.messageText = message.text;
+        this.messageType = message.type;
     }
 
     private show() {

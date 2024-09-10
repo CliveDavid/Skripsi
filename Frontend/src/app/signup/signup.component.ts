@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { MessageData } from '../shared/components/message/message.component';
 
 @Component({
   selector: 'app-signup',
@@ -12,7 +13,7 @@ import { AuthService } from '../services/auth.service';
 export class SignupComponent implements OnInit {
   signupForm: FormGroup;
   passwordVisible: boolean = false;
-  apiError: any = null;
+  message: MessageData | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -49,19 +50,19 @@ export class SignupComponent implements OnInit {
       this.authService.signup({ username, password }).subscribe(
         response => {
           if (response.success) {
-            console.log('Signup successful');
-            this.router.navigate(['/login']);
+            this.message = { text: 'Signup successful', type: 'success' };
+            setTimeout(() => this.router.navigate(['/login']), 1000);
           } else {
-            this.apiError = response.error || 'Signup failed. Please try again.';
+            this.message = { text: response.error || 'Signup failed. Please try again.', type: 'error' };
           }
         },
         error => {
           console.error('Signup error:', error);
-          this.apiError = error;
+          this.message = { text: error.message || 'An unknown error occurred', type: 'error' };
         }
       );
     } else {
-      this.apiError = 'Please correct the errors in the form.';
+      this.message = { text: 'Please correct the errors in the form.', type: 'error' };
       Object.keys(this.signupForm.controls).forEach(key => {
         const control = this.signupForm.get(key);
         if (control?.invalid) {

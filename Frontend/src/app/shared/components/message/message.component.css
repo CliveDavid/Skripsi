@@ -1,8 +1,7 @@
-.error-message {
+.message {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #ff4444;
   color: white;
   padding: 15px;
   border-radius: 5px;
@@ -12,7 +11,15 @@
   animation: slideIn 0.5s ease-out;
 }
 
-.error-content {
+.message-success {
+  background-color: #28a745;
+}
+
+.message-error {
+  background-color: #dc3545;
+}
+
+.message-content {
   display: flex;
   justify-content: space-between;
   align-items: center;

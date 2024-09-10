@@ -1,0 +1,7 @@
+<div *ngIf="isVisible" class="message"
+  [ngClass]="{'message-success': messageType === 'success', 'message-error': messageType === 'error'}">
+  <div class="message-content">
+    <span>{{ messageText }}</span>
+    <button (click)="closeMessage()" class="close-btn">&times;</button>
+  </div>
+</div>
