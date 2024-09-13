@@ -9,7 +9,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(50),
             allowNull: false,
             unique: true
-        }
+        },
+        descr: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+          }
     }, {
         tableName: 'product_type'
     });

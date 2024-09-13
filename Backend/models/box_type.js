@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(50),
             allowNull: false,
             unique: true
+        },
+        box_capacity: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
     }, {
         tableName: 'box_type'

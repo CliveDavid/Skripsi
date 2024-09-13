@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../config/database');
 
-//#region Import
+// Import models
 const Admin = require('./admin')(sequelize, Sequelize.DataTypes);
 const Distributor = require('./distributor')(sequelize, Sequelize.DataTypes);
 const AdminNotif = require('./admin_notif')(sequelize, Sequelize.DataTypes);
@@ -14,48 +14,27 @@ const OrderItem = require('./order_items')(sequelize, Sequelize.DataTypes);
 const Price = require('./price')(sequelize, Sequelize.DataTypes);
 const Invoice = require('./invoice')(sequelize, Sequelize.DataTypes);
 const ShipmentMethod = require('./shipment_method')(sequelize, Sequelize.DataTypes);
-//#endregion
 
+// Relation (foreign keys) 
+Order.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 
-//#region Relation (foreign keys) 
-Order.belongsTo(Distributor, {
-    foreignKey: 'distributor_id'
-});
+OrderItem.belongsTo(Order, { foreignKey: 'order_id' });
 
-OrderItem.belongsTo(Order, {
-    foreignKey: 'order_id'
-});
-OrderItem.belongsTo(Product, {
-    foreignKey: 'product_id'
-});
+OrderItem.belongsTo(Product, { foreignKey: 'product_id' });
 
-Product.belongsTo(ProductType, {
-    foreignKey: 'prod_type_code'
-});
+Product.belongsTo(ProductType, { foreignKey: 'prod_type_code', targetKey: 'prod_type_code' });
 
-Order.hasMany(OrderItem, {
-    foreignKey: 'order_id'
-});
+Order.hasMany(OrderItem, { foreignKey: 'order_id' });
 
-Invoice.belongsTo(Order, {
-    foreignKey: 'order_id'
-});
+Invoice.belongsTo(Order, { foreignKey: 'order_id' });
 
-ShipmentMethod.hasMany(Order, {
-    foreignKey: 'shipment_code'
-});
+ShipmentMethod.hasMany(Order, { foreignKey: 'shipment_code' });
 
-AdminNotif.belongsTo(Admin, {
-    foreignKey: 'admin_id'
-});
+AdminNotif.belongsTo(Admin, { foreignKey: 'admin_id' });
 
-Price.belongsTo(ProductType, {
-    foreignKey: 'prod_type_code'
-});
-Price.belongsTo(BoxType, {
-    foreignKey: 'box_type_code'
-});
-//#endregion
+Price.belongsTo(ProductType, { foreignKey: 'prod_type_code' });
+
+Price.belongsTo(BoxType, { foreignKey: 'box_type_code' });
 
 module.exports = {
     Product,

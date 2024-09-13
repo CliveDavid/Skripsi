@@ -42,9 +42,13 @@ sessionStore.sync();
 
 // Import Routes
 const adminRoutes = require('./routes/adminRoutes');
+const distributorRoutes = require('./routes/distributorRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 // Routes
 app.use('/admin', adminRoutes);
+app.use('/distributor', distributorRoutes);
+app.use('/product', productRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {
