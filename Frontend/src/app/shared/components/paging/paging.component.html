@@ -35,6 +35,7 @@
             <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
             <td *ngFor="let column of columns" [ngClass]="column.alignment">
               <ng-container [ngSwitch]="column.type">
+                <span *ngSwitchCase="'int'" [ngClass]="column.alignment">{{ row[column.field] | number:'1.0-0' }}</span>
                 <span *ngSwitchCase="'text'" [ngClass]="column.alignment"
                   [innerHTML]="row[column.field] | highlight: searchText"></span>
                 <span *ngSwitchCase="'currency'" [ngClass]="column.alignment">{{ row[column.field] | currency }}</span>

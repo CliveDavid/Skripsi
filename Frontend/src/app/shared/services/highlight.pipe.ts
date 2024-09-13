@@ -7,13 +7,23 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 export class HighlightPipe implements PipeTransform {
     constructor(private sanitizer: DomSanitizer) { }
 
-    transform(value: string, search: string): SafeHtml {
+    transform(value: any, search: string): SafeHtml {
         if (!search || !value) {
             return value;
         }
+
+        // Convert value to string if it's not already
+        const stringValue = String(value);
+
         const re = new RegExp(this.escapeRegExp(search), 'gi');
-        const newValue = value.replace(re, match => `<mark>${match}</mark>`);
-        return this.sanitizer.bypassSecurityTrustHtml(newValue);
+        const match = stringValue.match(re);
+
+        if (!match) {
+            return stringValue;
+        }
+
+        const replacedValue = stringValue.replace(re, "<mark>$&</mark>");
+        return this.sanitizer.bypassSecurityTrustHtml(replacedValue);
     }
 
     private escapeRegExp(string: string): string {

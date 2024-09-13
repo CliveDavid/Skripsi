@@ -46,7 +46,6 @@ thead {
 table th,
 table td {
   padding: 12px 20px;
-  width: 150px;
   border-bottom: 1px solid #dddddd95;
 }
 
@@ -58,7 +57,7 @@ table th:first-child,
 table td:first-child,
 table th:last-child,
 table td:last-child {
-  width: 50px;
+  width: 10px;
 }
 
 table th.boolean,
@@ -66,7 +65,7 @@ table td.boolean {
   width: 50px;
 }
 
-table th.string,
+/* table th.string,
 table td.string {
   width: 150px;
 }
@@ -84,7 +83,7 @@ table td.currency {
 table th.link,
 table td.link {
   width: 150px;
-}
+} */
 
 tr:hover {
   background-color: rgba(0, 0, 0, 0.03) !important;

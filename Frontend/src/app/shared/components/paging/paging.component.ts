@@ -8,7 +8,7 @@ interface TableColumn {
   header: string;
   field: string;
   alignment: 'left' | 'center' | 'right';
-  type: 'text' | 'currency' | 'link' | 'date' | 'boolean';
+  type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int';
 }
 
 @Component({
