@@ -61,6 +61,10 @@ export class AppComponent implements OnInit, OnDestroy {
       this.pageTitle = 'Dashboard';
     } else if (route.includes('admin')) {
       this.pageTitle = 'Admin';
+    } else if (route.includes('product')) {
+      this.pageTitle = 'Product';
+    } else if (route.includes('distributor')) {
+      this.pageTitle = 'Distributor';
     }
     // add more conditions for other pages
   }

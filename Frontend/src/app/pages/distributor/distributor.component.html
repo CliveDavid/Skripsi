@@ -1,0 +1,14 @@
+<app-paging [tableTitle]="'Distributor Records'" [addButton]="true" [columns]="[
+  { header: 'Distributor ID', field: 'distributor_id', alignment: 'left', type: 'text' },
+  { header: 'Name', field: 'name', alignment: 'left', type: 'text' },
+  { header: 'Email', field: 'email', alignment: 'left', type: 'text' },
+  { header: 'Phone', field: 'phone', alignment: 'left', type: 'text' },
+  { header: 'Address', field: 'address', alignment: 'left', type: 'text' },
+  { header: 'Address Details', field: 'addr_details', alignment: 'left', type: 'text' },
+  { header: 'City', field: 'city', alignment: 'left', type: 'text' },
+  { header: 'Province', field: 'province', alignment: 'left', type: 'text' },
+  { header: 'Zipcode', field: 'zipcode', alignment: 'left', type: 'text' },
+  { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
+  { header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' }
+  ]" [url]="'distributor/get-all'" [editButton]="true" [primaryKey]="'distributor_id'">
+</app-paging>

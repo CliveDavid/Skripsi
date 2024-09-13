@@ -1,15 +1,32 @@
+.card {
+  width: 100%;
+  overflow: hidden;
+}
+
 table {
-  margin: 0 0;
+  margin: 0;
   width: 100%;
   border-collapse: collapse;
   font-size: 16px;
+  min-width: 800px;
 }
 
 .table-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   padding: 20px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  scrollbar-width: thin;
+  /* For Firefox */
+  scrollbar-color: #88888849 #f1f1f1;
+  /* For Firefox */
 }
 
 .table-title {
@@ -144,8 +161,10 @@ td.right {
 .pagination-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   margin-top: 20px;
+  padding: 0 20px;
   /* margin-bottom: -20px; */
 }
 

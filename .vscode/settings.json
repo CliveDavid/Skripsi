@@ -1,0 +1,19 @@
+{
+    "favorites.resources": [{
+            "filePath": "Frontend\\src\\app\\sidebar\\sidebar.component.ts",
+            "group": "Default"
+        },
+        {
+            "filePath": "Frontend\\src\\app\\app-routing.module.ts",
+            "group": "Default"
+        },
+        {
+            "filePath": "Frontend\\src\\app\\app.component.ts",
+            "group": "Default"
+        },
+        {
+            "filePath": "Frontend\\src\\app\\app.module.ts",
+            "group": "Default"
+        }
+    ]
+}

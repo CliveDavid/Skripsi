@@ -19,6 +19,8 @@ import { AdminFormComponent } from './pages/admin-form/admin-form.component';
 import { ProductComponent } from './pages/product/product.component';
 import { ProductFormComponent } from './pages/product-form/product-form.component';
 import { MessageComponent } from './shared/components/message/message.component';
+import { DistributorComponent } from './pages/distributor/distributor.component';
+import { DistributorFormComponent } from './pages/distributor-form/distributor-form.component';
 
 
 @NgModule({
@@ -35,7 +37,9 @@ import { MessageComponent } from './shared/components/message/message.component'
     FormsComponent,
     AdminFormComponent,
     ProductComponent,
-    ProductFormComponent
+    ProductFormComponent,
+    DistributorComponent,
+    DistributorFormComponent
   ],
   imports: [
     BrowserModule,
