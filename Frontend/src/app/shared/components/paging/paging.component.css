@@ -34,6 +34,11 @@ table {
   font-size: 22px;
 }
 
+mark {
+  background-color: yellow;
+  padding: 0;
+}
+
 thead {
   background-color: rgba(0, 0, 0, 0.03);
 }

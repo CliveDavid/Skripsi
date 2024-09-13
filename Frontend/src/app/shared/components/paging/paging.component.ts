@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { BASE_URL } from '../constants';
+import { BASE_URL } from '../../../constants';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '../shared/services/toastr.service';
+import { ToastrService } from '../../services/toastr.service';
 
 interface TableColumn {
   header: string;
@@ -99,6 +99,16 @@ export class PagingComponent implements OnInit {
         .some(column => row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase()))
     );
     this.currentPage = 1;
+    this.forceRefresh();
+  }
+
+  forceRefresh() {
+    for (let i = 0; i < 20; i++) {
+      setTimeout(() => {
+        const event = new KeyboardEvent('keypress', { key: 'Enter' });
+        document.dispatchEvent(event);
+      }, 0);
+    }
   }
 
   paginatedData() {

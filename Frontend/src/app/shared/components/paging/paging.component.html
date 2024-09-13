@@ -35,11 +35,12 @@
             <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
             <td *ngFor="let column of columns" [ngClass]="column.alignment">
               <ng-container [ngSwitch]="column.type">
-                <span *ngSwitchCase="'text'" [ngClass]="column.alignment">{{ row[column.field] }}</span>
+                <span *ngSwitchCase="'text'" [ngClass]="column.alignment"
+                  [innerHTML]="row[column.field] | highlight: searchText"></span>
                 <span *ngSwitchCase="'currency'" [ngClass]="column.alignment">{{ row[column.field] | currency }}</span>
                 <span *ngSwitchCase="'date'" [ngClass]="column.alignment">{{ row[column.field] | dateFormat }}</span>
-                <a *ngSwitchCase="'link'" [href]="row[column.field]"
-                  [ngClass]="column.alignment">{{ row[column.field] }}</a>
+                <a *ngSwitchCase="'link'" [href]="row[column.field]" [ngClass]="column.alignment"
+                  [innerHTML]="row[column.field] | highlight: searchText"></a>
                 <span *ngSwitchCase="'boolean'"
                   [ngClass]="[column.alignment, row[column.field] ? 'boolean-yes' : 'boolean-no']">{{ row[column.field] ? 'yes' : 'no' }}</span>
               </ng-container>

@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { ToastrService } from '../shared/services/toastr.service';
+import { ToastrService } from '../../services/toastr.service';
 
 interface FormColumn {
   header: string;

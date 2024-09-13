@@ -5,22 +5,23 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from './services/auth.service';
+import { AuthService } from './shared/services/auth.service';
 import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { HttpClientModule } from '@angular/common/http';
-import { AutoLogoutService } from './services/auto-logout-service';
-import { PagingComponent } from './paging/paging.component';
-import { DateFormatPipe } from './services/date-format/date-format.pipe';
+import { AutoLogoutService } from './shared/services/auto-logout-service';
+import { PagingComponent } from './shared/components/paging/paging.component';
+import { FormsComponent } from './shared/components/forms/forms.component';
 import { AdminComponent } from './pages/admin/admin.component';
-import { FormsComponent } from './forms/forms.component';
 import { AdminFormComponent } from './pages/admin-form/admin-form.component';
 import { ProductComponent } from './pages/product/product.component';
 import { ProductFormComponent } from './pages/product-form/product-form.component';
 import { MessageComponent } from './shared/components/message/message.component';
 import { DistributorComponent } from './pages/distributor/distributor.component';
 import { DistributorFormComponent } from './pages/distributor-form/distributor-form.component';
+import { HighlightPipe } from './shared/services/highlight.pipe';
+import { DateFormatPipe } from './shared/services/date-format/date-format.pipe';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { DistributorFormComponent } from './pages/distributor-form/distributor-f
     SidebarComponent,
     PagingComponent,
     DateFormatPipe,
+    HighlightPipe,
     AdminComponent,
     FormsComponent,
     AdminFormComponent,

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from './services/auth.service';
-import { AutoLogoutService } from './services/auto-logout-service';
+import { AuthService } from './shared/services/auth.service';
+import { AutoLogoutService } from './shared/services/auto-logout-service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
