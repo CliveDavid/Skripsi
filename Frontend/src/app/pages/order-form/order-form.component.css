@@ -234,16 +234,28 @@ label {
   padding-left: 2.5rem;
 }
 
-.distributor-results {
-  position: relative;
-  width: 100%;
-  max-width: 300px;
-  /* Adjust this value to control the width of the dropdown */
+/* search distributor dropdown */
+
+.distributor-label {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
 }
 
-.distributor-results .list-group {
+.distributor-label label {
+  margin-bottom: 0;
+  margin-right: 0.5rem;
+}
+
+.not-found-text {
+  color: #dc3545;
+  font-size: 0.75rem;
+}
+
+.distributor-results {
   position: absolute;
   width: 100%;
+  max-width: 300px;
   max-height: 200px;
   overflow-y: auto;
   z-index: 1000;
@@ -256,7 +268,6 @@ label {
 .distributor-results .list-group-item {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  /* Smaller font size */
   cursor: pointer;
   border: none;
   border-bottom: 1px solid #f0f0f0;
@@ -268,14 +279,4 @@ label {
 
 .distributor-results .list-group-item:hover {
   background-color: #f8f9fa;
-}
-
-.distributor-results .no-results {
-  color: #dc3545;
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  background-color: #fff;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }

@@ -26,6 +26,7 @@ export class OrderFormComponent implements OnInit {
   products: any[] = [];
   boxTypes: any[] = [];
   statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  showNotFound = false;
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -72,6 +73,7 @@ export class OrderFormComponent implements OnInit {
         this.searchSubject.next(searchTerm);
       } else {
         this.filteredDistributors = [];
+        this.showNotFound = false;
       }
     });
 
@@ -81,10 +83,12 @@ export class OrderFormComponent implements OnInit {
     ).subscribe(
       results => {
         this.filteredDistributors = results;
+        this.showNotFound = results.length === 0;
       },
       error => {
         console.error('Error searching distributors:', error);
         this.filteredDistributors = [];
+        this.showNotFound = true;
       }
     );
   }
