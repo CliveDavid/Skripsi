@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
+import { BASE_URL } from '../../constants';
 
 interface OrderItem {
   product_id: number;
@@ -17,13 +18,17 @@ interface OrderItem {
   styleUrls: ['./order-form.component.css']
 })
 export class OrderFormComponent implements OnInit {
+  private apiUrl = BASE_URL;
+
   orderForm: FormGroup;
-  distributors: any[] = [];
-  filteredDistributors: any[] = [];
+  filteredDistributors: { id: string, name: string }[] = [];
   shipmentMethods: any[] = [];
   products: any[] = [];
   boxTypes: any[] = [];
   statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -43,8 +48,8 @@ export class OrderFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadDropdownData();
     this.setupDistributorSearch();
+    this.loadDropdownData();
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -52,26 +57,48 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   setupDistributorSearch() {
     this.orderForm.get('distributorSearch')!.valueChanges.pipe(
+      takeUntil(this.destroy$),
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(value => this.searchDistributors(value))
-    ).subscribe(results => {
-      this.filteredDistributors = results;
+    ).subscribe(searchTerm => {
+      if (searchTerm) {
+        this.searchSubject.next(searchTerm);
+      } else {
+        this.filteredDistributors = [];
+      }
     });
+
+    this.searchSubject.pipe(
+      takeUntil(this.destroy$),
+      switchMap(term => this.searchDistributors(term))
+    ).subscribe(
+      results => {
+        this.filteredDistributors = results;
+      },
+      error => {
+        console.error('Error searching distributors:', error);
+        this.filteredDistributors = [];
+      }
+    );
   }
 
   searchDistributors(term: string) {
-    // Implement the API call to search distributors
-    return this.http.get<any[]>(`/api/distributors/search?term=${term}`);
+    return this.http.post<{ id: string, name: string }[]>(`${this.apiUrl}/distributor/search`, { term });
   }
 
-  selectDistributor(distributor: any) {
+  selectDistributor(distributor: { id: string, name: string }) {
     this.orderForm.patchValue({
       distributor_id: distributor.id,
       distributorSearch: distributor.name
     });
+    this.filteredDistributors = [];
   }
 
   get orderItems() {
@@ -100,7 +127,6 @@ export class OrderFormComponent implements OnInit {
   loadDropdownData() {
     // Load distributors, shipment methods, products, and box types
     // You'll need to implement these API calls
-    this.http.get<any[]>('/api/distributors').subscribe(data => this.distributors = data);
     this.http.get<any[]>('/api/shipment-methods').subscribe(data => this.shipmentMethods = data);
     this.http.get<any[]>('/api/products').subscribe(data => this.products = data);
     this.http.get<any[]>('/api/box-types').subscribe(data => this.boxTypes = data);

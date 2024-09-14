@@ -14,12 +14,17 @@
               <div class="mx-1"></div>
               <button type="button" class="btn btn-add" (click)="navigateToDistributorForm()">+</button>
             </div>
-            <ul class="list-group mt-2" *ngIf="filteredDistributors.length">
-              <li class="list-group-item" *ngFor="let distributor of filteredDistributors"
-                (click)="selectDistributor(distributor)">
-                {{distributor.name}}
-              </li>
-            </ul>
+            <div class="distributor-results" *ngIf="orderForm.get('distributorSearch')?.value">
+              <ul class="list-group" *ngIf="filteredDistributors.length; else noResults">
+                <li class="list-group-item" *ngFor="let distributor of filteredDistributors"
+                  (click)="selectDistributor(distributor)">
+                  {{distributor.name}}
+                </li>
+              </ul>
+              <ng-template #noResults>
+                <div class="no-results">No distributors found</div>
+              </ng-template>
+            </div>
           </div>
 
           <div class="form-group">

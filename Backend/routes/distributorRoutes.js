@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {
-    Distributor
-} = require('../models');
+const { Distributor } = require('../models');
+const { Op, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
 
 // Middleware to handle errors
@@ -16,6 +15,27 @@ router.post('/get-all', asyncHandler(async (req, res) => {
             exclude: ['password']
         }
     });
+    res.json(distributors);
+}));
+
+// Search
+router.post('/search', asyncHandler(async (req, res) => {
+    const { term } = req.body;
+    
+    if (!term) {
+        return res.json([]);
+    }
+
+    const distributors = await Distributor.findAll({
+        where: Sequelize.where(
+            Sequelize.fn('LOWER', Sequelize.col('name')),
+            'LIKE',
+            '%' + term.toLowerCase() + '%'
+        ),
+        attributes: ['distributor_id', 'name'],
+        limit: 10 // Limit the number of results
+    });
+    
     res.json(distributors);
 }));
 
