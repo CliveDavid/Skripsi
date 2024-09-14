@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
 import { BASE_URL } from '../../constants';
+import { ToastrService } from 'src/app/shared/services/toastr.service';
 
 interface OrderItem {
   product_id: number;
@@ -35,7 +36,8 @@ export class OrderFormComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) {
     this.orderForm = this.fb.group({
       distributor_id: ['', Validators.required],
@@ -86,7 +88,7 @@ export class OrderFormComponent implements OnInit {
         this.showNotFound = results.length === 0;
       },
       error => {
-        console.error('Error searching distributors:', error);
+        this.toastr.error('Error searching distributors')
         this.filteredDistributors = [];
         this.showNotFound = true;
       }
@@ -151,11 +153,11 @@ export class OrderFormComponent implements OnInit {
       const orderData = this.orderForm.value;
       this.http.post('/api/orders', orderData).subscribe(
         response => {
-          console.log('Order saved successfully', response);
+          this.toastr.success('Order saved successfully')
           this.router.navigate(['/orders']); // Navigate to orders list
         },
         error => {
-          console.error('Error saving order', error);
+          this.toastr.error('Error saving order')
         }
       );
     }
