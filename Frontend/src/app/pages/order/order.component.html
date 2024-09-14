@@ -1,8 +1,11 @@
-<app-paging [tableTitle]="'Admin Records'" [addButton]="true" [columns]="[
-    { header: 'ID', field: 'admin_id', alignment: 'left', type: 'text' },
-    { header: 'Username', field: 'username', alignment: 'left', type: 'text' },
-    { header: 'Active', field: 'is_active', alignment: 'left', type: 'boolean' },
+<app-paging [tableTitle]="'Order Records'" [addButton]="true" [columns]="[
+    { header: 'Order ID', field: 'order_id', alignment: 'left', type: 'text' },
+    { header: 'Distributor ID', field: 'distributor_id', alignment: 'left', type: 'text' },
+    { header: 'Order Date', field: 'order_dt', alignment: 'left', type: 'date' },
+    { header: 'Status', field: 'status', alignment: 'left', type: 'text' },
+    { header: 'Total Price', field: 'total_price', alignment: 'left', type: 'text' },
+    { header: 'Shipment Code', field: 'shipment_code', alignment: 'left', type: 'text' },
     { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
     { header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' }
-  ]" [url]="'admin/get-all'" [editButton]="true" [primaryKey]="'admin_id'">
+  ]" [url]="'orders/get-all'" [editButton]="true" [primaryKey]="'order_id'">
 </app-paging>

@@ -57,17 +57,31 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 
 // Create new order
 router.post('/create', asyncHandler(async (req, res) => {
-    const { distributor_id, order_dt, status, total_price, shipment_code } = req.body;
+    const { distributor_id, order_dt, status, total_price, shipment_code, orderItems } = req.body;
     
-    const newOrder = await Order.create({
-        distributor_id,
-        order_dt,
-        status,
-        total_price,
-        shipment_code
+    const result = await sequelize.transaction(async (t) => {
+        // Create the order
+        const newOrder = await Order.create({
+            distributor_id,
+            order_dt,
+            status,
+            total_price,
+            shipment_code
+        }, { transaction: t });
+
+        // Create the order items
+        if (orderItems && orderItems.length > 0) {
+            const orderItemsWithOrderId = orderItems.map(item => ({
+                ...item,
+                order_id: newOrder.order_id
+            }));
+            await OrderItem.bulkCreate(orderItemsWithOrderId, { transaction: t });
+        }
+
+        return newOrder;
     });
 
-    res.status(201).json(newOrder);
+    res.status(201).json(result);
 }));
 
 // Update order

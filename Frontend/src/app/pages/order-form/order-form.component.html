@@ -1,1 +1,86 @@
-hello
+<div class="card">
+  <div class="card-header">
+    <h2>Add New Order</h2>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-column">
+          <div class="form-group">
+            <label for="distributorSearch">Distributor</label>
+            <div class="input-group">
+              <input type="text" id="distributorSearch" formControlName="distributorSearch" class="form-control"
+                placeholder="Search distributor...">
+              <div class="mx-1"></div>
+              <button type="button" class="btn btn-add" (click)="navigateToDistributorForm()">+</button>
+            </div>
+            <ul class="list-group mt-2" *ngIf="filteredDistributors.length">
+              <li class="list-group-item" *ngFor="let distributor of filteredDistributors"
+                (click)="selectDistributor(distributor)">
+                {{distributor.name}}
+              </li>
+            </ul>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" formControlName="status" class="form-control form-select">
+              <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-column">
+          <div class="form-group">
+            <label for="order_dt">Order Date</label>
+            <input type="date" id="order_dt" formControlName="order_dt" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="shipment_code">Shipment Method</label>
+            <select id="shipment_code" formControlName="shipment_code" class="form-control form-select">
+              <option value="" disabled>Select a shipment method</option>
+              <option *ngFor="let method of shipmentMethods" [value]="method.shipment_code">{{method.shipment_name}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-items mt-4">
+        <h3>Order Items <button type="button" class="btn btn-add btn-sm ml-2" (click)="addOrderItem()">+</button></h3>
+
+        <div formArrayName="orderItems">
+          <div *ngFor="let item of orderItems.controls; let i = index" [formGroupName]="i" class="order-item-row">
+            <select formControlName="product_id" class="form-control form-select">
+              <option value="" disabled>Select a product</option>
+              <option *ngFor="let product of products" [value]="product.prod_id">{{product.prod_name}}</option>
+            </select>
+            <select formControlName="box_type_code" class="form-control form-select">
+              <option value="" disabled>Select a box type</option>
+              <option *ngFor="let boxType of boxTypes" [value]="boxType.box_type_code">{{boxType.box_type_name}}
+              </option>
+            </select>
+            <input type="number" formControlName="qty" class="form-control qty-input" (change)="calculateTotalPrice()"
+              min="1" placeholder="Qty">
+            <button type="button" class="btn btn-remove" (click)="removeOrderItem(i)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group mt-3">
+        <label for="total_price">Total Price</label>
+        <div class="total-price-input">
+          <input type="number" id="total_price" formControlName="total_price" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!orderForm.valid">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
