@@ -76,10 +76,8 @@ router.post('/create', async (req, res) => {
     try {
         let { username, password, is_active } = req.body;
 
-        // Set default value for is_active if not provided
         is_active = typeof is_active === 'undefined' ? true : is_active;
 
-        // Check if username already exists
         const existingAdmin = await Admin.findOne({ where: { username } });
         if (existingAdmin) {
             return res.status(400).json({ message: 'Username already exists' });

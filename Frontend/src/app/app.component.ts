@@ -55,18 +55,18 @@ export class AppComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  updatePageTitle() {
-    const route = this.router.url;
-    if (route.includes('dashboard')) {
-      this.pageTitle = 'Dashboard';
-    } else if (route.includes('admin')) {
-      this.pageTitle = 'Admin';
-    } else if (route.includes('product')) {
-      this.pageTitle = 'Product';
-    } else if (route.includes('distributor')) {
-      this.pageTitle = 'Distributor';
-    }
-    // add more conditions for other pages
+  updatePageTitle(): void {
+    const routeTitleMap: { [key: string]: string } = {
+      'dashboard': 'Dashboard',
+      'admin': 'Admin',
+      'product': 'Product',
+      'distributor': 'Distributor',
+      'order': 'Order',
+      // add more routes and titles here
+    };
+
+    const currentRoute = Object.keys(routeTitleMap).find(routeKey => this.router.url.includes(routeKey));
+    this.pageTitle = currentRoute ? routeTitleMap[currentRoute] : 'Default Title'; // Set default title if no match found
   }
 
   getCurrentDate(): string {

@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
         image: {
             type: DataTypes.STRING(255),
             allowNull: true
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     }, {
         tableName: 'product'

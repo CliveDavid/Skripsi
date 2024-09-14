@@ -12,8 +12,9 @@ export class SidebarComponent implements OnInit {
   sidebarItems: SidebarItem[] = [
     { label: 'Dashboard', icon: 'fa-chart-line', route: '/dashboard' },
     { label: 'Admin', icon: 'fa-user', route: '/admin' },
-    { label: 'Distributor', icon: 'fa-user', route: '/distributor' },
-    { label: 'Products', icon: 'fa-box', route: '/product' },
+    { label: 'Distributor', icon: 'fa-truck', route: '/distributor' }, // or user
+    { label: 'Products', icon: 'fa-box', route: '/product' }, // cube or box
+    { label: 'Orders', icon: 'fa-receipt', route: '/order' },
     // Add more items as needed
   ];
 

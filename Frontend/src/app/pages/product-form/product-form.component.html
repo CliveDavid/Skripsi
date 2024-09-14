@@ -3,6 +3,7 @@
     { header: 'Product Name', field: 'prod_name', type: 'text', fullWidth: true },
     { header: 'Product Type Code', field: 'prod_type_code', type: 'dropdown', url: BASE_URL + '/productType/get-product-type-kvp', fullWidth: true },
     { header: 'Description', field: 'descr', type: 'text', fullWidth: true },
-    { header: 'Image URL', field: 'image', type: 'text', fullWidth: true }
+    { header: 'Image URL', field: 'image', type: 'text', fullWidth: true },
+    { header: 'Active', field: 'is_active', type: 'boolean', fullWidth: true }
   ]" [submitUrl]="BASE_URL + '/product'" [submitButtonText]="'Save'" [fetchUrl]="BASE_URL + '/product/get-by-id'">
 </app-forms>

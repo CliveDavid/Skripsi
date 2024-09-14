@@ -22,6 +22,8 @@ import { DistributorComponent } from './pages/distributor/distributor.component'
 import { DistributorFormComponent } from './pages/distributor-form/distributor-form.component';
 import { HighlightPipe } from './shared/services/highlight.pipe';
 import { DateFormatPipe } from './shared/services/date-format/date-format.pipe';
+import { OrderComponent } from './pages/order/order.component';
+import { OrderFormComponent } from './pages/order-form/order-form.component';
 
 
 @NgModule({
@@ -41,7 +43,9 @@ import { DateFormatPipe } from './shared/services/date-format/date-format.pipe';
     ProductComponent,
     ProductFormComponent,
     DistributorComponent,
-    DistributorFormComponent
+    DistributorFormComponent,
+    OrderComponent,
+    OrderFormComponent
   ],
   imports: [
     BrowserModule,

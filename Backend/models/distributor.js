@@ -41,6 +41,11 @@ module.exports = (sequelize, DataTypes) => {
         zipcode: {
             type: DataTypes.STRING(20),
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     }, {
         tableName: 'distributor'

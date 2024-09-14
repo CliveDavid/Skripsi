@@ -12,9 +12,18 @@ router.post('/get-all', asyncHandler(async (req, res) => {
         include: [{
             model: ProductType,
             attributes: ['descr']
-        }]
+        }],
+        raw: true, // returns plain object instead of model
+        nest: true
     });
-    res.json(products);
+
+    const flattenedProducts = products.map(product => ({
+        ...product,
+        product_type_descr: product.product_type.descr,
+        product_type: undefined
+    }));
+
+    res.json(flattenedProducts);
 }));
 
 // Get product by ID
@@ -34,7 +43,7 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 
 // Create new product
 router.post('/create', asyncHandler(async (req, res) => {
-    const { prod_code, prod_name, prod_type_code, descr, image } = req.body;
+    const { prod_code, prod_name, prod_type_code, descr, image , is_active} = req.body;
     
     const existingProduct = await Product.findOne({ where: { prod_code } });
     if (existingProduct) {
@@ -46,7 +55,8 @@ router.post('/create', asyncHandler(async (req, res) => {
         prod_name,
         prod_type_code,
         descr,
-        image
+        image,
+        is_active
     });
 
     res.status(201).json(newProduct);
@@ -54,7 +64,7 @@ router.post('/create', asyncHandler(async (req, res) => {
 
 // Update product
 router.post('/update', asyncHandler(async (req, res) => {
-    const { prod_id, prod_code, prod_name, prod_type_code, descr, image } = req.body;
+    const { prod_id, prod_code, prod_name, prod_type_code, descr, image, is_active } = req.body;
     const product = await Product.findByPk(prod_id);
     if (!product) {
         return res.status(404).json({ message: 'Product not found' });
@@ -65,7 +75,8 @@ router.post('/update', asyncHandler(async (req, res) => {
         prod_name,
         prod_type_code,
         descr,
-        image
+        image,
+        is_active
     });
 
     res.json(product);

@@ -9,6 +9,8 @@ import { ProductFormComponent } from './pages/product-form/product-form.componen
 import { ProductComponent } from './pages/product/product.component';
 import { DistributorComponent } from './pages/distributor/distributor.component';
 import { DistributorFormComponent } from './pages/distributor-form/distributor-form.component';
+import { OrderComponent } from './pages/order/order.component';
+import { OrderFormComponent } from './pages/order-form/order-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -21,6 +23,8 @@ const routes: Routes = [
   { path: 'distributor/form', component: DistributorFormComponent },
   { path: 'product', component: ProductComponent },
   { path: 'product/form', component: ProductFormComponent },
+  { path: 'order', component: OrderComponent },
+  { path: 'order/form', component: OrderFormComponent },
 ];
 
 @NgModule({
