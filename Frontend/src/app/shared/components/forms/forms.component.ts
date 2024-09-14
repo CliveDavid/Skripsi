@@ -7,9 +7,15 @@ import { ToastrService } from '../../services/toastr.service';
 interface FormColumn {
   header: string;
   field: string;
-  type: 'text' | 'date' | 'boolean' | 'currency' | 'link';
+  type: 'text' | 'date' | 'boolean' | 'currency' | 'link' | 'dropdown';
   fullWidth?: boolean;
   editDisabled?: boolean;
+  url?: string; // For dropdown options
+}
+
+interface DropdownOption {
+  value: string;
+  label: string;
 }
 
 @Component({
@@ -27,6 +33,7 @@ export class FormsComponent implements OnInit {
   formData: any = {};
   isEditMode: boolean = false;
   id: any;
+  dropdownOptions: { [key: string]: DropdownOption[] } = {};
 
   constructor(
     private http: HttpClient,
@@ -42,6 +49,22 @@ export class FormsComponent implements OnInit {
       this.isEditMode = true;
       this.fetchData(this.id);
     }
+    this.loadDropdownOptions();
+  }
+
+  loadDropdownOptions(): void {
+    this.columns.forEach(column => {
+      if (column.type === 'dropdown' && column.url) {
+        this.http.post<DropdownOption[]>(column.url, {}).subscribe(
+          options => {
+            this.dropdownOptions[column.field] = options;
+          },
+          error => {
+            this.toastr.error(`Error fetching options for ${column.header}`);
+          }
+        );
+      }
+    });
   }
 
   fetchData(id: string): void {
@@ -57,27 +80,16 @@ export class FormsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.isEditMode) {
-      this.http.post(`${this.submitUrl}/update`, this.formData).subscribe(
-        () => {
-          this.toastr.success('Data updated successfully');
-          setTimeout(() => this.location.back(), 1500); // Go back to the previous page after 2 seconds
-        },
-        error => {
-          this.toastr.error('Error updating data. Please try again.');
-        }
-      );
-    } else {
-      this.http.post(`${this.submitUrl}/create`, this.formData).subscribe(
-        () => {
-          this.toastr.success('Data created successfully');
-          setTimeout(() => this.location.back(), 1500); // Go back to the previous page after 2 seconds
-        },
-        error => {
-          this.toastr.error('Error creating data. Please try again.');
-        }
-      );
-    }
+    const url = this.isEditMode ? `${this.submitUrl}/update` : `${this.submitUrl}/create`;
+    this.http.post(url, this.formData).subscribe(
+      () => {
+        this.toastr.success(`Data ${this.isEditMode ? 'updated' : 'created'} successfully`);
+        setTimeout(() => this.location.back(), 1500);
+      },
+      error => {
+        this.toastr.error(`Error ${this.isEditMode ? 'updating' : 'creating'} data. Please try again.`);
+      }
+    );
   }
 
   onCancel(): void {
