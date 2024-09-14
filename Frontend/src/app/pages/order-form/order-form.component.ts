@@ -127,7 +127,8 @@ export class OrderFormComponent implements OnInit {
   }
 
   navigateToDistributorForm() {
-    this.router.navigate(['/distributor-form']);
+    const url = this.router.serializeUrl(this.router.createUrlTree(['/distributor/form']));
+    window.open(url, '_blank');
   }
 
   loadDropdownData() {
