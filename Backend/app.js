@@ -46,6 +46,7 @@ const distributorRoutes = require('./routes/distributorRoutes');
 const productRoutes = require('./routes/productRoutes');
 const productTypeRoutes = require('./routes/productTypeRoutes');
 const boxTypeRoutes = require('./routes/boxTypeRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 // Routes
 app.use('/admin', adminRoutes);
@@ -53,6 +54,7 @@ app.use('/distributor', distributorRoutes);
 app.use('/product', productRoutes);
 app.use('/productType', productTypeRoutes);
 app.use('/boxType', boxTypeRoutes);
+app.use('/orders', orderRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {

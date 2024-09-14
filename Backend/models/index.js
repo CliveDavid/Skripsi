@@ -30,6 +30,8 @@ Invoice.belongsTo(Order, { foreignKey: 'order_id' });
 
 ShipmentMethod.hasMany(Order, { foreignKey: 'shipment_code' });
 
+Order.belongsTo(ShipmentMethod, { foreignKey: 'shipment_code', targetKey: 'shipment_code' });
+
 AdminNotif.belongsTo(Admin, { foreignKey: 'admin_id' });
 
 Price.belongsTo(ProductType, { foreignKey: 'prod_type_code' });
