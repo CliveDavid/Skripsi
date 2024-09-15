@@ -116,9 +116,37 @@ export class OrderFormComponent implements OnInit {
       product_id: ['', Validators.required],
       box_type_code: ['', Validators.required],
       qty: [1, [Validators.required, Validators.min(1)]],
+      price: [0, Validators.required],
       total_item_price: [0, Validators.required]
     });
+
+    orderItem.get('product_id')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
+    orderItem.get('box_type_code')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
+    orderItem.get('qty')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
+
     this.orderItems.push(orderItem);
+  }
+
+  updateItemPrice(orderItem: FormGroup) {
+    const productId = orderItem.get('product_id')?.value;
+    const boxTypeCode = orderItem.get('box_type_code')?.value;
+    const qty = orderItem.get('qty')?.value;
+
+    if (productId && boxTypeCode) {
+      this.http.post<any>(`${this.apiUrl}/price/get-price`, { productId, boxTypeCode }).subscribe(
+        response => {
+          const price = response.price;
+          orderItem.patchValue({
+            price: price,
+            total_item_price: price * qty
+          });
+          this.calculateTotalPrice();
+        },
+        error => {
+          this.toastr.error('Error fetching price');
+        }
+      );
+    }
   }
 
   removeOrderItem(index: number) {
@@ -181,8 +209,7 @@ export class OrderFormComponent implements OnInit {
 
   calculateTotalPrice() {
     const total = this.orderItems.controls.reduce((sum, item) => {
-      const itemPrice = item.get('total_item_price');
-      return sum + (itemPrice ? itemPrice.value : 0);
+      return sum + (item.get('total_item_price')?.value || 0);
     }, 0);
     this.orderForm.patchValue({ total_price: total });
   }

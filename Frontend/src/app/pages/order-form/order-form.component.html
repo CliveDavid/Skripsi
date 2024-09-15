@@ -64,8 +64,9 @@
               <option *ngFor="let boxType of boxTypes" [value]="boxType.box_type_code">{{boxType.box_type_name}}
               </option>
             </select>
-            <input type="number" formControlName="qty" class="form-control qty-input" (change)="calculateTotalPrice()"
-              min="1" placeholder="Qty">
+            <input type="number" formControlName="qty" class="form-control qty-input" min="1" placeholder="Qty">
+            <input type="number" formControlName="price" class="form-control" readonly>
+            <input type="number" formControlName="total_item_price" class="form-control" readonly>
             <button type="button" class="btn btn-remove" (click)="removeOrderItem(i)">
               <i class="fas fa-trash-alt"></i>
             </button>
