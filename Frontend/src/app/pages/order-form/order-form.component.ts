@@ -132,11 +132,26 @@ export class OrderFormComponent implements OnInit {
   }
 
   loadDropdownData() {
-    // Load distributors, shipment methods, products, and box types
-    // You'll need to implement these API calls
-    this.http.get<any[]>('/api/shipment-methods').subscribe(data => this.shipmentMethods = data);
-    this.http.get<any[]>('/api/products').subscribe(data => this.products = data);
-    this.http.get<any[]>('/api/box-types').subscribe(data => this.boxTypes = data);
+    this.http.post<any[]>(`${this.apiUrl}/shipmentMethods/get-shipment-method-kvp`, {}).subscribe(data => {
+      this.shipmentMethods = data.map(item => ({
+        shipment_code: item.value,
+        shipment_name: item.label
+      }));
+    });
+
+    this.http.post<any[]>(`${this.apiUrl}/product/get-product-kvp`, {}).subscribe(data => {
+      this.products = data.map(item => ({
+        prod_id: item.value,
+        prod_name: item.label
+      }));
+    });
+
+    this.http.post<any[]>(`${this.apiUrl}/boxType/get-box-type-kvp`, {}).subscribe(data => {
+      this.boxTypes = data.map(item => ({
+        box_type_code: item.value,
+        box_type_name: item.label
+      }));
+    });
   }
 
   loadOrderData(id: string) {
@@ -155,7 +170,7 @@ export class OrderFormComponent implements OnInit {
       this.http.post('/api/orders', orderData).subscribe(
         response => {
           this.toastr.success('Order saved successfully')
-          this.router.navigate(['/orders']); // Navigate to orders list
+          this.router.navigate(['/orders']);
         },
         error => {
           this.toastr.error('Error saving order')
@@ -173,7 +188,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   onCancel() {
-    // Navigate back or to a specific route
-    this.router.navigate(['/orders']); // Adjust this route as needed
+    this.router.navigate(['/orders']);
   }
 }

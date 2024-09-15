@@ -82,4 +82,18 @@ router.post('/update', asyncHandler(async (req, res) => {
     res.json(product);
 }));
 
+
+router.post('/get-product-kvp', asyncHandler(async (req, res) => {
+    const products = await Product.findAll({
+        attributes: ['prod_id', 'prod_name'],
+        where: { is_active: true }
+    });
+    const kvp = products.map(p => ({ 
+        value: p.prod_id, 
+        label: p.prod_name 
+    }));
+    res.json(kvp);
+}));
+
+
 module.exports = router;

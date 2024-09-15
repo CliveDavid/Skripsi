@@ -47,6 +47,7 @@ const productRoutes = require('./routes/productRoutes');
 const productTypeRoutes = require('./routes/productTypeRoutes');
 const boxTypeRoutes = require('./routes/boxTypeRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const shipmentMethodRoutes = require('./routes/shipmentMethodRoutes');
 
 // Routes
 app.use('/admin', adminRoutes);
@@ -55,6 +56,7 @@ app.use('/product', productRoutes);
 app.use('/productType', productTypeRoutes);
 app.use('/boxType', boxTypeRoutes);
 app.use('/orders', orderRoutes);
+app.use('/shipmentMethods', shipmentMethodRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {
