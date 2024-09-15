@@ -2,7 +2,7 @@
 .card {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
+  max-width: 1000px;
   margin: 2rem auto;
   background-color: #ffffff;
 }
@@ -185,7 +185,7 @@ label {
 .order-item-row {
   display: flex;
   flex-wrap: nowrap;
-  gap: 10px;
+  gap: 15px;
   margin-bottom: 15px;
   align-items: center;
 }
@@ -198,7 +198,7 @@ label {
 
 .order-item-field-product,
 .order-item-field-boxtype {
-  flex-basis: 30%;
+  flex-basis: 25%;
 }
 
 .order-item-field-qty {
@@ -211,7 +211,7 @@ label {
 }
 
 .order-item-field-action {
-  flex-basis: auto;
+  flex-basis: 5%;
   flex-grow: 0;
   flex-shrink: 0;
 }
@@ -219,6 +219,10 @@ label {
 .order-item-field select,
 .order-item-field input {
   width: 100%;
+}
+
+.order-items {
+  padding: 1.5rem;
 }
 
 /* Total Price Input */
@@ -286,7 +290,7 @@ label {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .order-item-row {
     flex-wrap: wrap;
   }
@@ -294,12 +298,17 @@ label {
   .order-item-field-product,
   .order-item-field-boxtype {
     flex-basis: 100%;
+    margin-bottom: 10px;
   }
 
   .order-item-field-qty,
   .order-item-field-price,
   .order-item-field-total {
     flex-basis: 30%;
+  }
+
+  .order-item-field-action {
+    flex-basis: 10%;
   }
 }
 
