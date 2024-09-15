@@ -198,7 +198,7 @@ export class OrderFormComponent implements OnInit {
       this.http.post('/api/orders', orderData).subscribe(
         response => {
           this.toastr.success('Order saved successfully')
-          this.router.navigate(['/orders']);
+          this.router.navigate(['/order']);
         },
         error => {
           this.toastr.error('Error saving order')
@@ -215,6 +215,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate(['/orders']);
+    this.router.navigate(['/order']);
   }
 }
