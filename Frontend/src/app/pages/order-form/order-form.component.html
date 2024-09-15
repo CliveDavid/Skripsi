@@ -65,8 +65,8 @@
               </option>
             </select>
             <input type="number" formControlName="qty" class="form-control qty-input" min="1" placeholder="Qty">
-            <input type="number" formControlName="price" class="form-control" readonly>
-            <input type="number" formControlName="total_item_price" class="form-control" readonly>
+            <input type="text" [value]="item.get('price')?.value | rupiah" class="form-control" readonly>
+            <input type="text" [value]="item.get('total_item_price')?.value | rupiah" class="form-control" readonly>
             <button type="button" class="btn btn-remove" (click)="removeOrderItem(i)">
               <i class="fas fa-trash-alt"></i>
             </button>
@@ -77,7 +77,8 @@
       <div class="form-group mt-3">
         <label for="total_price">Total Price</label>
         <div class="total-price-input">
-          <input type="number" id="total_price" formControlName="total_price" class="form-control" readonly>
+          <input type="text" id="total_price" [value]="orderForm.get('total_price')?.value | rupiah"
+            class="form-control" readonly>
         </div>
       </div>
 

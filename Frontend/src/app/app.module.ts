@@ -24,6 +24,7 @@ import { HighlightPipe } from './shared/services/highlight.pipe';
 import { DateFormatPipe } from './shared/services/date-format/date-format.pipe';
 import { OrderComponent } from './pages/order/order.component';
 import { OrderFormComponent } from './pages/order-form/order-form.component';
+import { RupiahPipe } from './shared/services/rupiah.pipe';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { OrderFormComponent } from './pages/order-form/order-form.component';
     PagingComponent,
     DateFormatPipe,
     HighlightPipe,
+    RupiahPipe,
     AdminComponent,
     FormsComponent,
     AdminFormComponent,
