@@ -55,21 +55,33 @@
 
         <div formArrayName="orderItems">
           <div *ngFor="let item of orderItems.controls; let i = index" [formGroupName]="i" class="order-item-row">
-            <select formControlName="product_id" class="form-control form-select">
-              <option value="" disabled>Select a product</option>
-              <option *ngFor="let product of products" [value]="product.prod_id">{{product.prod_name}}</option>
-            </select>
-            <select formControlName="box_type_code" class="form-control form-select">
-              <option value="" disabled>Select a box type</option>
-              <option *ngFor="let boxType of boxTypes" [value]="boxType.box_type_code">{{boxType.box_type_name}}
-              </option>
-            </select>
-            <input type="number" formControlName="qty" class="form-control qty-input" min="1" placeholder="Qty">
-            <input type="text" [value]="item.get('price')?.value | rupiah" class="form-control" readonly>
-            <input type="text" [value]="item.get('total_item_price')?.value | rupiah" class="form-control" readonly>
-            <button type="button" class="btn btn-remove" (click)="removeOrderItem(i)">
-              <i class="fas fa-trash-alt"></i>
-            </button>
+            <div class="order-item-field order-item-field-product">
+              <select formControlName="product_id" class="form-control form-select">
+                <option value="" disabled>Select a product</option>
+                <option *ngFor="let product of products" [value]="product.prod_id">{{product.prod_name}}</option>
+              </select>
+            </div>
+            <div class="order-item-field order-item-field-boxtype">
+              <select formControlName="box_type_code" class="form-control form-select">
+                <option value="" disabled>Select a box type</option>
+                <option *ngFor="let boxType of boxTypes" [value]="boxType.box_type_code">{{boxType.box_type_name}}
+                </option>
+              </select>
+            </div>
+            <div class="order-item-field order-item-field-qty">
+              <input type="number" formControlName="qty" class="form-control qty-input" min="1" placeholder="Qty">
+            </div>
+            <div class="order-item-field order-item-field-price">
+              <input type="text" [value]="item.get('price')?.value | rupiah" class="form-control" readonly>
+            </div>
+            <div class="order-item-field order-item-field-total">
+              <input type="text" [value]="item.get('total_item_price')?.value | rupiah" class="form-control" readonly>
+            </div>
+            <div class="order-item-field order-item-field-action">
+              <button type="button" class="btn btn-remove" (click)="removeOrderItem(i)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
