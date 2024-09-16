@@ -18,11 +18,11 @@ interface OrderItem {
   templateUrl: './order-form.component.html',
   styleUrls: ['./order-form.component.css']
 })
-export class OrderFormComponent implements OnInit {
+export class OrderFormComponent implements OnInit, OnDestroy {
   private apiUrl = BASE_URL;
 
   orderForm: FormGroup;
-  filteredDistributors: { id: string, name: string }[] = [];
+  filteredDistributors: { distributor_id: string, name: string }[] = [];
   shipmentMethods: any[] = [];
   products: any[] = [];
   boxTypes: any[] = [];
@@ -71,8 +71,9 @@ export class OrderFormComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
     ).subscribe(searchTerm => {
-      if (searchTerm) {
+      if (searchTerm && typeof searchTerm === 'string') {
         this.searchSubject.next(searchTerm);
+        this.orderForm.patchValue({ distributor_id: '' }, { emitEvent: false });
       } else {
         this.filteredDistributors = [];
         this.showNotFound = false;
@@ -88,7 +89,7 @@ export class OrderFormComponent implements OnInit {
         this.showNotFound = results.length === 0;
       },
       error => {
-        this.toastr.error('Error searching distributors')
+        this.toastr.error('Error searching distributors');
         this.filteredDistributors = [];
         this.showNotFound = true;
       }
@@ -96,14 +97,15 @@ export class OrderFormComponent implements OnInit {
   }
 
   searchDistributors(term: string) {
-    return this.http.post<{ id: string, name: string }[]>(`${this.apiUrl}/distributor/search`, { term });
+    return this.http.post<{ distributor_id: string, name: string }[]>(`${this.apiUrl}/distributor/search`, { term });
   }
 
-  selectDistributor(distributor: { id: string, name: string }) {
+  selectDistributor(distributor: { distributor_id: string, name: string }) {
     this.orderForm.patchValue({
-      distributor_id: distributor.id,
+      distributor_id: distributor.distributor_id,
       distributorSearch: distributor.name
-    });
+    }, { emitEvent: false });
+
     this.filteredDistributors = [];
   }
 
@@ -195,13 +197,13 @@ export class OrderFormComponent implements OnInit {
   onSubmit() {
     if (this.orderForm.valid) {
       const orderData = this.orderForm.value;
-      this.http.post('/api/orders', orderData).subscribe(
+      this.http.post(`${this.apiUrl}/orders/create`, orderData).subscribe(
         response => {
-          this.toastr.success('Order saved successfully')
+          this.toastr.success('Order saved successfully');
           this.router.navigate(['/order']);
         },
         error => {
-          this.toastr.error('Error saving order')
+          this.toastr.error('Error saving order');
         }
       );
     }

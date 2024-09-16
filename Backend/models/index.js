@@ -39,6 +39,8 @@ Price.belongsTo(ProductType, { foreignKey: 'prod_type_code' });
 Price.belongsTo(BoxType, { foreignKey: 'box_type_code' });
 
 module.exports = {
+    sequelize,
+    Sequelize,
     Product,
     ProductType,
     BoxType,

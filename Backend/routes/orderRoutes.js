@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Order, Distributor, ShipmentMethod } = require('../models');
+const { sequelize, Order, OrderItem, Distributor, ShipmentMethod } = require('../models');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -59,29 +59,44 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 router.post('/create', asyncHandler(async (req, res) => {
     const { distributor_id, order_dt, status, total_price, shipment_code, orderItems } = req.body;
     
-    const result = await sequelize.transaction(async (t) => {
-        // Create the order
-        const newOrder = await Order.create({
-            distributor_id,
-            order_dt,
-            status,
-            total_price,
-            shipment_code
-        }, { transaction: t });
+    // Basic validation
+    if (!distributor_id || !order_dt || !status || !shipment_code) {
+        return res.status(400).json({ message: "Missing required fields" });
+    }
 
-        // Create the order items
-        if (orderItems && orderItems.length > 0) {
-            const orderItemsWithOrderId = orderItems.map(item => ({
-                ...item,
-                order_id: newOrder.order_id
-            }));
-            await OrderItem.bulkCreate(orderItemsWithOrderId, { transaction: t });
-        }
+    try {
+        const result = await sequelize.transaction(async (t) => {
+            // Create the order
+            const newOrder = await Order.create({
+                distributor_id,
+                order_dt,
+                status,
+                total_price,
+                shipment_code
+            }, { transaction: t });
 
-        return newOrder;
-    });
+            // Create the order items
+            if (orderItems && orderItems.length > 0) {
+                const orderItemsWithOrderId = orderItems.map(item => ({
+                    ...item,
+                    order_id: newOrder.order_id
+                }));
+                await OrderItem.bulkCreate(orderItemsWithOrderId, { transaction: t });
+            }
 
-    res.status(201).json(result);
+            // Fetch the full order with items
+            return Order.findByPk(newOrder.order_id, {
+                include: [OrderItem],
+                transaction: t
+            });
+        });
+
+        console.log(`Order created successfully: ${result.order_id}`);
+        res.status(201).json(result);
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(500).json({ message: "Error creating order", error: error.message });
+    }
 }));
 
 // Update order

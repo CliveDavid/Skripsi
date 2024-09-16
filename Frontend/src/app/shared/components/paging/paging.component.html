@@ -38,7 +38,8 @@
                 <span *ngSwitchCase="'int'" [ngClass]="column.alignment">{{ row[column.field] | number:'1.0-0' }}</span>
                 <span *ngSwitchCase="'text'" [ngClass]="column.alignment"
                   [innerHTML]="row[column.field] | highlight: searchText"></span>
-                <span *ngSwitchCase="'currency'" [ngClass]="column.alignment">{{ row[column.field] | currency }}</span>
+                <span *ngSwitchCase="'currency'"
+                  [ngClass]="column.alignment">{{ row[column.field] | currency: 'Rp' }}</span>
                 <span *ngSwitchCase="'date'" [ngClass]="column.alignment">{{ row[column.field] | dateFormat }}</span>
                 <a *ngSwitchCase="'link'" [href]="row[column.field]" [ngClass]="column.alignment"
                   [innerHTML]="row[column.field] | highlight: searchText"></a>
