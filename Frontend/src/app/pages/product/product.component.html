@@ -8,5 +8,9 @@
       { header: 'Active', field: 'is_active', alignment: 'left', type: 'boolean' },
       { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
       { header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' }
-    ]" [url]="'product/get-all'" [editButton]="true" [primaryKey]="'prod_id'">
+    ]" [url]="'product/get-all'" [editButton]="true" [primaryKey]="'prod_id'" [filterField]="'prod_type_code'"
+  [filterOptions]="[
+    { label: 'Ecer 500', value: 'ECER500' },
+    { label: 'Ecer 2000', value: 'ECER2000' },
+  ]">
 </app-paging>
