@@ -14,7 +14,7 @@ interface TableColumn {
 
 interface FilterOption {
   label: string;
-  value: string;
+  value: string | string[];
 }
 
 @Component({
@@ -46,7 +46,7 @@ export class PagingComponent implements OnInit {
   // filter dropdown
   @Input() filterOptions: FilterOption[] = [];
   @Input() filterField: string = '';
-  selectedFilter: string = 'All';
+  selectedFilter: string | string[] = 'All';
 
   currentPage: number = 1;
   rowsPerPage: number = 20;
@@ -112,12 +112,34 @@ export class PagingComponent implements OnInit {
   }
 
   filterData() {
-    this.filteredData = this.data.filter(row =>
-      (this.selectedFilter === 'All' || row[this.filterField] === this.selectedFilter) &&
-      this.columns
+    this.filteredData = this.data.filter(row => {
+      let filterMatch: boolean;
+      if (this.selectedFilter === 'All') {
+        filterMatch = true;
+      } else if (typeof this.selectedFilter === 'string') {
+        if (this.selectedFilter.includes(',')) {
+          // Handle the case where selectedFilter is a comma-separated string
+          const filterValues = this.selectedFilter.split(',');
+          filterMatch = filterValues.includes(row[this.filterField]);
+        } else {
+          filterMatch = row[this.filterField] === this.selectedFilter;
+        }
+      } else if (Array.isArray(this.selectedFilter)) {
+        filterMatch = this.selectedFilter.includes(row[this.filterField]);
+      } else {
+        filterMatch = false;
+      }
+
+      const searchMatch = this.columns
         .filter(column => column.type === 'text')
-        .some(column => row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase()))
-    );
+        .some(column => {
+          const match = row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase());
+          return match;
+        });
+
+      return filterMatch && searchMatch;
+    });
+
     this.currentPage = 1;
     this.forceRefresh();
   }

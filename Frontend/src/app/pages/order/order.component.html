@@ -9,7 +9,8 @@
     { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
     { header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' }
   ]" [url]="'orders/get-all'" [editButton]="true" [primaryKey]="'order_id'" [filterField]="'status'" [filterOptions]="[
-    { label: 'Pending', value: 'Pending' },
+  { label: 'Active', value: ['Pending', 'Processing', 'Shipped'] },
+  { label: 'Pending', value: 'Pending' },
     { label: 'Processing', value: 'Processing' },
     { label: 'Shipped', value: 'Shipped' },
     { label: 'Delivered', value: 'Delivered' },
