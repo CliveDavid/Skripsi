@@ -59,13 +59,19 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 }));
 
 // Create new product
-router.post('/create', upload.single('image'), asyncHandler(async (req, res) => {
-    const { prod_code, prod_name, prod_type_code, descr, is_active } = req.body;
-    const image = req.file ? req.file.buffer : null;
+router.post('/create', asyncHandler(async (req, res) => {
+    const { prod_code, prod_name, prod_type_code, descr, is_active, image } = req.body;
     
     const existingProduct = await Product.findOne({ where: { prod_code } });
     if (existingProduct) {
         return res.status(400).json({ message: 'Product code already exists' });
+    }
+
+    // Convert base64 to buffer
+    let imageBuffer = null;
+    if (image) {
+        const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+        imageBuffer = Buffer.from(base64Data, 'base64');
     }
 
     const newProduct = await Product.create({
@@ -73,22 +79,28 @@ router.post('/create', upload.single('image'), asyncHandler(async (req, res) => 
         prod_name,
         prod_type_code,
         descr,
-        image,
+        image: imageBuffer,
         is_active
     });
 
-    const { image: _, ...productWithoutImage } = newProduct.get({ plain: true }); //exclude image
+    const { image: _, ...productWithoutImage } = newProduct.get({ plain: true }); // exclude image
     res.status(201).json(productWithoutImage);
 }));
 
 // Update product
-router.post('/update', upload.single('image'), asyncHandler(async (req, res) => {
-    const { prod_id, prod_code, prod_name, prod_type_code, descr, is_active } = req.body;
-    const image = req.file ? req.file.buffer : undefined; // Get image from file upload if provided
+router.post('/update', asyncHandler(async (req, res) => {
+    const { prod_id, prod_code, prod_name, prod_type_code, descr, is_active, image } = req.body;
     
     const product = await Product.findByPk(prod_id);
     if (!product) {
         return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Convert base64 to buffer if new image is provided
+    let imageBuffer = undefined;
+    if (image) {
+        const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+        imageBuffer = Buffer.from(base64Data, 'base64');
     }
 
     await product.update({
@@ -96,7 +108,7 @@ router.post('/update', upload.single('image'), asyncHandler(async (req, res) => 
         prod_name,
         prod_type_code,
         descr,
-        image: image !== undefined ? image : product.image, // Only update image if new file is provided
+        image: imageBuffer !== undefined ? imageBuffer : product.image,
         is_active
     });
 

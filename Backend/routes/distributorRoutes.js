@@ -27,13 +27,30 @@ router.post('/search', asyncHandler(async (req, res) => {
     }
 
     const distributors = await Distributor.findAll({
-        where: Sequelize.where(
-            Sequelize.fn('LOWER', Sequelize.col('name')),
-            'LIKE',
-            '%' + term.toLowerCase() + '%'
-        ),
-        attributes: ['distributor_id', 'name'],
-        limit: 10 // Limit the number of results
+        where: {
+            [Op.and]: [
+                Sequelize.where(
+                    Sequelize.fn('LOWER', Sequelize.col('name')),
+                    'LIKE',
+                    '%' + term.toLowerCase() + '%'
+                ),
+                { is_active: true } 
+            ]
+        },
+        attributes: [
+            'distributor_id',
+            [
+                Sequelize.literal(`
+                    CASE 
+                        WHEN (SELECT COUNT(*) FROM distributor d WHERE LOWER(d.name) = LOWER(distributor.name)) > 1 
+                        THEN CONCAT(distributor.name, ' (', distributor.distributor_id, ')') 
+                        ELSE distributor.name 
+                    END
+                `), 
+                'name' 
+            ]
+        ],
+        limit: 10
     });
     
     res.json(distributors);
@@ -118,6 +135,7 @@ router.post('/update', asyncHandler(async (req, res) => {
         zipcode,
         is_active
     } = req.body;
+    console.log('Searching for distributor_id:', distributor_id);
     const distributor = await Distributor.findByPk(distributor_id);
     if (!distributor) {
         return res.status(404).json({

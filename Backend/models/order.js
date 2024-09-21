@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'shipment_method',
                 key: 'shipment_code'
             }
+        },
+        notes: {
+            type: DataTypes.TEXT, 
+            allowNull: true
         }
     }, {
         tableName: 'order'

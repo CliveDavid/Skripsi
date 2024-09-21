@@ -34,6 +34,7 @@ export class FormsComponent implements OnInit {
   isEditMode: boolean = false;
   id: any;
   dropdownOptions: { [key: string]: DropdownOption[] } = {};
+  imageFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
 
   constructor(
@@ -87,7 +88,11 @@ export class FormsComponent implements OnInit {
   loadImagePreview(id: string): void {
     this.http.post(`${this.submitUrl}/image`, { id }, { responseType: 'blob' }).subscribe(
       (blob: Blob) => {
-        this.handleFile(new File([blob], 'preview.jpg', { type: blob.type }), 'image');
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          this.imagePreview = reader.result;
+        };
+        reader.readAsDataURL(blob);
       },
       error => {
         this.toastr.error('Error loading image preview.');
@@ -129,20 +134,18 @@ export class FormsComponent implements OnInit {
   }
 
   private handleFile(file: File, field: string): void {
-    // Check file type
     if (!file.type.startsWith('image/')) {
       this.toastr.error('Please select an image file.');
       return;
     }
 
-    // Check file size (e.g., limit to 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
       this.toastr.error('File is too large. Maximum size is 5MB.');
       return;
     }
 
-    this.formData[field] = file;
+    this.imageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
       this.imagePreview = reader.result;
@@ -150,19 +153,85 @@ export class FormsComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  private compressImage(file: File, maxWidth: number, maxHeight: number): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx!.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error('Canvas to Blob conversion failed'));
+              }
+            },
+            file.type,
+            0.7
+          );
+        };
+        img.onerror = () => reject(new Error('Image loading failed'));
+        img.src = event.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('File reading failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
   onSubmit(): void {
     const url = this.isEditMode ? `${this.submitUrl}/update` : `${this.submitUrl}/create`;
 
-    const formData = new FormData();
-    for (const key in this.formData) {
-      if (this.formData[key] instanceof File) {
-        formData.append(key, this.formData[key], this.formData[key].name);
-      } else {
-        formData.append(key, this.formData[key]);
+    const formDataToSubmit = { ...this.formData };
+    this.columns.forEach(column => {
+      if (column.type === 'date' && formDataToSubmit[column.field]) {
+        formDataToSubmit[column.field] = new Date(formDataToSubmit[column.field]).toISOString();
       }
+    });
+
+    if (this.isEditMode) {
+      formDataToSubmit.id = this.id;
     }
 
-    this.http.post(url, formData).subscribe(
+    if (this.imageFile) {
+      this.compressImage(this.imageFile, 800, 600).then(compressedBlob => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result as string;
+          formDataToSubmit.image = base64data.split(',')[1];
+          this.sendRequest(url, formDataToSubmit);
+        };
+        reader.readAsDataURL(compressedBlob);
+      });
+    } else {
+      this.sendRequest(url, formDataToSubmit);
+    }
+  }
+
+  private sendRequest(url: string, formData: any): void {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    this.http.post(url, formData, { headers }).subscribe(
       () => {
         this.toastr.success(`Data ${this.isEditMode ? 'updated' : 'created'} successfully`);
         setTimeout(() => this.location.back(), 1500);
