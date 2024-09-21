@@ -257,3 +257,15 @@ td.right {
 .close-popup:hover {
   color: #000;
 }
+
+/* dropdown */
+
+.filter-dropdown {
+  margin-right: 10px;
+  width: 150px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+}

@@ -13,6 +13,7 @@ router.post('/get-all', asyncHandler(async (req, res) => {
             { model: Distributor, attributes: ['name'] },
             { model: ShipmentMethod, attributes: ['shipment_name'] }
         ],
+        order: [['updatedAt', 'DESC']],
         raw: true,
         nest: true
     });

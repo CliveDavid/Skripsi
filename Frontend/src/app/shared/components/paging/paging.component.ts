@@ -12,6 +12,11 @@ interface TableColumn {
   type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int' | 'image';
 }
 
+interface FilterOption {
+  label: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-paging',
   templateUrl: './paging.component.html',
@@ -33,8 +38,15 @@ export class PagingComponent implements OnInit {
   sortedColumn: string | null = null;
   sortOrder: 'asc' | 'desc' = 'asc';
   currentRoute: string = '';
+
+  // for search
   searchText: string = '';
   filteredData: any[] = [];
+
+  // filter dropdown
+  @Input() filterOptions: FilterOption[] = [];
+  @Input() filterField: string = '';
+  selectedFilter: string = 'All';
 
   currentPage: number = 1;
   rowsPerPage: number = 20;
@@ -101,6 +113,7 @@ export class PagingComponent implements OnInit {
 
   filterData() {
     this.filteredData = this.data.filter(row =>
+      (this.selectedFilter === 'All' || row[this.filterField] === this.selectedFilter) &&
       this.columns
         .filter(column => column.type === 'text')
         .some(column => row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase()))
