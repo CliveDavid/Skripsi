@@ -15,6 +15,7 @@ interface TableColumn {
 interface FilterOption {
   label: string;
   value: string | string[];
+  default?: boolean;
 }
 
 @Component({
@@ -61,28 +62,44 @@ export class PagingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.url) {
-      this.fetchData();
-    }
     this.setCurrentRoute();
+    if (this.url) {
+      this.fetchData().then(() => {
+        this.setDefaultFilter();
+        this.filterData();
+      }).catch(error => {
+        this.toastr.error('Error in ngOnInit:' + error);
+      });
+    }
   }
 
-  fetchData() {
-    const body = {}; // Add the request body if needed
-    this.http.post<any[]>(BASE_URL + "/" + this.url, body).subscribe(
-      (data) => {
-        this.data = data;
-        this.filteredData = data;
-      },
-      (error: HttpErrorResponse) => {
-        console.error('Error fetching data:', error);
-        if (error.status === 0) {
-          this.toastr.error('Unable to connect to the server.');
-        } else {
-          this.toastr.error('Error fetching data. Please try again later.');
+  setDefaultFilter() {
+    const defaultOption = this.filterOptions.find(option => option.default);
+    if (defaultOption) {
+      this.selectedFilter = defaultOption.value;
+    }
+  }
+
+  fetchData(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const body = {};
+      this.http.post<any[]>(`${BASE_URL}/${this.url}`, body).subscribe(
+        (data) => {
+          this.data = data;
+          this.filteredData = data;
+          resolve();
+        },
+        (error: HttpErrorResponse) => {
+          console.error('Error fetching data:', error);
+          if (error.status === 0) {
+            this.toastr.error('Unable to connect to the server.');
+          } else {
+            this.toastr.error('Error fetching data. Please try again later.');
+          }
+          reject(error);
         }
-      }
-    );
+      );
+    });
   }
 
   setCurrentRoute() {
@@ -116,16 +133,10 @@ export class PagingComponent implements OnInit {
       let filterMatch: boolean;
       if (this.selectedFilter === 'All') {
         filterMatch = true;
-      } else if (typeof this.selectedFilter === 'string') {
-        if (this.selectedFilter.includes(',')) {
-          // Handle the case where selectedFilter is a comma-separated string
-          const filterValues = this.selectedFilter.split(',');
-          filterMatch = filterValues.includes(row[this.filterField]);
-        } else {
-          filterMatch = row[this.filterField] === this.selectedFilter;
-        }
       } else if (Array.isArray(this.selectedFilter)) {
         filterMatch = this.selectedFilter.includes(row[this.filterField]);
+      } else if (typeof this.selectedFilter === 'string') {
+        filterMatch = row[this.filterField] === this.selectedFilter;
       } else {
         filterMatch = false;
       }
@@ -136,6 +147,7 @@ export class PagingComponent implements OnInit {
           const match = row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase());
           return match;
         });
+
 
       return filterMatch && searchMatch;
     });
