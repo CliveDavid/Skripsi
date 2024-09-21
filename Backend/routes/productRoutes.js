@@ -70,21 +70,31 @@ router.post('/create', asyncHandler(async (req, res) => {
     // Convert base64 to buffer
     let imageBuffer = null;
     if (image) {
-        const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-        imageBuffer = Buffer.from(base64Data, 'base64');
+        try {
+            const base64Data = image.split(';base64,').pop();
+            imageBuffer = Buffer.from(base64Data, 'base64');
+        } catch (error) {
+            console.error('Error processing image:', error);
+            return res.status(400).json({ message: 'Invalid image data' });
+        }
     }
 
-    const newProduct = await Product.create({
-        prod_code,
-        prod_name,
-        prod_type_code,
-        descr,
-        image: imageBuffer,
-        is_active
-    });
+    try {
+        const newProduct = await Product.create({
+            prod_code,
+            prod_name,
+            prod_type_code,
+            descr,
+            image: imageBuffer,
+            is_active
+        });
 
-    const { image: _, ...productWithoutImage } = newProduct.get({ plain: true }); // exclude image
-    res.status(201).json(productWithoutImage);
+        const { image: _, ...productWithoutImage } = newProduct.get({ plain: true }); // exclude image
+        res.status(201).json(productWithoutImage);
+    } catch (error) {
+        console.error('Error creating product:', error);
+        res.status(500).json({ message: 'Error creating product', error: error.message });
+    }
 }));
 
 // Update product
@@ -99,21 +109,31 @@ router.post('/update', asyncHandler(async (req, res) => {
     // Convert base64 to buffer if new image is provided
     let imageBuffer = undefined;
     if (image) {
-        const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-        imageBuffer = Buffer.from(base64Data, 'base64');
+        try {
+            const base64Data = image.split(';base64,').pop();
+            imageBuffer = Buffer.from(base64Data, 'base64');
+        } catch (error) {
+            console.error('Error processing image:', error);
+            return res.status(400).json({ message: 'Invalid image data' });
+        }
     }
 
-    await product.update({
-        prod_code,
-        prod_name,
-        prod_type_code,
-        descr,
-        image: imageBuffer !== undefined ? imageBuffer : product.image,
-        is_active
-    });
+    try {
+        await product.update({
+            prod_code,
+            prod_name,
+            prod_type_code,
+            descr,
+            image: imageBuffer !== undefined ? imageBuffer : product.image,
+            is_active
+        });
 
-    const { image: _, ...productWithoutImage } = product.get({ plain: true });
-    res.json(productWithoutImage);
+        const { image: _, ...productWithoutImage } = product.get({ plain: true });
+        res.json(productWithoutImage);
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ message: 'Error updating product', error: error.message });
+    }
 }));
 
 // Get Product Image
