@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { sequelize, Order, OrderItem, Distributor, ShipmentMethod } = require('../models');
+const { format } = require('date-fns');
+const { sequelize, Order, OrderItem, Distributor, ShipmentMethod, Product, BoxType } = require('../models');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -35,10 +36,15 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
     const order = await Order.findByPk(order_id, {
         include: [
             { model: Distributor, attributes: ['name'] },
-            { model: ShipmentMethod, attributes: ['shipment_name'] }
-        ],
-        raw: true,
-        nest: true
+            { model: ShipmentMethod, attributes: ['shipment_name'] },
+            { 
+                model: OrderItem,
+                include: [
+                    { model: Product, attributes: ['prod_name'] },
+                    { model: BoxType, attributes: ['box_type_code', 'box_capacity'] }
+                ]
+            }
+        ]
     });
 
     if (!order) {
@@ -46,11 +52,22 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
     }
 
     const flattenedOrder = {
-        ...order,
+        ...order.get({ plain: true }),
         distributor_name: order.distributor.name,
         shipment_name: order.shipment_method.shipment_name,
+        order_dt: format(new Date(order.order_dt), 'yyyy-MM-dd'),
+        orderItems: order.order_items.map(item => ({
+            order_item_id: item.order_item_id,
+            product_id: item.product_id,
+            product_name: item.product.prod_name,
+            box_type_code: item.box_type_code,
+            box_type_display: `${item.box_type.box_type_code} (Capacity: ${item.box_type.box_capacity})`,
+            qty: item.qty,
+            total_item_price: item.total_item_price
+        })),
         distributor: undefined,
-        shipment_method: undefined
+        shipment_method: undefined,
+        order_items: undefined
     };
 
     res.json(flattenedOrder);
@@ -102,21 +119,57 @@ router.post('/create', asyncHandler(async (req, res) => {
 
 // Update order
 router.post('/update', asyncHandler(async (req, res) => {
-    const { order_id, distributor_id, order_dt, status, total_price, shipment_code } = req.body;
-    const order = await Order.findByPk(order_id);
-    if (!order) {
-        return res.status(404).json({ message: 'Order not found' });
+    const { order_id, status, total_price, shipment_code, orderItems } = req.body;
+    
+    // Basic validation
+    if (!order_id || !status || !shipment_code) {
+        return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const updates = {};
-    if (distributor_id) updates.distributor_id = distributor_id;
-    if (order_dt) updates.order_dt = order_dt;
-    if (status) updates.status = status;
-    if (total_price) updates.total_price = total_price;
-    if (shipment_code) updates.shipment_code = shipment_code;
+    try {
+        const result = await sequelize.transaction(async (t) => {
+            // Find the order
+            const order = await Order.findByPk(order_id, { transaction: t });
+            if (!order) {
+                throw new Error('Order not found');
+            }
 
-    await order.update(updates);
-    res.json(order);
+            // Update the order
+            await order.update({
+                status,
+                total_price,
+                shipment_code
+            }, { transaction: t });
+
+            // Handle order items
+            if (orderItems && orderItems.length > 0) {
+                // Delete existing order items
+                await OrderItem.destroy({
+                    where: { order_id: order_id },
+                    transaction: t
+                });
+
+                // Create new order items
+                const orderItemsWithOrderId = orderItems.map(item => ({
+                    ...item,
+                    order_id: order_id
+                }));
+                await OrderItem.bulkCreate(orderItemsWithOrderId, { transaction: t });
+            }
+
+            // Fetch the updated order with items
+            return Order.findByPk(order_id, {
+                include: [OrderItem],
+                transaction: t
+            });
+        });
+
+        console.log(`Order updated successfully: ${result.order_id}`);
+        res.json(result);
+    } catch (error) {
+        console.error('Error updating order:', error);
+        res.status(500).json({ message: "Error updating order", error: error.message });
+    }
 }));
 
 // Get orders by distributor ID

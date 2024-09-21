@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
 import { BASE_URL } from '../../constants';
 import { ToastrService } from 'src/app/shared/services/toastr.service';
@@ -28,6 +28,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   boxTypes: any[] = [];
   statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
   showNotFound = false;
+  isEditMode: boolean = false;
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -35,7 +36,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService
   ) {
@@ -54,8 +55,9 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.setupDistributorSearch();
     this.loadDropdownData();
 
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.queryParamMap.get('id');
     if (id) {
+      this.isEditMode = true;
       this.loadOrderData(id);
     }
   }
@@ -185,27 +187,96 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   loadOrderData(id: string) {
-    this.http.get<any>(`/api/orders/${id}`).subscribe(order => {
-      this.orderForm.patchValue(order);
-      order.orderItems.forEach((item: OrderItem) => {
-        this.orderItems.push(this.fb.group(item));
-      });
-      this.calculateTotalPrice();
-    });
+    this.http.post<any>(`${this.apiUrl}/orders/get-by-id`, { order_id: id }).subscribe(
+      order => {
+        this.orderForm.patchValue({
+          distributor_id: order.distributor_id,
+          distributorSearch: order.distributor_name,
+          order_dt: order.order_dt,
+          status: order.status,
+          shipment_code: order.shipment_code,
+          total_price: order.total_price
+        });
+
+        // Disable distributor and order date fields
+        this.orderForm.get('distributorSearch')?.disable();
+        this.orderForm.get('order_dt')?.disable();
+
+        // Clear existing order items
+        while (this.orderItems.length !== 0) {
+          this.orderItems.removeAt(0);
+        }
+
+        // Add order items
+        order.orderItems.forEach((item: any) => {
+          const orderItem = this.fb.group({
+            product_id: [item.product_id, Validators.required],
+            product_name: [item.product_name],
+            box_type_code: [item.box_type_code, Validators.required],
+            box_type_display: [item.box_type_display],
+            qty: [item.qty, [Validators.required, Validators.min(1)]],
+            price: [item.total_item_price / item.qty, Validators.required],
+            total_item_price: [item.total_item_price, Validators.required]
+          });
+
+          // Set up value change subscriptions
+          orderItem.get('product_id')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
+          orderItem.get('box_type_code')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
+          orderItem.get('qty')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
+
+          this.orderItems.push(orderItem);
+        });
+
+        this.calculateTotalPrice();
+      },
+      error => {
+        this.toastr.error('Error loading order data');
+      }
+    );
   }
 
   onSubmit() {
     if (this.orderForm.valid) {
-      const orderData = this.orderForm.value;
-      this.http.post(`${this.apiUrl}/orders/create`, orderData).subscribe(
+      const formValue = this.orderForm.getRawValue();
+      const id = this.route.snapshot.queryParamMap.get('id');
+      const url = id ? `${this.apiUrl}/orders/update` : `${this.apiUrl}/orders/create`;
+
+      // Prepare the order data
+      const orderData: any = {
+        status: formValue.status,
+        total_price: formValue.total_price,
+        shipment_code: formValue.shipment_code,
+        orderItems: formValue.orderItems.map((item: any) => ({
+          product_id: item.product_id,
+          box_type_code: item.box_type_code,
+          qty: item.qty,
+          total_item_price: item.total_item_price
+        }))
+      };
+
+      // Add fields only for create operation
+      if (!id) {
+        orderData.distributor_id = formValue.distributor_id;
+        orderData.order_dt = formValue.order_dt;
+      } else {
+        orderData.order_id = id;
+      }
+
+      console.log('Sending order data:', orderData);
+
+      this.http.post(url, orderData).subscribe(
         response => {
-          this.toastr.success('Order saved successfully');
+          this.toastr.success(`Order ${id ? 'updated' : 'created'} successfully`);
           this.router.navigate(['/order']);
         },
         error => {
-          this.toastr.error('Error saving order');
+          console.error('Error response:', error);
+          this.toastr.error(`Error ${id ? 'updating' : 'creating'} order: ${error.error?.message || 'Unknown error'}`);
         }
       );
+    } else {
+      this.toastr.error('Please fill all required fields correctly');
+      console.log('Form validation errors:', this.orderForm.errors);
     }
   }
 

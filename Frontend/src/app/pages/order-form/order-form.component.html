@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    <h2>Add New Order</h2>
+    <h2>{{route.snapshot.queryParamMap.get('id') ? 'Edit' : 'Add New'}} Order</h2>
   </div>
   <div class="card-body">
     <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">

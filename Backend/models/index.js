@@ -22,6 +22,8 @@ OrderItem.belongsTo(Order, { foreignKey: 'order_id' });
 
 OrderItem.belongsTo(Product, { foreignKey: 'product_id' });
 
+OrderItem.belongsTo(BoxType, { foreignKey: 'box_type_code', targetKey: 'box_type_code' });
+
 Product.belongsTo(ProductType, { foreignKey: 'prod_type_code', targetKey: 'prod_type_code' });
 
 Order.hasMany(OrderItem, { foreignKey: 'order_id' });

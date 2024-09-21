@@ -74,7 +74,6 @@ export class FormsComponent implements OnInit {
     this.http.post<any>(this.fetchUrl, body).subscribe(
       data => {
         this.formData = data;
-        // Load image preview if there's an image
         if (data.image) {
           this.loadImagePreview(id);
         }
