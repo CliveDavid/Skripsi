@@ -3,12 +3,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { BASE_URL } from '../../../constants';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from '../../services/toastr.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 interface TableColumn {
   header: string;
   field: string;
   alignment: 'left' | 'center' | 'right';
-  type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int';
+  type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int' | 'image';
 }
 
 @Component({
@@ -17,6 +18,8 @@ interface TableColumn {
   styleUrls: ['./paging.component.css']
 })
 export class PagingComponent implements OnInit {
+
+  //#region Variables
   @Input() tableTitle: string = '';
   @Input() addButton: boolean = false;
   @Input() columns: TableColumn[] = [];
@@ -24,6 +27,8 @@ export class PagingComponent implements OnInit {
   @Input() url: string = '';
   @Input() editButton: boolean = false;
   @Input() primaryKey: string = 'id';
+  showImagePopup: boolean = false;
+  popupImageUrl: SafeUrl | null = null;
 
   sortedColumn: string | null = null;
   sortOrder: 'asc' | 'desc' = 'asc';
@@ -33,10 +38,12 @@ export class PagingComponent implements OnInit {
 
   currentPage: number = 1;
   rowsPerPage: number = 20;
+  //#endregion
 
   constructor(
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer,
     private router: Router,
     private toastr: ToastrService
   ) { }
@@ -111,6 +118,21 @@ export class PagingComponent implements OnInit {
     }
   }
 
+  //#region Image Popup
+  openImagePopup(id: string) {
+    const imageUrl = `${BASE_URL}/product/image`;
+    this.popupImageUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${imageUrl}?id=${id}`);
+    this.showImagePopup = true;
+  }
+
+  closeImagePopup() {
+    this.showImagePopup = false;
+    this.popupImageUrl = null;
+  }
+  //#endregion
+
+  //#region Pagination
+
   paginatedData() {
     const startIndex = (this.currentPage - 1) * this.rowsPerPage;
     return this.filteredData.slice(startIndex, startIndex + this.rowsPerPage);
@@ -131,4 +153,6 @@ export class PagingComponent implements OnInit {
       this.currentPage--;
     }
   }
+
+  //#endregion
 }

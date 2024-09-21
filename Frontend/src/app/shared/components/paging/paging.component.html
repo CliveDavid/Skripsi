@@ -45,6 +45,9 @@
                   [innerHTML]="row[column.field] | highlight: searchText"></a>
                 <span *ngSwitchCase="'boolean'"
                   [ngClass]="[column.alignment, row[column.field] ? 'boolean-yes' : 'boolean-no']">{{ row[column.field] ? 'yes' : 'no' }}</span>
+                <ng-container *ngSwitchCase="'image'">
+                  <i class="fas fa-eye" (click)="openImagePopup(row[primaryKey])"></i>
+                </ng-container>
               </ng-container>
             </td>
             <td *ngIf="editButton">
@@ -64,4 +67,13 @@
     </div>
   </div>
 </div>
+
+<!-- Image Popup -->
+<div class="image-popup" *ngIf="showImagePopup" (click)="closeImagePopup()">
+  <div class="image-popup-content" (click)="$event.stopPropagation()">
+    <span class="close-popup" (click)="closeImagePopup()">&times;</span>
+    <img [src]="popupImageUrl" alt="Product Image" *ngIf="popupImageUrl">
+  </div>
+</div>
+
 <app-message></app-message>

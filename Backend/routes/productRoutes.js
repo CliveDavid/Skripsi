@@ -1,6 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const { Product, ProductType } = require('../models');
+const multer = require('multer');
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // limit file size to 5MB
+    }
+});
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -13,6 +28,7 @@ router.post('/get-all', asyncHandler(async (req, res) => {
             model: ProductType,
             attributes: ['descr']
         }],
+        attributes: { exclude: ['image'] },
         raw: true, // returns plain object instead of model
         nest: true
     });
@@ -33,7 +49,8 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
         include: [{
             model: ProductType,
             attributes: ['descr']
-        }]
+        }],
+        attributes: { exclude: ['image'] }
     });
     if (!product) {
         return res.status(404).json({ message: 'Product not found' });
@@ -42,8 +59,9 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 }));
 
 // Create new product
-router.post('/create', asyncHandler(async (req, res) => {
-    const { prod_code, prod_name, prod_type_code, descr, image , is_active} = req.body;
+router.post('/create', upload.single('image'), asyncHandler(async (req, res) => {
+    const { prod_code, prod_name, prod_type_code, descr, is_active } = req.body;
+    const image = req.file ? req.file.buffer : null;
     
     const existingProduct = await Product.findOne({ where: { prod_code } });
     if (existingProduct) {
@@ -59,12 +77,15 @@ router.post('/create', asyncHandler(async (req, res) => {
         is_active
     });
 
-    res.status(201).json(newProduct);
+    const { image: _, ...productWithoutImage } = newProduct.get({ plain: true }); //exclude image
+    res.status(201).json(productWithoutImage);
 }));
 
 // Update product
-router.post('/update', asyncHandler(async (req, res) => {
-    const { prod_id, prod_code, prod_name, prod_type_code, descr, image, is_active } = req.body;
+router.post('/update', upload.single('image'), asyncHandler(async (req, res) => {
+    const { prod_id, prod_code, prod_name, prod_type_code, descr, is_active } = req.body;
+    const image = req.file ? req.file.buffer : undefined; // Get image from file upload if provided
+    
     const product = await Product.findByPk(prod_id);
     if (!product) {
         return res.status(404).json({ message: 'Product not found' });
@@ -75,13 +96,26 @@ router.post('/update', asyncHandler(async (req, res) => {
         prod_name,
         prod_type_code,
         descr,
-        image,
+        image: image !== undefined ? image : product.image, // Only update image if new file is provided
         is_active
     });
 
-    res.json(product);
+    const { image: _, ...productWithoutImage } = product.get({ plain: true });
+    res.json(productWithoutImage);
 }));
 
+// Get Product Image
+router.get('/image', asyncHandler(async (req, res) => {
+    const { id } = req.query; 
+    const product = await Product.findByPk(id, {
+        attributes: ['image']
+    });
+    if (!product || !product.image) {
+        return res.status(404).json({ message: 'Image not found' });
+    }
+    res.contentType('image/jpeg');
+    res.send(product.image);
+}));
 
 router.post('/get-product-kvp', asyncHandler(async (req, res) => {
     const products = await Product.findAll({
