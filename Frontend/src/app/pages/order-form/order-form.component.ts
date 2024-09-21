@@ -52,14 +52,14 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.setupDistributorSearch();
-    this.loadDropdownData();
-
     const id = this.route.snapshot.queryParamMap.get('id');
     if (id) {
       this.isEditMode = true;
       this.loadOrderData(id);
     }
+
+    this.setupDistributorSearch();
+    this.loadDropdownData();
   }
 
   ngOnDestroy() {
@@ -68,6 +68,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   setupDistributorSearch() {
+    if (this.isEditMode) return;
     this.orderForm.get('distributorSearch')!.valueChanges.pipe(
       takeUntil(this.destroy$),
       debounceTime(300),
