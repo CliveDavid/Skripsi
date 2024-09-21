@@ -1,24 +1,24 @@
 <div class="card">
   <div class="card-header">
-    <h2>{{route.snapshot.queryParamMap.get('id') ? 'Edit' : 'Add New'}} Order</h2>
+    <h2>{{isEditMode ? 'Edit' : 'Add New'}} Order</h2>
   </div>
   <div class="card-body">
     <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+      <!-- Main form row -->
       <div class="form-row">
+        <!-- Left column -->
         <div class="form-column">
+          <!-- Distributor search -->
           <div class="form-group">
-            <div class="distributor-label">
-              <label for="distributorSearch">Distributor</label>
-              <small class="not-found-text" *ngIf="showNotFound">Not found</small>
-            </div>
+            <label for="distributorSearch">Distributor</label>
             <div class="input-group">
               <input type="text" id="distributorSearch" formControlName="distributorSearch" class="form-control"
-                placeholder="Search distributor...">
+                placeholder="Search distributor..." [readonly]="isEditMode">
               <input type="hidden" formControlName="distributor_id">
-              <div class="mx-1"></div>
-              <button type="button" class="btn btn-add" (click)="navigateToDistributorForm()">+</button>
+              <button type="button" class="btn btn-add ml-2" (click)="navigateToDistributorForm()"
+                *ngIf="!isEditMode">+</button>
             </div>
-            <ul class="distributor-results list-group" *ngIf="filteredDistributors.length">
+            <ul class="distributor-results list-group" *ngIf="filteredDistributors.length && !isEditMode">
               <li class="list-group-item" *ngFor="let distributor of filteredDistributors"
                 (click)="selectDistributor(distributor)">
                 {{distributor.name}}
@@ -26,20 +26,32 @@
             </ul>
           </div>
 
+          <!-- Status -->
           <div class="form-group">
             <label for="status">Status</label>
             <select id="status" formControlName="status" class="form-control form-select">
               <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
             </select>
           </div>
+
+          <!-- Order Notes -->
+          <div class="form-group">
+            <label for="order_notes">Order Notes</label>
+            <textarea id="order_notes" formControlName="order_notes" class="form-control" rows="4"></textarea>
+          </div>
         </div>
 
+
+        <!-- Right column -->
         <div class="form-column">
+          <!-- Order Date -->
           <div class="form-group">
             <label for="order_dt">Order Date</label>
-            <input type="date" id="order_dt" formControlName="order_dt" class="form-control">
+            <input type="date" id="order_dt" formControlName="order_dt" class="form-control" [readonly]="isEditMode">
           </div>
 
+
+          <!-- Shipment Method -->
           <div class="form-group">
             <label for="shipment_code">Shipment Method</label>
             <select id="shipment_code" formControlName="shipment_code" class="form-control form-select">
@@ -48,9 +60,20 @@
               </option>
             </select>
           </div>
+
+
+          <!-- Distributor Information -->
+          <label>Distributor Info</label>
+          <div class="distributor-info" *ngIf="distributorInfo">
+            <div data-label="Name">{{distributorInfo.name}}</div>
+            <div data-label="Email">{{distributorInfo.email}}</div>
+            <div data-label="Phone">{{distributorInfo.phone}}</div>
+            <div data-label="Address">{{distributorInfo.address}}</div>
+          </div>
         </div>
       </div>
 
+      <!-- Order Items -->
       <div class="order-items mt-4">
         <h3>Order Items <button type="button" class="btn btn-add btn-sm ml-2" (click)="addOrderItem()">+</button></h3>
 
@@ -87,6 +110,7 @@
         </div>
       </div>
 
+      <!-- Total Price -->
       <div class="form-group mt-3">
         <label for="total_price">Total Price</label>
         <div class="total-price-input">
@@ -95,6 +119,7 @@
         </div>
       </div>
 
+      <!-- Form Buttons -->
       <div class="form-buttons">
         <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
         <button type="submit" class="btn btn-primary" [disabled]="!orderForm.valid">Submit</button>
@@ -102,5 +127,3 @@
     </form>
   </div>
 </div>
-
-<app-message></app-message>

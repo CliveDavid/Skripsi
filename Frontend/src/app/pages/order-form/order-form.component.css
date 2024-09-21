@@ -99,13 +99,12 @@ label {
   border: 1px solid #ced4da;
   border-left: none;
   border-radius: 0 4px 4px 0;
-  padding: 0.5rem 0.75rem !important;
+  padding: 0.5rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
 .btn-add:hover {
@@ -161,8 +160,7 @@ label {
 }
 
 .form-buttons .btn {
-  min-width: 90;
-  /* Ensures buttons have a minimum width */
+  min-width: 90px;
 }
 
 /* Order Items */
@@ -170,7 +168,7 @@ label {
   margin-top: 1.5rem;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
 .order-items h3 {
@@ -219,10 +217,6 @@ label {
 .order-item-field select,
 .order-item-field input {
   width: 100%;
-}
-
-.order-items {
-  padding: 1.5rem;
 }
 
 /* Total Price Input */
@@ -289,6 +283,49 @@ label {
   background-color: #f8f9fa;
 }
 
+/* Distributor Information */
+.distributor-info {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #212529;
+}
+
+.distributor-info div {
+  display: flex;
+  margin-bottom: 0.25rem;
+}
+
+.distributor-info div::before {
+  content: attr(data-label);
+  font-weight: 500;
+  color: #6c757d;
+  width: 60px;
+  display: inline-block;
+  margin-right: 1rem;
+}
+
+/* Textarea */
+#order_notes {
+  height: 100px;
+}
+
+/* Utility Classes */
+.mt-2 {
+  margin-top: 0.5rem !important;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
+
+.mt-4 {
+  margin-top: 1.5rem !important;
+}
+
+.ml-2 {
+  margin-left: 0.5rem !important;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
   .order-item-row {
@@ -312,19 +349,9 @@ label {
   }
 }
 
-/* Utility Classes */
-.mt-2 {
-  margin-top: 0.5rem !important;
-}
-
-.mt-3 {
-  margin-top: 1rem !important;
-}
-
-.mt-4 {
-  margin-top: 1.5rem !important;
-}
-
-.ml-2 {
-  margin-left: 0.5rem !important;
+@media (max-width: 768px) {
+  .form-column {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }

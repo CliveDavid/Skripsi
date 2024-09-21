@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
 import { BASE_URL } from '../../constants';
 import { ToastrService } from 'src/app/shared/services/toastr.service';
@@ -29,6 +29,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
   showNotFound = false;
   isEditMode: boolean = false;
+  distributorInfo: any = null;
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -47,6 +48,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       status: ['Pending', Validators.required],
       total_price: [0, Validators.required],
       shipment_code: ['', Validators.required],
+      order_notes: [''],
       orderItems: this.fb.array([])
     });
   }
@@ -56,9 +58,10 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     if (id) {
       this.isEditMode = true;
       this.loadOrderData(id);
+    } else {
+      this.setupDistributorSearch();
     }
 
-    this.setupDistributorSearch();
     this.loadDropdownData();
   }
 
@@ -68,7 +71,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   setupDistributorSearch() {
-    if (this.isEditMode) return;
     this.orderForm.get('distributorSearch')!.valueChanges.pipe(
       takeUntil(this.destroy$),
       debounceTime(300),
@@ -97,6 +99,17 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         this.showNotFound = true;
       }
     );
+
+    this.orderForm.get('distributor_id')!.valueChanges.pipe(
+      takeUntil(this.destroy$),
+      distinctUntilChanged(),
+    ).subscribe(distributorId => {
+      if (distributorId) {
+        this.loadDistributorInfo(distributorId);
+      } else {
+        this.distributorInfo = null;
+      }
+    });
   }
 
   searchDistributors(term: string) {
@@ -110,6 +123,19 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }, { emitEvent: false });
 
     this.filteredDistributors = [];
+    this.loadDistributorInfo(distributor.distributor_id);
+  }
+
+  loadDistributorInfo(distributorId: string) {
+    this.http.post<any>(`${this.apiUrl}/distributor/get-by-id`, { id: distributorId }).subscribe(
+      info => {
+        this.distributorInfo = info;
+      },
+      error => {
+        this.toastr.error('Error loading distributor information');
+        this.distributorInfo = null;
+      }
+    );
   }
 
   get orderItems() {
@@ -196,7 +222,8 @@ export class OrderFormComponent implements OnInit, OnDestroy {
           order_dt: order.order_dt,
           status: order.status,
           shipment_code: order.shipment_code,
-          total_price: order.total_price
+          total_price: order.total_price,
+          order_notes: order.order_notes
         });
 
         // Disable distributor and order date fields
@@ -229,6 +256,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         });
 
         this.calculateTotalPrice();
+        this.loadDistributorInfo(order.distributor_id);
       },
       error => {
         this.toastr.error('Error loading order data');
@@ -247,6 +275,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         status: formValue.status,
         total_price: formValue.total_price,
         shipment_code: formValue.shipment_code,
+        order_notes: formValue.order_notes,
         orderItems: formValue.orderItems.map((item: any) => ({
           product_id: item.product_id,
           box_type_code: item.box_type_code,
