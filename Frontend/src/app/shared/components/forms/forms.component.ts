@@ -233,7 +233,7 @@ export class FormsComponent implements OnInit {
     this.http.post(url, formData, { headers }).subscribe(
       () => {
         this.toastr.success(`Data ${this.isEditMode ? 'updated' : 'created'} successfully`);
-        setTimeout(() => this.location.back(), 1500);
+        setTimeout(() => this.closeOrGoBack(), 1500);
       },
       error => {
         this.toastr.error(`Error ${this.isEditMode ? 'updating' : 'creating'} data. Please try again.`);
@@ -242,6 +242,28 @@ export class FormsComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.location.back();
+    this.closeOrGoBack();
   }
+
+  private closeOrGoBack(): void {
+    if (window.opener) {
+      window.close();
+    } else {
+      // Check if this is the only tab in the window
+      if (window.history.length > 1) {
+        this.location.back();
+      } else {
+        window.close();
+      }
+    }
+
+    // If window.close() didn't work (e.g., was blocked), fall back to location.back()
+    setTimeout(() => {
+      if (!window.closed) {
+        this.location.back();
+      }
+    }, 300);
+  }
+
+
 }
