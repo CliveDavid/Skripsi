@@ -230,13 +230,24 @@ export class FormsComponent implements OnInit {
   private sendRequest(url: string, formData: any): void {
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-    this.http.post(url, formData, { headers }).subscribe(
-      () => {
-        this.toastr.success(`Data ${this.isEditMode ? 'updated' : 'created'} successfully`);
+    this.http.post(url, formData, { headers, observe: 'response' }).subscribe(
+      (response) => {
+        // CHANGE: Check for success message in response body
+        const successMessage = response.body && (response.body as any).message
+          ? (response.body as any).message
+          : `Data ${this.isEditMode ? 'updated' : 'created'} successfully`;
+        this.toastr.success(successMessage);
         setTimeout(() => this.closeOrGoBack(), 1500);
       },
-      error => {
-        this.toastr.error(`Error ${this.isEditMode ? 'updating' : 'creating'} data. Please try again.`);
+      (error) => {
+        let errorMessage = `Error ${this.isEditMode ? 'updating' : 'creating'} data. Please try again.`;
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+          if (error.error.error) {
+            errorMessage += `: ${error.error.error}`;
+          }
+        }
+        this.toastr.error(errorMessage);
       }
     );
   }
@@ -256,13 +267,6 @@ export class FormsComponent implements OnInit {
         window.close();
       }
     }
-
-    // If window.close() didn't work (e.g., was blocked), fall back to location.back()
-    setTimeout(() => {
-      if (!window.closed) {
-        this.location.back();
-      }
-    }, 300);
   }
 
 

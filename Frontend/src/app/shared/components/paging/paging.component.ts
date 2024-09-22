@@ -68,7 +68,7 @@ export class PagingComponent implements OnInit {
         this.setDefaultFilter();
         this.filterData();
       }).catch(error => {
-        this.toastr.error('Error in ngOnInit:' + error);
+        this.toastr.error('Error fetching data');
       });
     }
   }
