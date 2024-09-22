@@ -4,8 +4,8 @@
     <span class="table-title">{{ tableTitle }}</span>
     <div class="header-controls">
       <!-- Dropdown -->
-      <select *ngIf="filterOptions.length > 0" class="form-control filter-dropdown" [(ngModel)]="selectedFilter"
-        (change)="filterData()">
+      <select *ngIf="filterOptions.length > 0" class="form-control form-select filter-dropdown"
+        [(ngModel)]="selectedFilter" (change)="filterData()">
         <option value="All">All</option>
         <option *ngFor="let option of filterOptions" [value]="option.value">{{ option.label }}</option>
       </select>

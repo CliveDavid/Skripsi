@@ -263,6 +263,7 @@ td.right {
 .filter-dropdown {
   margin-right: 10px;
   width: 150px;
+  /* border-radius: 25px; */
 }
 
 .header-controls {
