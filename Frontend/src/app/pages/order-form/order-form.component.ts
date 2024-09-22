@@ -275,13 +275,17 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     const currentIndex = this.statuses.indexOf(currentStatus);
     if (currentIndex < this.statuses.length - 2) {
       const nextStatus = this.statuses[currentIndex + 1];
-      this.orderForm.patchValue({ status: nextStatus });
-      this.onSubmit(true);
+      const confirmMessage = `Are you sure you want to update the status from ${currentStatus} to ${nextStatus}?`;
+
+      if (confirm(confirmMessage)) {
+        this.orderForm.patchValue({ status: nextStatus });
+        this.onSubmit();
+      }
     }
   }
 
 
-  onSubmit(isProgressingStatus: boolean = false) {
+  onSubmit() {
     if (this.orderForm.valid) {
       const formValue = this.orderForm.getRawValue();
       const id = this.route.snapshot.queryParamMap.get('id');
@@ -314,9 +318,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       this.http.post(url, orderData).subscribe(
         response => {
           this.toastr.success(`Order ${id ? 'updated' : 'created'} successfully`);
-          if (!isProgressingStatus) {
-            this.router.navigate(['/order']);
-          }
+          this.router.navigate(['/order']);
         },
         error => {
           console.error('Error response:', error);

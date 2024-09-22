@@ -10,7 +10,11 @@
         <div class="form-column">
           <!-- Distributor search -->
           <div class="form-group">
-            <label for="distributorSearch">Distributor</label>
+            <div class="d-flex align-items-center">
+              <label for="distributorSearch">Distributor</label>
+              <div class="p-2"></div>
+              <small *ngIf="showNotFound" class="text-danger mb-2">Distributor not found</small>
+            </div>
             <div class="input-group">
               <input type="text" id="distributorSearch" formControlName="distributorSearch" class="form-control"
                 placeholder="Search distributor..." [readonly]="isEditMode">
@@ -35,7 +39,7 @@
               </select>
               <button *ngIf="isEditMode && canProgressStatus()" type="button" class="btn btn-progress ml-2"
                 (click)="progressStatus()">
-                <i class="fas fa-chevron-right"></i>
+                Continue <i class="fas fa-chevron-right ml-1"></i>
               </button>
             </div>
           </div>

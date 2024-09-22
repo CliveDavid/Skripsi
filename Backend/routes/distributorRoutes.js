@@ -85,9 +85,10 @@ router.post('/create', asyncHandler(async (req, res) => {
         addr_details,
         city,
         province,
-        zipcode
+        zipcode,
+        is_active
     } = req.body;
-
+        
     const existingDistributor = await Distributor.findOne({
         where: {
             email

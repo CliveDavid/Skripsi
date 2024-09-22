@@ -319,16 +319,21 @@ label {
   line-height: 1.5;
   border-radius: 0.25rem;
   transition: background-color 0.15s ease-in-out;
+  display: flex;
+  align-items: center;
 }
 
 .btn-progress:hover {
-  /* background-color: var(--primary-color); */
   background-color: rgb(3, 79, 3);
   color: white;
 }
 
 .btn-progress i {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
+  margin-left: 0.5rem;
+  line-height: 1;
+  /* Ensures the arrow aligns with the text */
+  display: inline-block;
 }
 
 /* Utility Classes */
