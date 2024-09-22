@@ -136,7 +136,13 @@ export class PagingComponent implements OnInit {
       } else if (Array.isArray(this.selectedFilter)) {
         filterMatch = this.selectedFilter.includes(row[this.filterField]);
       } else if (typeof this.selectedFilter === 'string') {
-        filterMatch = row[this.filterField] === this.selectedFilter;
+        if (this.selectedFilter.includes(',')) {
+          // Handle case where selectedFilter is a comma-separated string
+          const filterValues = this.selectedFilter.split(',');
+          filterMatch = filterValues.includes(row[this.filterField]);
+        } else {
+          filterMatch = row[this.filterField] === this.selectedFilter;
+        }
       } else {
         filterMatch = false;
       }
@@ -145,9 +151,9 @@ export class PagingComponent implements OnInit {
         .filter(column => column.type === 'text')
         .some(column => {
           const match = row[column.field]?.toString().toLowerCase().includes(this.searchText.toLowerCase());
+          console.log(`Search Match for ${column.field}:`, match);
           return match;
         });
-
 
       return filterMatch && searchMatch;
     });

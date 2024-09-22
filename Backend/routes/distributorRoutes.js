@@ -135,7 +135,6 @@ router.post('/update', asyncHandler(async (req, res) => {
         zipcode,
         is_active
     } = req.body;
-    console.log('Searching for distributor_id:', distributor_id);
     const distributor = await Distributor.findByPk(distributor_id);
     if (!distributor) {
         return res.status(404).json({
