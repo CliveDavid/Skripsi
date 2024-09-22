@@ -264,7 +264,24 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSubmit() {
+  canProgressStatus(): boolean {
+    const currentStatus = this.orderForm.get('status')?.value;
+    const currentIndex = this.statuses.indexOf(currentStatus);
+    return currentIndex < this.statuses.length - 2; // -2 because we don't progress from Delivered or Cancelled
+  }
+
+  progressStatus(): void {
+    const currentStatus = this.orderForm.get('status')?.value;
+    const currentIndex = this.statuses.indexOf(currentStatus);
+    if (currentIndex < this.statuses.length - 2) {
+      const nextStatus = this.statuses[currentIndex + 1];
+      this.orderForm.patchValue({ status: nextStatus });
+      this.onSubmit(true);
+    }
+  }
+
+
+  onSubmit(isProgressingStatus: boolean = false) {
     if (this.orderForm.valid) {
       const formValue = this.orderForm.getRawValue();
       const id = this.route.snapshot.queryParamMap.get('id');
@@ -297,7 +314,9 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       this.http.post(url, orderData).subscribe(
         response => {
           this.toastr.success(`Order ${id ? 'updated' : 'created'} successfully`);
-          this.router.navigate(['/order']);
+          if (!isProgressingStatus) {
+            this.router.navigate(['/order']);
+          }
         },
         error => {
           console.error('Error response:', error);

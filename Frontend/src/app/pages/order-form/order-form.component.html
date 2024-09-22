@@ -29,9 +29,15 @@
           <!-- Status -->
           <div class="form-group">
             <label for="status">Status</label>
-            <select id="status" formControlName="status" class="form-control form-select">
-              <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
-            </select>
+            <div class="d-flex align-items-center">
+              <select id="status" formControlName="status" class="form-control form-select">
+                <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
+              </select>
+              <button *ngIf="isEditMode && canProgressStatus()" type="button" class="btn btn-progress ml-2"
+                (click)="progressStatus()">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
           </div>
 
           <!-- Order Notes -->
