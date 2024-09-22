@@ -333,8 +333,12 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   calculateTotalPrice() {
     const total = this.orderItems.controls.reduce((sum, item) => {
-      return sum + (item.get('total_item_price')?.value || 0);
+      const itemPrice = parseFloat(item.get('total_item_price')?.value || '0'); // Ensure it's a number
+      console.log(`Item total price: ${itemPrice}`);
+      return sum + itemPrice;
     }, 0);
+
+    console.log('Calculated total price:', total);
     this.orderForm.patchValue({ total_price: total });
   }
 
