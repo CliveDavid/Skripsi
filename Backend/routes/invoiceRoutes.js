@@ -40,7 +40,7 @@ router.post('/create', asyncHandler(async (req, res) => {
     }
 
     const newInvoice = await Invoice.create({
-        invoice_dt,
+        invoice_dt: new Date(invoice_dt),
         order_id,
         subtotal,
         tax: tax || 0,
@@ -50,7 +50,7 @@ router.post('/create', asyncHandler(async (req, res) => {
 
     res.status(201).json({
         invoice_id: newInvoice.invoice_id,
-        invoice_number: newInvoice.invoice_number,  
+        invoice_number: newInvoice.invoice_number,
         invoice_dt: newInvoice.invoice_dt,
         due_dt: newInvoice.due_dt,
         order_id: newInvoice.order_id,

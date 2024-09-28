@@ -32,11 +32,13 @@ module.exports = (sequelize, DataTypes) => {
         },
         tax: {
             type: DataTypes.DECIMAL(10, 2),
-            allowNull: true
+            allowNull: false,
+            defaultValue: 0
         },
         additional_fee: {
             type: DataTypes.DECIMAL(10, 2),
-            allowNull: true
+            allowNull: false,
+            defaultValue: 0
         },
         total: {
             type: DataTypes.DECIMAL(10, 2),
@@ -50,18 +52,22 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         tableName: 'invoice',
         hooks: {
-            beforeCreate: (invoice) => {
+            beforeValidate: (invoice) => {
                 // Auto-generate invoice number (e.g., format: INV-20240928-001)
-                const date = new Date();
-                const invoiceNumber = `INV-${date.getFullYear()}${(date.getMonth() + 1)
-                    .toString()
-                    .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}-${Math.floor(Math.random() * 1000)}`;
-                invoice.invoice_number = invoiceNumber;
+                if (!invoice.invoice_number) {
+                    const date = new Date(invoice.invoice_dt);
+                    const invoiceNumber = `INV-${date.getFullYear()}${(date.getMonth() + 1)
+                        .toString()
+                        .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+                    invoice.invoice_number = invoiceNumber;
+                }
 
-                // Set due date to 7 days after invoice date
-                const dueDate = new Date();
-                dueDate.setDate(dueDate.getDate() + 7);
-                invoice.due_dt = dueDate;
+                // Set due date to 7 days after invoice date if not provided
+                if (!invoice.due_dt) {
+                    const dueDate = new Date(invoice.invoice_dt);
+                    dueDate.setDate(dueDate.getDate() + 7);
+                    invoice.due_dt = dueDate;
+                }
 
                 // Calculate total: subtotal + tax + additional_fee
                 const tax = invoice.tax || 0;
