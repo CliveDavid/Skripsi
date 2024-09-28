@@ -25,6 +25,8 @@ import { DateFormatPipe } from './shared/services/date-format/date-format.pipe';
 import { OrderComponent } from './pages/order/order.component';
 import { OrderFormComponent } from './pages/order-form/order-form.component';
 import { RupiahPipe } from './shared/services/rupiah.pipe';
+import { InvoiceComponent } from './pages/invoice/invoice.component';
+import { InvoiceDetailComponent } from './pages/invoice-detail/invoice-detail.component';
 
 
 @NgModule({
@@ -47,7 +49,9 @@ import { RupiahPipe } from './shared/services/rupiah.pipe';
     DistributorComponent,
     DistributorFormComponent,
     OrderComponent,
-    OrderFormComponent
+    OrderFormComponent,
+    InvoiceComponent,
+    InvoiceDetailComponent
   ],
   imports: [
     BrowserModule,

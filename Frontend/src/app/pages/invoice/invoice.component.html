@@ -1,0 +1,17 @@
+<app-paging [tableTitle]="'Invoice Records'" [addButton]="false" [columns]="[
+    { header: 'Invoice ID', field: 'invoice_id', alignment: 'left', type: 'text' },
+    { header: 'Invoice Number', field: 'invoice_number', alignment: 'left', type: 'text' },
+    { header: 'Invoice Date', field: 'invoice_dt', alignment: 'left', type: 'date' },
+    { header: 'Due Date', field: 'due_dt', alignment: 'left', type: 'date' },
+    { header: 'Order ID', field: 'order_id', alignment: 'left', type: 'text' },
+    { header: 'Subtotal', field: 'subtotal', alignment: 'left', type: 'currency' },
+    { header: 'Tax', field: 'tax', alignment: 'left', type: 'currency' },
+    { header: 'Total', field: 'total', alignment: 'left', type: 'currency' },
+    { header: 'Payment Status', field: 'payment_status', alignment: 'left', type: 'text' }
+  ]" [url]="'invoices/get-all'" [editButton]="false" [primaryKey]="'invoice_id'" [filterField]="'payment_status'"
+  [filterOptions]="[
+  { label: 'Unpaid', value: 'Unpaid', default: true },
+  { label: 'Paid', value: 'Paid' },
+  { label: 'Overdue', value: 'Overdue' }
+  ]">
+</app-paging>

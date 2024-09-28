@@ -62,6 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
       'product': 'Product',
       'distributor': 'Distributor',
       'order': 'Order',
+      'invoice': 'Invoice'
       // add more routes and titles here
     };
 
