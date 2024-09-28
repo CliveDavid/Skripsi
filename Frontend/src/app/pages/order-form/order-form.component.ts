@@ -26,7 +26,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   shipmentMethods: any[] = [];
   products: any[] = [];
   boxTypes: any[] = [];
-  statuses: string[] = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  statuses: string[] = ['Pending', 'Processing', 'Invoiced', 'Delivered', 'Cancelled'];
   showNotFound = false;
   isEditMode: boolean = false;
   distributorInfo: any = null;
