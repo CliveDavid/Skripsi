@@ -10,6 +10,7 @@ interface TableColumn {
   field: string;
   alignment: 'left' | 'center' | 'right';
   type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int' | 'image';
+  path?: string;
 }
 
 interface FilterOption {

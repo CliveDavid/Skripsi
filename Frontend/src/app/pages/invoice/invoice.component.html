@@ -1,6 +1,6 @@
 <app-paging [tableTitle]="'Invoice Records'" [addButton]="false" [columns]="[
-    { header: 'Invoice ID', field: 'invoice_id', alignment: 'left', type: 'text' },
-    { header: 'Invoice Number', field: 'invoice_number', alignment: 'left', type: 'text' },
+{ header: 'Invoice ID', field: 'invoice_id', alignment: 'left', type: 'link', path: 'invoice/detail' },
+{ header: 'Invoice Number', field: 'invoice_number', alignment: 'left', type: 'text' },
     { header: 'Invoice Date', field: 'invoice_dt', alignment: 'left', type: 'date' },
     { header: 'Due Date', field: 'due_dt', alignment: 'left', type: 'date' },
     { header: 'Order ID', field: 'order_id', alignment: 'left', type: 'text' },

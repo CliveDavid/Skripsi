@@ -48,7 +48,7 @@
                 <span *ngSwitchCase="'currency'"
                   [ngClass]="column.alignment">{{ row[column.field] | currency: 'Rp' }}</span>
                 <span *ngSwitchCase="'date'" [ngClass]="column.alignment">{{ row[column.field] | dateFormat }}</span>
-                <a *ngSwitchCase="'link'" [href]="row[column.field]" [ngClass]="column.alignment"
+                <a *ngSwitchCase="'link'" [routerLink]="[column.path, row[column.field]]" [ngClass]="column.alignment"
                   [innerHTML]="row[column.field] | highlight: searchText"></a>
                 <span *ngSwitchCase="'boolean'"
                   [ngClass]="[column.alignment, row[column.field] ? 'boolean-yes' : 'boolean-no']">{{ row[column.field] ? 'yes' : 'no' }}</span>
