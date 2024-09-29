@@ -28,8 +28,13 @@ async function generateInvoicePDF(invoice_id) {
         const company = await Company.findOne();
 
         // Load the HTML template
-        const templatePath = path.join(__dirname, '../templates/invoice-template.html');
+        const templatePath = path.join(__dirname, '../templates/invoice-template/invoice-template.html');
         let templateHtml = fs.readFileSync(templatePath, 'utf8');
+
+        // Load and inject CSS
+        const cssPath = path.join(__dirname, '../templates/invoice-template/invoice-template.css');
+        let cssContent = fs.readFileSync(cssPath, 'utf8');
+        templateHtml = templateHtml.replace('</head>', `<style>${cssContent}</style></head>`);
 
         // Helper function to format number to 2 decimal places
         const formatNumber = (num) => parseFloat(num).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');

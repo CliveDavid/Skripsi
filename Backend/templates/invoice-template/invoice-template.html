@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nota Titipan Barang</title>
+    <link rel="stylesheet" href="invoice-template.css">
+</head>
+
+<body>
+    <div class="invoice-box">
+        <div class="header">
+            <div class="logo-container">
+                <img src="../images/SJM.png" alt="PT Sadang Jaya Logo"> <!-- Logo image -->
+            </div>
+            <div class="company-info">
+                <div class="company-name">{{ company_name }}</div>
+                <p>{{ company_address }}</p>
+                <p>Phone: {{ company_phone }}</p>
+                <p>Email: {{ company_email }}</p>
+            </div>
+        </div>
+
+        <div class="invoice-details">
+            <h2>Nota Titipan Barang</h2>
+            <p><strong>Nomor:</strong> {{ invoice_number }}</p>
+            <p><strong>Tanggal:</strong> {{ invoice_dt }}</p>
+            <p><strong>Tanggal Jatuh Tempo:</strong> {{ due_dt }}</p>
+        </div>
+
+        <div class="customer-details">
+            <h3>Kepada:</h3>
+            <p><strong>{{ distributor_name }}</strong></p>
+            <p>{{ distributor_address }}</p>
+            <p><strong>Metode Pengiriman:</strong> {{ shipment_method }}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Produk</th>
+                    <th>Jumlah</th>
+                    <th>Tipe Box</th>
+                    <th>Harga Satuan</th>
+                    <th>Total Harga</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ order_items }}
+            </tbody>
+        </table>
+
+        <table class="total-table">
+            <tr>
+                <td>Subtotal</td>
+                <td class="text-right">Rp {{ subtotal }}</td>
+            </tr>
+            <tr>
+                <td>Biaya Tambahan</td>
+                <td class="text-right">Rp {{ additional_fee }}</td>
+            </tr>
+            <tr>
+                <td>Pajak</td>
+                <td class="text-right">Rp {{ tax }}</td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>Total</strong></td>
+                <td class="text-right"><strong>Rp {{ total }}</strong></td>
+            </tr>
+        </table>
+
+        <div class="notes">
+            <h3>Catatan Pesanan:</h3>
+            <p>{{ notes }}</p>
+        </div>
+
+        <div class="footer">
+            <p>Pembayaran total harus diselesaikan dalam waktu 7 hari.</p>
+            <p>Terima kasih atas kerja sama Anda.</p>
+        </div>
+    </div>
+</body>
+
+</html>
