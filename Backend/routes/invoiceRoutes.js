@@ -72,18 +72,21 @@ router.post('/generate-pdf', asyncHandler(async (req, res) => {
     try {
         const { pdfBuffer, invoice } = await generateInvoicePDF(invoice_id);
 
+        // Convert to Buffer if it's not recognized as a valid Buffer
+        const validBuffer = Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
+
         // Set headers for file download
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=nota-titipan-barang-${invoice_id}.pdf`);
-        res.setHeader('Content-Length', pdfBuffer.length);
+        res.setHeader('Content-Length', validBuffer.length);
 
-        // Send the PDF buffer
-        res.send(pdfBuffer);
+        // Send the PDF buffer as a binary stream
+        res.end(validBuffer);
 
         console.log('PDF sent successfully');
     } catch (error) {
         console.error('Error in PDF generation:', error);
-        res.status(500).json({ message: 'Error generating PDF', error: error.message });
+        res.status(500).contentType('text/plain').send('Error generating PDF: ' + error.message);
     }
 }));
 

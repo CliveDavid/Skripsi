@@ -1,0 +1,108 @@
+.card {
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 2rem;
+}
+
+.invoice-info,
+.invoice-summary {
+  margin-bottom: 2rem;
+}
+
+.invoice-info .row,
+.invoice-summary .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  /* Add padding for spacing */
+  border-bottom: 1px solid #e9ecef;
+  /* Subtle line between rows */
+}
+
+.invoice-info .label,
+.invoice-summary .label {
+  font-weight: bold;
+  flex-basis: 40%;
+  color: rgba(0, 0, 0, 0.634);
+}
+
+.invoice-info .content,
+.invoice-summary .content {
+  flex-basis: 60%;
+  text-align: right;
+}
+
+.card-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+  text-align: right;
+}
+
+
+/* buttons */
+.btn-icon {
+  background-color: var(--primary-color);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-icon:hover {
+  background-color: white;
+  color: var(--primary-color);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+}
+
+.btn-secondary:hover {
+  opacity: 0.9;
+}
+
+@media print {
+
+  .header-buttons,
+  .card-footer {
+    display: none;
+  }
+}
