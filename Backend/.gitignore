@@ -1,0 +1,40 @@
+# Node.js specific files
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Ignore environment variable files
+.env
+
+# Ignore database and local files
+*.sqlite
+*.sqlite3
+*.db
+*.local
+*.p12
+
+# Ignore any compiled files (if using TypeScript)
+dist/
+out/
+build/
+
+# Ignore coverage reports
+coverage/
+
+# Ignore any secret keys or certificates
+*.pem
+*.crt
+*.key
+
+# Ignore IDE-specific files (e.g., VSCode, JetBrains)
+.vscode/
+.idea/
+
+# Ignore operating system files
+.DS_Store
+Thumbs.db
