@@ -4,6 +4,7 @@ const cors = require('cors');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize = require('./config/database');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +20,9 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Serve static files from the 'public' folder
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Session middleware
 const sessionStore = new SequelizeStore({
