@@ -60,6 +60,10 @@ async function generateInvoicePDF(invoice_id) {
             `;
         });
 
+        // Get dynamic port and host the app is running on
+        const port = process.env.PORT || 3000;
+        const imageUrl = `http://localhost:${port}/public/images/SJM.png`;
+
         // Replace placeholders in the HTML template with actual data
         templateHtml = templateHtml
             .replace('{{ invoice_number }}', invoice.invoice_number)
@@ -77,7 +81,8 @@ async function generateInvoicePDF(invoice_id) {
             .replace('{{ company_name }}', company.company_name)
             .replace('{{ company_address }}', company.address)
             .replace('{{ company_phone }}', company.phn1)
-            .replace('{{ company_email }}', company.email);
+            .replace('{{ company_email }}', company.email)
+            .replace('src="images/SJM.png"', `src="${imageUrl}"`);
 
         // Launch Puppeteer in headless mode
         const browser = await puppeteer.launch();
