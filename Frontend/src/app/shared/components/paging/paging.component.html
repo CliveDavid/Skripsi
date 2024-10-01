@@ -56,8 +56,9 @@
                   <i class="fas fa-image" (click)="openImagePopup(row[primaryKey])"></i>
                 </ng-container>
                 <ng-container *ngSwitchCase="'status'">
-                  <span [ngClass]="['status-badge', getStatusClass(row[column.field])]">
-                    {{ row[column.field] }}
+                  <span class="status-wrapper">
+                    <span class="status-dot" [style.background-color]="getStatusInfo(row[column.field]).color"></span>
+                    <span class="status-text">{{ row[column.field] }}</span>
                   </span>
                 </ng-container>
               </ng-container>
