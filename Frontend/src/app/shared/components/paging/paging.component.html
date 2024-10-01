@@ -53,7 +53,12 @@
                 <span *ngSwitchCase="'boolean'"
                   [ngClass]="[column.alignment, row[column.field] ? 'boolean-yes' : 'boolean-no']">{{ row[column.field] ? 'yes' : 'no' }}</span>
                 <ng-container *ngSwitchCase="'image'">
-                  <i class="fas fa-eye" (click)="openImagePopup(row[primaryKey])"></i>
+                  <i class="fas fa-image" (click)="openImagePopup(row[primaryKey])"></i>
+                </ng-container>
+                <ng-container *ngSwitchCase="'status'">
+                  <span [ngClass]="['status-badge', getStatusClass(row[column.field])]">
+                    {{ row[column.field] }}
+                  </span>
                 </ng-container>
               </ng-container>
             </td>

@@ -5,11 +5,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from '../../services/toastr.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
+type StatusType = 'Pending' | 'Processing' | 'Invoiced' | 'Delivered' | 'Cancelled';
+
 interface TableColumn {
   header: string;
   field: string;
   alignment: 'left' | 'center' | 'right';
-  type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int' | 'image';
+  type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int' | 'image' | 'status';
   path?: string;
 }
 
@@ -49,6 +51,15 @@ export class PagingComponent implements OnInit {
   @Input() filterOptions: FilterOption[] = [];
   @Input() filterField: string = '';
   selectedFilter: string | string[] = 'All';
+
+  // status
+  statusClasses: { [key in StatusType]: string } = {
+    'Pending': 'status-pending',
+    'Processing': 'status-processing',
+    'Invoiced': 'status-invoiced',
+    'Delivered': 'status-delivered',
+    'Cancelled': 'status-cancelled'
+  };
 
   currentPage: number = 1;
   rowsPerPage: number = 20;
@@ -206,6 +217,10 @@ export class PagingComponent implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
+  }
+
+  getStatusClass(status: any): string {
+    return this.statusClasses[status as StatusType] || '';
   }
 
   //#endregion
