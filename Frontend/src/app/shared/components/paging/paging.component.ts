@@ -8,7 +8,6 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 type StatusType = 'Pending' | 'Processing' | 'Invoiced' | 'Delivered' | 'Cancelled';
 
 interface StatusInfo {
-  class: string;
   color: string;
 }
 
@@ -59,11 +58,11 @@ export class PagingComponent implements OnInit {
 
   // status
   statusInfo: { [key in StatusType]: StatusInfo } = {
-    'Pending': { class: 'status-pending', color: '#FFA500' },  // Orange
-    'Processing': { class: 'status-processing', color: '#1E90FF' },  // Blue
-    'Invoiced': { class: 'status-invoiced', color: '#9370DB' },  // Purple
-    'Delivered': { class: 'status-delivered', color: '#32CD32' },  // Green
-    'Cancelled': { class: 'status-canceled', color: '#FF6347' }  // Red
+    'Pending': { color: '#FFA500' },  // Orange
+    'Processing': { color: '#1E90FF' },  // Blue
+    'Invoiced': { color: '#9370DB' },  // Purple
+    'Delivered': { color: '#32CD32' },  // Green
+    'Cancelled': { color: '#FF6347' }  // Red
   };
 
   currentPage: number = 1;
@@ -225,7 +224,7 @@ export class PagingComponent implements OnInit {
   }
 
   getStatusInfo(status: any): StatusInfo {
-    return this.statusInfo[status as StatusType] || { class: '', color: '#000000' };
+    return this.statusInfo[status as StatusType] || { color: '#000000' };
   }
 
   //#endregion

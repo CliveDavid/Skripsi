@@ -194,12 +194,12 @@ td.right {
 
 
 /* Image */
-.fa-eye {
+.fa-image {
   cursor: pointer;
   color: black;
 }
 
-.fa-eye:hover {
+.fa-image:hover {
   color: var(--secondary-color);
 }
 
