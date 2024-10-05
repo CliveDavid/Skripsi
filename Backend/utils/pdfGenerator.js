@@ -59,7 +59,6 @@ async function generateInvoicePDF(invoice_id) {
                 </tr>
             `;
         });
-
         // Get dynamic port and host the app is running on
         const port = process.env.PORT || 3000;
         const imageUrl = `http://localhost:${port}/public/images/SJM.png`;
@@ -77,7 +76,7 @@ async function generateInvoicePDF(invoice_id) {
             .replace('{{ additional_fee }}', formatNumber(invoice.additional_fee))
             .replace('{{ tax }}', formatNumber(invoice.tax))
             .replace('{{ total }}', formatNumber(invoice.total))
-            .replace('{{ shipment_method }}', invoice.order.shipmentMethod ? invoice.order.shipmentMethod.shipment_name : 'Metode pengiriman tidak diketahui')
+            .replace('{{ shipment_method }}', invoice.order.shipment_method.shipment_name)
             .replace('{{ company_name }}', company.company_name)
             .replace('{{ company_address }}', company.address)
             .replace('{{ company_phone }}', company.phn1)
