@@ -120,6 +120,33 @@
         </div>
       </div>
 
+      <!-- Invoice Fields -->
+      <div class="invoice-details"
+        *ngIf="orderForm.get('status')?.value === 'Invoiced' || orderForm.get('status')?.value === 'Delivered'">
+        <h3>Invoice Details</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="invoice_dt">Invoice Date</label>
+            <input type="date" id="invoice_dt" formControlName="invoice_dt" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="tax">Tax</label>
+            <input type="number" id="tax" formControlName="tax" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="additional_fee">Additional Fee</label>
+            <input type="number" id="additional_fee" formControlName="additional_fee" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="payment_status">Payment Status</label>
+            <select id="payment_status" formControlName="payment_status" class="form-control">
+              <option value="Unpaid">Unpaid</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- Total Price -->
       <div class="form-group mt-3">
         <label for="total_price">Total Price</label>
@@ -134,6 +161,8 @@
         <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
         <button type="submit" class="btn btn-primary" [disabled]="!orderForm.valid">Submit</button>
       </div>
+
+
     </form>
   </div>
 </div>

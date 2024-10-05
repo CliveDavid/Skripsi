@@ -6,13 +6,6 @@ import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil } fro
 import { BASE_URL } from '../../constants';
 import { ToastrService } from 'src/app/shared/services/toastr.service';
 
-interface OrderItem {
-  product_id: number;
-  box_type_code: string;
-  qty: number;
-  total_item_price: number;
-}
-
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html',
@@ -49,7 +42,11 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       total_price: [0, Validators.required],
       shipment_code: ['', Validators.required],
       order_notes: [''],
-      orderItems: this.fb.array([])
+      orderItems: this.fb.array([]),
+      tax: [0],
+      additional_fee: [0],
+      invoice_dt: [new Date().toISOString().split('T')[0]],
+      payment_status: ['Unpaid']
     });
   }
 
@@ -63,6 +60,13 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
 
     this.loadDropdownData();
+
+    this.orderForm.get('status')?.valueChanges.subscribe(status => {
+      this.updateInvoiceFields(status);
+      if (status === 'Invoiced' || status === 'Delivered') {
+        this.loadInvoiceData();
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -264,6 +268,36 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     );
   }
 
+  loadInvoiceData() {
+    const orderId = this.route.snapshot.queryParamMap.get('id');
+    if (orderId) {
+      this.http.post<any>(`${this.apiUrl}/invoices/get-by-order-id`, { order_id: orderId }).subscribe(
+        invoice => {
+          if (invoice && Object.keys(invoice).length > 0) {
+            this.orderForm.patchValue({
+              invoice_dt: invoice.invoice_dt,
+              tax: invoice.tax,
+              additional_fee: invoice.additional_fee,
+              payment_status: invoice.payment_status
+            });
+          } else {
+            // If no invoice data, set default values or clear the fields
+            this.orderForm.patchValue({
+              invoice_dt: new Date().toISOString().split('T')[0],
+              tax: 0,
+              additional_fee: 0,
+              payment_status: 'Unpaid'
+            });
+          }
+        },
+        error => {
+          console.error('Error loading invoice data:', error);
+          this.toastr.error('Error loading invoice data');
+        }
+      );
+    }
+  }
+
   canProgressStatus(): boolean {
     const currentStatus = this.orderForm.get('status')?.value;
     const currentIndex = this.statuses.indexOf(currentStatus);
@@ -284,6 +318,24 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  updateInvoiceFields(status: string) {
+    const invoiceFields = ['tax', 'additional_fee', 'invoice_dt', 'payment_status'];
+    if (status === 'Invoiced' || status === 'Delivered') {
+      invoiceFields.forEach(field => {
+        this.orderForm.get(field)?.setValidators(Validators.required);
+        this.orderForm.get(field)?.enable();
+      });
+    } else {
+      invoiceFields.forEach(field => {
+        this.orderForm.get(field)?.clearValidators();
+        this.orderForm.get(field)?.disable();
+      });
+    }
+    this.orderForm.get('tax')?.updateValueAndValidity();
+    this.orderForm.get('additional_fee')?.updateValueAndValidity();
+    this.orderForm.get('invoice_dt')?.updateValueAndValidity();
+    this.orderForm.get('payment_status')?.updateValueAndValidity();
+  }
 
   onSubmit() {
     if (this.orderForm.valid) {
@@ -291,7 +343,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       const id = this.route.snapshot.queryParamMap.get('id');
       const url = id ? `${this.apiUrl}/orders/update` : `${this.apiUrl}/orders/create`;
 
-      // Prepare the order data
       const orderData: any = {
         status: formValue.status,
         total_price: formValue.total_price,
@@ -305,7 +356,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         }))
       };
 
-      // Add fields only for create operation
       if (!id) {
         orderData.distributor_id = formValue.distributor_id;
         orderData.order_dt = formValue.order_dt;
@@ -313,12 +363,16 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         orderData.order_id = id;
       }
 
-      console.log('Sending order data:', orderData);
-
       this.http.post(url, orderData).subscribe(
-        response => {
+        (response: any) => {
           this.toastr.success(`Order ${id ? 'updated' : 'created'} successfully`);
-          this.router.navigate(['/order']);
+
+          // If status is Invoiced or Delivered, create invoice
+          if (formValue.status === 'Invoiced' || formValue.status === 'Delivered') {
+            this.createInvoice(response.order_id || id, formValue);
+          } else {
+            this.router.navigate(['/order']);
+          }
         },
         error => {
           console.error('Error response:', error);
@@ -331,14 +385,34 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  createInvoice(orderId: string, formValue: any) {
+    const invoiceData = {
+      invoice_dt: formValue.invoice_dt,
+      order_id: orderId,
+      subtotal: formValue.total_price,
+      tax: formValue.tax,
+      additional_fee: formValue.additional_fee,
+      payment_status: formValue.payment_status
+    };
+
+    this.http.post(`${this.apiUrl}/invoices/create`, invoiceData).subscribe(
+      (response: any) => {
+        this.toastr.success('Invoice created successfully');
+        this.router.navigate(['/order']);
+      },
+      error => {
+        console.error('Error creating invoice:', error);
+        this.toastr.error(`Error creating invoice: ${error.error?.message || 'Unknown error'}`);
+      }
+    );
+  }
+
   calculateTotalPrice() {
     const total = this.orderItems.controls.reduce((sum, item) => {
       const itemPrice = parseFloat(item.get('total_item_price')?.value || '0'); // Ensure it's a number
-      console.log(`Item total price: ${itemPrice}`);
       return sum + itemPrice;
     }, 0);
 
-    console.log('Calculated total price:', total);
     this.orderForm.patchValue({ total_price: total });
   }
 

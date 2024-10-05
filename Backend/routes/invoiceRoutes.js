@@ -33,6 +33,23 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
     res.json(invoice);
 }));
 
+// Get invoice by order ID
+router.post('/get-by-order-id', asyncHandler(async (req, res) => {
+    const { order_id } = req.body;
+
+    if (!order_id) {
+        return res.status(400).json({ message: 'Order ID is required' });
+    }
+
+    const invoice = await Invoice.findOne({
+        where: { order_id },
+        attributes: ['invoice_id', 'invoice_number', 'invoice_dt', 'due_dt', 'order_id', 'subtotal', 'tax', 'total', 'payment_status', 'additional_fee']
+    });
+
+    // If no invoice is found, return an empty object instead of an error
+    res.json(invoice || {});
+}));
+
 // Create new invoice
 router.post('/create', asyncHandler(async (req, res) => {
     const { invoice_dt, order_id, subtotal, tax, additional_fee, payment_status } = req.body;
@@ -42,26 +59,41 @@ router.post('/create', asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    const newInvoice = await Invoice.create({
-        invoice_dt: new Date(invoice_dt),
-        order_id,
-        subtotal,
-        tax: tax || 0,
-        additional_fee: additional_fee || 0, 
-        payment_status: payment_status || 'Unpaid'
-    });
+    // Check if an invoice already exists for this order
+    let invoice = await Invoice.findOne({ where: { order_id } });
 
-    res.status(201).json({
-        invoice_id: newInvoice.invoice_id,
-        invoice_number: newInvoice.invoice_number,
-        invoice_dt: newInvoice.invoice_dt,
-        due_dt: newInvoice.due_dt,
-        order_id: newInvoice.order_id,
-        subtotal: newInvoice.subtotal,
-        tax: newInvoice.tax,
-        additional_fee: newInvoice.additional_fee,
-        total: newInvoice.total,
-        payment_status: newInvoice.payment_status
+    if (invoice) {
+        // Update existing invoice
+        invoice = await invoice.update({
+            invoice_dt: new Date(invoice_dt),
+            subtotal,
+            tax: tax || 0,
+            additional_fee: additional_fee || 0,
+            payment_status: payment_status || 'Unpaid'
+        });
+    } else {
+        // Create new invoice
+        invoice = await Invoice.create({
+            invoice_dt: new Date(invoice_dt),
+            order_id,
+            subtotal,
+            tax: tax || 0,
+            additional_fee: additional_fee || 0,
+            payment_status: payment_status || 'Unpaid'
+        });
+    }
+
+    res.status(invoice ? 200 : 201).json({
+        invoice_id: invoice.invoice_id,
+        invoice_number: invoice.invoice_number,
+        invoice_dt: invoice.invoice_dt,
+        due_dt: invoice.due_dt,
+        order_id: invoice.order_id,
+        subtotal: invoice.subtotal,
+        tax: invoice.tax,
+        additional_fee: invoice.additional_fee,
+        total: invoice.total,
+        payment_status: invoice.payment_status
     });
 }));
 
