@@ -274,8 +274,9 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       this.http.post<any>(`${this.apiUrl}/invoices/get-by-order-id`, { order_id: orderId }).subscribe(
         invoice => {
           if (invoice && Object.keys(invoice).length > 0) {
+            const formattedInvoiceDate = invoice.invoice_dt ? new Date(invoice.invoice_dt).toISOString().split('T')[0] : null;
             this.orderForm.patchValue({
-              invoice_dt: invoice.invoice_dt,
+              invoice_dt: formattedInvoiceDate,
               tax: invoice.tax,
               additional_fee: invoice.additional_fee,
               payment_status: invoice.payment_status
