@@ -1,47 +1,58 @@
-<header class="navbar navbar-expand-lg navbar-light bg-white">
-  <div class="container">
-    <a class="navbar-brand" routerLink="/">SJM</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/eleven">Eleven</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/twelve">Twelve</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/thirteen">Thirteen</a>
-        </li>
-        <li class="nav-item" ngbDropdown>
-          <a class="nav-link" ngbDropdownToggle id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Sixteen
-          </a>
-          <ul ngbDropdownMenu aria-labelledby="navbarDropdown">
-            <li><a ngbDropdownItem href="#">Action</a></li>
-            <li><a ngbDropdownItem href="#">Another action</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><a ngbDropdownItem href="#">Something else here</a></li>
-          </ul>
-        </li>
-      </ul>
-      <div class="d-flex align-items-center">
-        <button class="btn btn-outline-primary me-2">Log In</button>
-        <button class="btn btn-primary me-2">Register</button>
-        <a class="position-relative" routerLink="/cart">
-          <i class="bi bi-cart3 fs-5"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            1
-            <span class="visually-hidden">unread messages</span>
-          </span>
-        </a>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+    <div class="container">
+      <a class="navbar-brand me-5" href="#">
+        <img src="../../assets/images/SJM.png" alt="SJM" class="img-fluid logo">
+      </a>
+      <div class="collapse navbar-collapse justify-content-center">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="#">Eleven</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="#">Twelve</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="#">Thirteen</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="#">Sixteen</a>
+          </li>
+        </ul>
       </div>
+      <div class="d-flex align-items-center">
+        <a href="#" class="btn btn-sm btn-outline-secondary me-2 no-border rounded-0">Log In</a>
+        <a href="#" class="btn btn-sm btn-primary me-3 no-border rounded-0">Register</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="border-bottom second-row">
+    <div class="container px-3 py-2 d-flex justify-content-between align-items-center">
+      <div class="dropdown">
+        <button class="btn btn-link dropdown-toggle fw-semibold text-dark text-decoration-none" type="button"
+          id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          All Products
+          <i class="fas fa-chevron-down ms-1"></i>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="#">All Products</a></li>
+          <li><a class="dropdown-item" href="#">Type 1</a></li>
+          <li><a class="dropdown-item" href="#">Type 2</a></li>
+        </ul>
+      </div>
+
+      <form class="d-flex w-75 position-relative">
+        <i class="fas fa-search search-icon"></i>
+        <input class="form-control ps-5 border-bottom-only" type="search" placeholder="Search for..."
+          aria-label="Search">
+      </form>
+
+      <a href="#" class="position-relative d-flex align-items-center ms-3 my-cart">
+        <i class="fas fa-shopping-cart my-cart-icon"></i>
+        <span class="ms-2 fw-semibold my-cart-text">My Cart</span>
+        <span class="position-absolute translate-middle badge rounded-pill bg-danger cart-badge">9</span>
+      </a>
     </div>
   </div>
 </header>

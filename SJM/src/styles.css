@@ -1,1 +1,46 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary-color: #0f62fe;
+  --secondary-color: #0f62fe;
+  --button-border-color: #0d437d;
+  --dark-blue: #0d437d;
+  --gray-color: #dcdcdc;
+  --input-bg: #f0f0f0;
+  --text-color-dark: #000000;
+  --text-color-light: #ffffff;
+}
+
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+}
+
+.no-border {
+  border: 1px solid var(--button-border-color) !important;
+}
+
+.rounded-0 {
+  border-radius: 0 !important;
+}
+
+.nav-link {
+  color: var(--text-color-dark) !important;
+}
+
+.nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--button-border-color);
+}
+
+.btn-outline-secondary {
+  color: var(--text-color-dark);
+  border-color: var(--button-border-color);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(15, 98, 254, 0.25);
+}
