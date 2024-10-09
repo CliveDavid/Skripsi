@@ -1,0 +1,61 @@
+.footer {
+  background-color: #4a4a4a;
+  /* Adjust this to match the exact color in the image */
+  font-size: 0.8rem;
+  /* Base font size for smaller text */
+}
+
+.footer h5 {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  font-weight: bold;
+}
+
+.footer ul li {
+  margin-bottom: 0.4rem;
+}
+
+.footer .social-icons a {
+  font-size: 1rem;
+}
+
+.footer .social-icons a:hover {
+  opacity: 0.8;
+}
+
+.footer .nav-links {
+  margin-bottom: 0;
+}
+
+.footer .nav-links a {
+  margin-left: 1rem;
+}
+
+.footer .copyright {
+  font-size: 0.75rem;
+}
+
+/* Ensure proper spacing between columns */
+.footer .col-md-3 {
+  margin-bottom: 1rem;
+}
+
+/* Add a subtle line between the main content and the copyright row */
+.footer .row:last-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer .nav-links {
+    text-align: left;
+    margin-top: 1rem;
+  }
+
+  .footer .nav-links a {
+    margin-left: 0;
+    margin-right: 1rem;
+  }
+}

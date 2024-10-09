@@ -1,1 +1,60 @@
-<p>register works!</p>
+<div class="auth-layout">
+  <div class="auth-image">
+    <img
+      src="https://images.unsplash.com/photo-1728243342275-f84ce4a022bd?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      alt="Authentication Background" class="auth-background-image">
+  </div>
+  <div class="auth-form">
+    <div class="form-container">
+      <h1>Sign Up</h1>
+      <div class="stepper">
+        <div class="step" [ngClass]="{'active': currentStep === 1}">1. Fill in Account Information</div>
+        <div class="step" [ngClass]="{'active': currentStep === 2}">2. Address Information</div>
+      </div>
+      <form (ngSubmit)="onSubmit()">
+        <div *ngIf="currentStep === 1">
+          <div class="form-group">
+            <label for="firstname">First Name</label>
+            <input type="text" id="firstname" name="firstname" [(ngModel)]="firstName"
+              placeholder="Enter your first name" required>
+          </div>
+          <div class="form-group">
+            <label for="lastname">Last Name</label>
+            <input type="text" id="lastname" name="lastname" [(ngModel)]="lastName" placeholder="Enter your last name"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-input">
+              <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="password"
+                placeholder="Enter your password" required>
+              <span class="password-toggle" (click)="togglePasswordVisibility()">👁️</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-container">
+              <input type="checkbox" name="terms" [(ngModel)]="acceptTerms">
+              <span class="checkmark"></span>
+              I agree to the Terms and Conditions
+            </label>
+          </div>
+        </div>
+        <div *ngIf="currentStep === 2">
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" [(ngModel)]="address" placeholder="Enter your address"
+              required>
+          </div>
+          <!-- Add more address fields as needed -->
+        </div>
+        <button type="button" class="submit-btn" (click)="nextStep()" *ngIf="currentStep === 1">Continue</button>
+        <button type="submit" class="submit-btn" *ngIf="currentStep === 2">Sign Up</button>
+      </form>
+      <p class="login-link">Already have an account? <a routerLink="/login">Log In</a></p>
+    </div>
+  </div>
+</div>
