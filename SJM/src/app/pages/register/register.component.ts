@@ -19,16 +19,40 @@ export class RegisterComponent {
   acceptTerms: boolean = false;
   address: string = '';
   showPassword: boolean = false;
+  step1Completed: boolean = false;
+  step2Completed: boolean = false;
+
+  get progressWidth(): string {
+    return this.currentStep === 1 ? '50%' : '100%';
+  }
+
+  get isStep1Valid(): boolean {
+    return (
+      this.firstName.trim() !== '' &&
+      this.lastName.trim() !== '' &&
+      this.email.trim() !== '' &&
+      this.password.trim() !== '' &&
+      this.acceptTerms
+    );
+  }
+
+  get isStep2Valid(): boolean {
+    return this.address.trim() !== '';
+  }
 
   nextStep() {
-    if (this.currentStep < 2) {
-      this.currentStep++;
+    if (this.currentStep === 1 && this.isStep1Valid) {
+      this.step1Completed = true;
+      this.currentStep = 2;
     }
   }
 
   onSubmit() {
-    // Handle signup logic here
-    console.log('Signup submitted', this.firstName, this.lastName, this.email, this.password, this.address);
+    if (this.currentStep === 2 && this.isStep2Valid) {
+      this.step2Completed = true;
+      // Handle signup logic here
+      console.log('Signup submitted', this.firstName, this.lastName, this.email, this.password, this.address);
+    }
   }
 
   togglePasswordVisibility() {

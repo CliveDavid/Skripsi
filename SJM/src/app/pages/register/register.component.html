@@ -1,15 +1,24 @@
-<div class="auth-layout">
-  <div class="auth-image">
-    <img
-      src="https://images.unsplash.com/photo-1728243342275-f84ce4a022bd?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-      alt="Authentication Background" class="auth-background-image">
-  </div>
+<div class="auth-content">
   <div class="auth-form">
     <div class="form-container">
-      <h1>Sign Up</h1>
-      <div class="stepper">
-        <div class="step" [ngClass]="{'active': currentStep === 1}">1. Fill in Account Information</div>
-        <div class="step" [ngClass]="{'active': currentStep === 2}">2. Address Information</div>
+      <h1 class="fw-bold mt-5">Sign Up</h1>
+      <div class="stepper" [style.--progress-width]="progressWidth">
+        <div class="step" [class.active]="currentStep === 1" [class.completed]="step1Completed">
+          <div class="step-circle"></div>
+          <div class="step-content">
+            <div class="step-title">1. Account Information</div>
+            <div class="step-status" *ngIf="currentStep === 1 && !step1Completed">Incomplete</div>
+            <div class="step-status completed" *ngIf="step1Completed">Completed</div>
+          </div>
+        </div>
+        <div class="step" [class.active]="currentStep === 2" [class.completed]="step2Completed">
+          <div class="step-circle"></div>
+          <div class="step-content">
+            <div class="step-title">2. Address Information</div>
+            <div class="step-status" *ngIf="currentStep === 2 && !step2Completed">Incomplete</div>
+            <div class="step-status completed" *ngIf="step2Completed">Completed</div>
+          </div>
+        </div>
       </div>
       <form (ngSubmit)="onSubmit()">
         <div *ngIf="currentStep === 1">
@@ -49,7 +58,6 @@
             <input type="text" id="address" name="address" [(ngModel)]="address" placeholder="Enter your address"
               required>
           </div>
-          <!-- Add more address fields as needed -->
         </div>
         <button type="button" class="submit-btn" (click)="nextStep()" *ngIf="currentStep === 1">Continue</button>
         <button type="submit" class="submit-btn" *ngIf="currentStep === 2">Sign Up</button>

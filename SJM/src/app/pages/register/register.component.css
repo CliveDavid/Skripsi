@@ -1,135 +1,196 @@
-.auth-layout {
+:host ::ng-deep .auth-content {
   display: flex;
-  min-height: 100vh;
-}
-
-.auth-image {
-  flex: 1;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.auth-background-image {
-  width: 100%;
+  flex-direction: column;
   height: 100%;
-  object-fit: cover;
 }
 
-.auth-form {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  padding: 40px;
-}
-
-.form-container {
-  width: 100%;
-  max-width: 400px;
-  padding: 0 20px;
-}
-
-h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: var(--text-color-dark);
-}
-
-.stepper {
-  display: flex;
-  margin-bottom: 20px;
-}
-
-.step {
-  flex: 1;
+:host ::ng-deep .logo {
   text-align: center;
-  padding: 10px;
-  background-color: var(--input-bg);
-  border: 1px solid var(--gray-color);
-  font-size: 14px;
+  margin-bottom: 25px;
+  margin-top: 50px;
 }
 
-.step.active {
-  background-color: var(--primary-color);
-  color: var(--text-color-light);
+:host ::ng-deep .auth-logo {
+  max-width: 140px;
+  max-height: 40px;
+  width: auto;
+  height: auto;
 }
 
-.form-group {
+:host ::ng-deep .form-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+:host ::ng-deep h1 {
   margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
+  font-size: 28px;
   color: var(--text-color-dark);
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
+:host ::ng-deep .form-group {
+  margin-bottom: 20px;
+}
+
+:host ::ng-deep label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: var(--text-color-dark);
+}
+
+:host ::ng-deep input[type="email"],
+:host ::ng-deep input[type="password"],
+:host ::ng-deep input[type="text"] {
   width: 100%;
   padding: 10px;
   border: 1px solid var(--gray-color);
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
   background-color: var(--input-bg);
 }
 
-.password-input {
+:host ::ng-deep .password-input {
   position: relative;
 }
 
-.password-toggle {
+:host ::ng-deep .password-toggle {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
+  font-size: 18px;
 }
 
-.checkbox-container {
+:host ::ng-deep .password-hint {
+  font-size: 14px;
+  color: var(--text-color-dark);
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+:host ::ng-deep .checkbox-container {
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 16px;
 }
 
-.checkbox-container input {
-  margin-right: 10px;
+:host ::ng-deep .checkbox-container input {
+  margin-right: 12px;
+  transform: scale(1.2);
 }
 
-.submit-btn {
+:host ::ng-deep .forgot-password {
+  float: right;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 16px;
+}
+
+:host ::ng-deep .submit-btn {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: var(--primary-color);
   color: var(--text-color-light);
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   margin-top: 20px;
 }
 
-.login-link {
+:host ::ng-deep .signup-link,
+:host ::ng-deep .login-link {
   text-align: center;
   margin-top: 20px;
+  font-size: 16px;
+}
+
+/* Stepper styles */
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding: 20px 0;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.stepper::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #ccc;
+  z-index: 1;
+}
+
+.stepper::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: var(--progress-width, 50%);
+  height: 3px;
+  background-color: #0056b3;
+  z-index: 2;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 50%;
+  z-index: 3;
+}
+
+.step-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 3px solid #ccc;
+  z-index: 4;
+  margin-right: 10px;
+}
+
+.step.active .step-circle {
+  border-color: red;
+}
+
+.step.completed .step-circle {
+  border-color: #003d00;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-title {
+  font-weight: bold;
   font-size: 14px;
 }
 
-@media (max-width: 768px) {
-  .auth-layout {
-    flex-direction: column;
-  }
+.step-status {
+  font-size: 12px;
+  font-weight: 500;
+  color: #ff0000;
+}
 
-  .auth-image {
-    display: none;
-  }
+.step-status.completed {
+  color: #003d00;
+}
 
-  .auth-form {
-    padding: 20px;
-  }
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
