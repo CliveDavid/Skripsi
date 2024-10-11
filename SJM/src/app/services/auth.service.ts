@@ -9,7 +9,6 @@ interface LoginResponse {
   message: string;
   email: string;
   distributor_id: number;
-  username?: string; // Optional, if you still want to include username
 }
 
 interface LogoutResponse {
@@ -77,9 +76,7 @@ export class AuthService {
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('email', authResult.email);
     localStorage.setItem('distributor_id', authResult.distributor_id.toString());
-    if (authResult.username) {
-      localStorage.setItem('username', authResult.username);
-    }
+
     // Set expiration time to 8 hours from now
     const expiresAt = new Date().getTime() + 8 * 60 * 60 * 1000;
     localStorage.setItem('expires_at', expiresAt.toString());
@@ -89,7 +86,6 @@ export class AuthService {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('email');
     localStorage.removeItem('distributor_id');
-    localStorage.removeItem('username');
     localStorage.removeItem('expires_at');
   }
 
