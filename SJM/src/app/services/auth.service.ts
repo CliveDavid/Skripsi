@@ -68,6 +68,12 @@ export class AuthService {
     return !!expiresAt && new Date().getTime() < parseInt(expiresAt);
   }
 
+  refreshAuthState(): void {
+    // Check if the user is still logged in based on the stored session data
+    const isLoggedIn = this.isLoggedIn();
+    this.authStateSubject.next(isLoggedIn);
+  }
+
   getEmail(): string | null {
     return localStorage.getItem('email');
   }
