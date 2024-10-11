@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router'; // Import Router
+
 
 @Component({
   selector: 'app-login',
@@ -19,14 +20,14 @@ export class LoginComponent {
   showPassword: boolean = false;
   errorMessage: string = '';
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
 
   onSubmit() {
     this.authService.login(this.email, this.password).subscribe({
       next: (result) => {
         if (result.success) {
-          console.log('Login successful', result);
-          // Handle successful login (e.g., redirect to dashboard)
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          this.router.navigateByUrl(returnUrl);
         } else {
           this.errorMessage = 'Login failed. Please try again.';
         }
