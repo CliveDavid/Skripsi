@@ -8,6 +8,46 @@ const bcrypt = require('bcrypt');
 const asyncHandler = (fn) => (req, res, next) =>
     Promise.resolve(fn(req, res, next)).catch(next);
 
+
+// Distributor Login
+router.post('/login', asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    const distributor = await Distributor.findOne({ where: { email } });
+
+    if (!distributor) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, distributor.password);
+
+    if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Set session data
+    req.session.distributor = {
+        distributor_id: distributor.distributor_id,
+        email: distributor.email,
+    };
+
+    res.json({
+        message: 'Logged in successfully',
+        distributor_id: distributor.distributor_id,
+        email: distributor.email,
+    });
+}));
+
+
+// Distributor Logout
+router.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Could not log out, please try again' });
+        }
+        res.json({ message: 'Logged out successfully' });
+    });
+});
+
 // Get all distributors
 router.post('/get-all', asyncHandler(async (req, res) => {
     const distributors = await Distributor.findAll({

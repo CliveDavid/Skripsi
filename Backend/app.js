@@ -25,24 +25,52 @@ app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Session middleware
-const sessionStore = new SequelizeStore({
+const adminSessionStore = new SequelizeStore({
     db: sequelize,
+    tableName: 'admin_sessions'
 });
 
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false, // Set to true if using HTTPS
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-}));
+const distributorSessionStore = new SequelizeStore({
+    db: sequelize,
+    tableName: 'distributor_sessions'
+});
 
-// Create the session table if it doesn't exist
-sessionStore.sync();
+// Middleware to check the request path and apply the appropriate session
+app.use((req, res, next) => {
+    if (req.path.startsWith('/admin')) {
+        session({
+            secret: process.env.ADMIN_SESSION_SECRET,
+            store: adminSessionStore,
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                secure: false, // Set to true if using HTTPS
+                httpOnly: true,
+                maxAge: 24 * 60 * 60 * 1000 // 24 hours
+            },
+            name: 'admin.sid' // Unique name for admin session cookie
+        })(req, res, next);
+    } else if (req.path.startsWith('/distributor')) {
+        session({
+            secret: process.env.DISTRIBUTOR_SESSION_SECRET,
+            store: distributorSessionStore,
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                secure: false,
+                httpOnly: true,
+                maxAge: 24 * 60 * 60 * 1000
+            },
+            name: 'distributor.sid'
+        })(req, res, next);
+    } else {
+        next();
+    }
+});
+
+// Create the session tables if they don't exist
+// adminSessionStore.sync();
+// distributorSessionStore.sync();
 
 // Import Routes
 const adminRoutes = require('./routes/adminRoutes');
