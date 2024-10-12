@@ -57,3 +57,36 @@
   top: 0;
   left: 15px;
 }
+
+/* profile dropdown */
+.dropdown-menu {
+  margin-top: 0.75rem !important;
+  padding: 0.5rem 0;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.75rem 1rem;
+}
+
+.dropdown-item i:first-child {
+  width: 20px;
+  text-align: center;
+  margin-right: 1rem;
+}
+
+.dropdown-item span {
+  flex-grow: 1;
+  text-align: left;
+  min-width: 100px;
+}
+
+.dropdown-item .fa-chevron-right {
+  font-size: 0.8em;
+  opacity: 0.5;
+  margin-left: 1rem;
+}

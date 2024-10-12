@@ -49,12 +49,6 @@ export class HeaderComponent implements OnInit {
     console.log('Show notifications');
   }
 
-  showProfile() {
-    // Implement profile display logic
-    this.logout();
-    console.log('Show profile');
-  }
-
   fetchProductTypes() {
     this.http.post<ProductType[]>(`${this.baseUrl}/productType/get-product-type-kvp`, {}
     ).subscribe(

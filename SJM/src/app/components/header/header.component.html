@@ -30,9 +30,24 @@
             <i class="fas fa-bell my-icon-fa"></i>
             <span class="position-absolute translate-middle badge rounded-pill bg-danger icon-badge">3</span>
           </a>
-          <a href="#" class="position-relative d-flex align-items-center ms-4 my-icon" (click)="showProfile()">
-            <i class="fas fa-user my-icon-fa"></i>
-          </a>
+          <div class="dropdown" ngbDropdown>
+            <a href="#" class="position-relative d-flex align-items-center ms-4 my-icon" ngbDropdownToggle
+              id="profileDropdown" role="button">
+              <i class="fas fa-user my-icon-fa"></i>
+            </a>
+            <ul ngbDropdownMenu aria-labelledby="profileDropdown" class="dropdown-menu dropdown-menu-end">
+              <li><a ngbDropdownItem routerLink="/edit-profile" class="dropdown-item">
+                  <i class="fas fa-user-edit"></i>
+                  <span>Edit Profile</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a></li>
+              <li><a ngbDropdownItem href="#" (click)="logout()" class="dropdown-item">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+                  <i class="fas fa-chevron-right"></i>
+                </a></li>
+            </ul>
+          </div>
         </ng-template>
       </div>
     </div>
