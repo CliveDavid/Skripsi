@@ -39,20 +39,20 @@
   border-bottom: 1px solid var(--gray-color);
 }
 
-.my-cart {
+.my-icon {
   text-decoration: none;
   color: var(--text-color-dark);
 }
 
-.my-cart-icon {
-  font-size: 1rem;
+.my-icon-fa {
+  font-size: 1.2rem;
 }
 
-.my-cart-text {
+.my-icon-text {
   font-size: 0.9rem;
 }
 
-.cart-badge {
+.icon-badge {
   font-size: 0.7rem;
   top: 0;
   left: 15px;

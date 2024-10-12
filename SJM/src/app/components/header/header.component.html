@@ -26,12 +26,13 @@
           <a routerLink="/register" class="btn btn-sm btn-primary me-3 no-border rounded-0">Register</a>
         </ng-container>
         <ng-template #loggedInButtons>
-          <button class="btn btn-sm btn-link me-2 no-border" (click)="showNotifications()">
-            <i class="fas fa-bell"></i>
-          </button>
-          <button class="btn btn-sm btn-link me-3 no-border" (click)="showProfile()">
-            <i class="fas fa-user"></i>
-          </button>
+          <a href="#" class="position-relative d-flex align-items-center ms-3 my-icon" (click)="showNotifications()">
+            <i class="fas fa-bell my-icon-fa"></i>
+            <span class="position-absolute translate-middle badge rounded-pill bg-danger icon-badge">3</span>
+          </a>
+          <a href="#" class="position-relative d-flex align-items-center ms-4 my-icon" (click)="showProfile()">
+            <i class="fas fa-user my-icon-fa"></i>
+          </a>
         </ng-template>
       </div>
     </div>
@@ -59,10 +60,10 @@
           aria-label="Search">
       </form>
 
-      <a href="#" class="position-relative d-flex align-items-center ms-3 my-cart">
-        <i class="fas fa-shopping-cart my-cart-icon"></i>
-        <span class="ms-2 fw-semibold my-cart-text">My Cart</span>
-        <span class="position-absolute translate-middle badge rounded-pill bg-danger cart-badge">9</span>
+      <a href="#" class="position-relative d-flex align-items-center ms-3 my-icon">
+        <i class="fas fa-shopping-cart my-icon-fa"></i>
+        <span class="ms-2 fw-semibold my-icon-text">My Cart</span>
+        <span class="position-absolute translate-middle badge rounded-pill bg-danger icon-badge">9</span>
       </a>
     </div>
   </div>
