@@ -85,6 +85,10 @@ export class AuthService {
     );
   }
 
+  resendOtp(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/distributor/resend-otp`, { email });
+  }
+
   isLoggedIn(): boolean {
     const expiresAt = localStorage.getItem('expires_at');
     return !!expiresAt && new Date().getTime() < parseInt(expiresAt);

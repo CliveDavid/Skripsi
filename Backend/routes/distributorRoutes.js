@@ -268,6 +268,45 @@ router.post('/register', asyncHandler(async (req, res) => {
     res.status(201).json({ message: 'Registration successful. Please check your email for the OTP.' });    
 }));
 
+// Resend OTP
+router.post('/resend-otp', asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    // Find the distributor by email
+    const distributor = await Distributor.findOne({ where: { email } });
+
+    if (!distributor) {
+        return res.status(404).json({ message: 'Distributor not found' });
+    }
+
+    // Check if the distributor is already verified
+    if (distributor.is_active) {
+        return res.status(400).json({ message: 'Account is already verified' });
+    }
+
+    // Generate new OTP and set new expiration time
+    const newOtp = generateOTP();
+    const newOtpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // New OTP expires in 15 minutes
+
+    // Update distributor with new OTP and expiration time
+    await distributor.update({
+        otp: newOtp,
+        otp_expires_at: newOtpExpiresAt
+    });
+
+    // Send new OTP via email
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'New OTP Code for Email Verification',
+        text: `Dear ${distributor.name},\n\nYou have requested a new OTP. Please verify your email by entering this new OTP: ${newOtp}\n\nThe OTP will expire in 15 minutes.\n\nBest regards,\nPT Sadang Jaya`
+    };
+
+    await sendMail(mailOptions);
+
+    res.status(200).json({ message: 'New OTP sent successfully. Please check your email.' });
+}));
+
 router.post('/verify-otp', asyncHandler(async (req, res) => {
     const { email, otp } = req.body;
 
@@ -275,7 +314,7 @@ router.post('/verify-otp', asyncHandler(async (req, res) => {
     const distributor = await Distributor.findOne({ where: { email } });
 
     if (!distributor) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     // Check if OTP matches and is not expired
@@ -285,9 +324,9 @@ router.post('/verify-otp', asyncHandler(async (req, res) => {
         distributor.otp_expires_at = null; // Clear expiration time
         await distributor.save();
 
-        return res.status(200).json({ message: 'Account verified successfully' });
+        return res.status(200).json({ success: true, message: 'Account verified successfully' });
     } else {
-        return res.status(400).json({ message: 'Invalid or expired OTP' });
+        return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 }));
 

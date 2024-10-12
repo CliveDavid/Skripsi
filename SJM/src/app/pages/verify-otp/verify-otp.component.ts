@@ -54,7 +54,8 @@ export class VerifyOtpComponent implements OnInit {
 
         this.authService.verifyOtp(this.email, this.otp).subscribe({
             next: (response) => {
-                if (response.success) {
+                if (response.message === "Account verified successfully") {
+                    alert('Account verified successfully. You can now log in.');
                     this.router.navigate(['/login']);
                 } else {
                     alert('Invalid OTP, please try again.');
@@ -62,7 +63,7 @@ export class VerifyOtpComponent implements OnInit {
             },
             error: (error) => {
                 console.error('OTP verification failed', error);
-                alert('OTP verification failed. Please try again.');
+                alert(error.error.message || 'OTP verification failed. Please try again.');
             }
         });
     }
@@ -74,17 +75,17 @@ export class VerifyOtpComponent implements OnInit {
         this.isResendDisabled = true;
         this.resendCountdown = 60; // 60 seconds cooldown
 
-        // this.authService.resendOtp(this.email).subscribe({
-        //     next: () => {
-        //         alert('New OTP sent. Please check your email.');
-        //         this.startResendCooldown();
-        //     },
-        //     error: (error) => {
-        //         console.error('Failed to resend OTP', error);
-        //         alert('Failed to resend OTP. Please try again.');
-        //         this.isResendDisabled = false;
-        //     }
-        // });
+        this.authService.resendOtp(this.email).subscribe({
+            next: (response) => {
+                alert(response.message);
+                this.startResendCooldown();
+            },
+            error: (error) => {
+                console.error('Failed to resend OTP', error);
+                alert(error.error.message || 'Failed to resend OTP. Please try again.');
+                this.isResendDisabled = false;
+            }
+        });
     }
 
     private startResendCooldown() {
