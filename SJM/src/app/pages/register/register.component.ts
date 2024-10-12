@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -18,9 +20,19 @@ export class RegisterComponent {
   password: string = '';
   acceptTerms: boolean = false;
   address: string = '';
+  addr_details: string = '';
+  city: string = '';
+  province: string = '';
+  zipcode: string = '';
+  phone: string = '';
   showPassword: boolean = false;
   step1Completed: boolean = false;
   step2Completed: boolean = false;
+
+  emailError: string = '';
+  passwordError: string = '';
+
+  constructor(private http: HttpClient, private router: Router) { }
 
   get progressWidth(): string {
     return this.currentStep === 1 ? '50%' : '100%';
@@ -30,14 +42,34 @@ export class RegisterComponent {
     return (
       this.firstName.trim() !== '' &&
       this.lastName.trim() !== '' &&
-      this.email.trim() !== '' &&
-      this.password.trim() !== '' &&
+      this.isEmailValid() &&
+      this.isPasswordValid() &&
       this.acceptTerms
     );
   }
 
   get isStep2Valid(): boolean {
-    return this.address.trim() !== '';
+    return (
+      this.address.trim() !== '' &&
+      this.city.trim() !== '' &&
+      this.province.trim() !== '' &&
+      this.zipcode.trim() !== '' &&
+      this.phone.trim() !== ''
+    );
+  }
+
+  isEmailValid(): boolean {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    const isValid = emailRegex.test(this.email);
+    this.emailError = isValid ? '' : 'Please enter a valid email address.';
+    return isValid;
+  }
+
+  isPasswordValid(): boolean {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const isValid = passwordRegex.test(this.password);
+    this.passwordError = isValid ? '' : 'Password must be at least 8 characters long and include letters, numbers, and symbols.';
+    return isValid;
   }
 
   nextStep() {
@@ -50,8 +82,28 @@ export class RegisterComponent {
   onSubmit() {
     if (this.currentStep === 2 && this.isStep2Valid) {
       this.step2Completed = true;
-      // Handle signup logic here
-      console.log('Signup submitted', this.firstName, this.lastName, this.email, this.password, this.address);
+      const registrationData = {
+        name: `${this.firstName} ${this.lastName}`,
+        email: this.email,
+        password: this.password,
+        phone: this.phone,
+        address: this.address,
+        addr_details: this.addr_details,
+        city: this.city,
+        province: this.province,
+        zipcode: this.zipcode
+      };
+
+      this.http.post('/distributor/register', registrationData).subscribe({
+        next: (response) => {
+          console.log('Registration successful', response);
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          console.error('Registration failed', error);
+          // Handle error (show error message to user)
+        }
+      });
     }
   }
 

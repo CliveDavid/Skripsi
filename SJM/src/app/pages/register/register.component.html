@@ -35,6 +35,7 @@
           <div class="form-group">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" [(ngModel)]="email" placeholder="Enter your email" required>
+            <div *ngIf="emailError" class="error-message">{{ emailError }}</div>
           </div>
           <div class="form-group">
             <label for="password">Password</label>
@@ -43,6 +44,9 @@
                 placeholder="Enter your password" required>
               <span class="password-toggle" (click)="togglePasswordVisibility()">👁️</span>
             </div>
+            <div *ngIf="passwordError" class="error-message">{{ passwordError }}</div>
+            <p *ngIf="!passwordError" class="password-hint">It must be a combination of minimum 8 letters, numbers, and
+              symbols.</p>
           </div>
           <div class="form-group">
             <label class="checkbox-container">
@@ -58,7 +62,28 @@
             <input type="text" id="address" name="address" [(ngModel)]="address" placeholder="Enter your address"
               required>
           </div>
+          <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" [(ngModel)]="city" placeholder="Enter your city" required>
+          </div>
+          <div class="form-group">
+            <label for="province">Province</label>
+            <input type="text" id="province" name="province" [(ngModel)]="province" placeholder="Enter your province"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="zipcode">Zipcode</label>
+            <input type="text" id="zipcode" name="zipcode" [(ngModel)]="zipcode" placeholder="Enter your zipcode"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" [(ngModel)]="phone" placeholder="Enter your phone number"
+              required>
+          </div>
         </div>
+
+        <!-- Buttons for navigation -->
         <button type="button" class="submit-btn" (click)="nextStep()" *ngIf="currentStep === 1">Continue</button>
         <button type="submit" class="submit-btn" *ngIf="currentStep === 2">Sign Up</button>
       </form>

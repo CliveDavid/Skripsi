@@ -74,6 +74,12 @@
   margin-top: 8px;
 }
 
+.error-message {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
 :host ::ng-deep .checkbox-container {
   display: flex;
   align-items: center;
