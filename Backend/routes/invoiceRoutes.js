@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Invoice } = require('../models');
 const { generateInvoicePDF } = require('../utils/pdfGenerator');
-const nodemailer = require('nodemailer');
 require('dotenv').config();
-
+const { sendMail } = require('../utils/email');
 
 // Middleware to handle async errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -122,18 +121,7 @@ router.post('/generate-pdf', asyncHandler(async (req, res) => {
     }
 }));
 
-// Configure nodemailer transporter
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // use SSL
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
-
-// Route to send invoice PDF via email
+// Send invoice PDF via email
 router.post('/send-invoice-email', asyncHandler(async (req, res) => {
     const { invoice_id } = req.body;
     const testEmail = 'clivedavid.lie@gmail.com'; // For testing purposes
@@ -156,7 +144,7 @@ router.post('/send-invoice-email', asyncHandler(async (req, res) => {
         };
 
         // Send email
-        await transporter.sendMail(mailOptions);
+        await sendMail(mailOptions);
 
         res.status(200).json({ message: 'Invoice sent successfully via email' });
     } catch (error) {

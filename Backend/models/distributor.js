@@ -45,7 +45,15 @@ module.exports = (sequelize, DataTypes) => {
         is_active: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: true
+            defaultValue: false
+        },
+        otp: {
+            type: DataTypes.STRING(6),
+            allowNull: true
+        },
+        otp_expires_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: 'distributor'

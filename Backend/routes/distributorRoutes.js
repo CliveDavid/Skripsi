@@ -3,6 +3,7 @@ const router = express.Router();
 const { Distributor } = require('../models');
 const { Op, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
+const { sendMail } = require('../utils/email'); 
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -207,5 +208,94 @@ router.post('/update', asyncHandler(async (req, res) => {
     } = distributor.toJSON();
     res.json(updatedDistributorWithoutPassword);
 }));
+
+
+// Register
+router.post('/register', asyncHandler(async (req, res) => {
+    const {
+        name,
+        email,
+        password,
+        phone,
+        address,
+        addr_details,
+        city,
+        province,
+        zipcode
+    } = req.body;
+        
+    // Check if the email already exists
+    const existingDistributor = await Distributor.findOne({
+        where: { email }
+    });
+    if (existingDistributor) {
+        return res.status(400).json({ message: 'Email already exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate OTP and set expiration time (e.g., 15 minutes from now)
+    const otp = generateOTP();
+    const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // OTP expires in 15 minutes
+
+    // Create a new distributor 
+    const newDistributor = await Distributor.create({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        address,
+        addr_details,
+        city,
+        province,
+        zipcode,
+        otp,
+        otp_expires_at: otpExpiresAt,
+        is_active: false
+    });
+
+    // Send OTP via email
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Verify Your Email - OTP Code',
+        text: `Dear ${name},\n\nPlease verify your email by entering this OTP: ${otp}\n\nThe OTP will expire in 15 minutes.\n\nBest regards,\nPT Sadang Jaya`
+    };
+
+    await sendMail(mailOptions);
+
+    res.status(201).json({ message: 'Registration successful. Please check your email for the OTP.' });    
+}));
+
+router.post('/verify-otp', asyncHandler(async (req, res) => {
+    const { email, otp } = req.body;
+
+    // Find the user by email
+    const distributor = await Distributor.findOne({ where: { email } });
+
+    if (!distributor) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if OTP matches and is not expired
+    if (distributor.otp === otp && new Date() < distributor.otp_expires_at) {
+        // OTP is valid, activate the user
+        distributor.is_active = true;
+        distributor.otp = null; // Clear OTP after successful verification
+        distributor.otp_expires_at = null; // Clear expiration time
+        await distributor.save();
+
+        return res.status(200).json({ message: 'Account verified successfully' });
+    } else {
+        return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+}));
+
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
+}
+  
+
 
 module.exports = router;
