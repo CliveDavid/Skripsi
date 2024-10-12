@@ -1,11 +1,11 @@
 <div class="product-card">
-    <div class="product-image">
-        <img [src]="product.imageUrl" alt="{{ product.name }}" />
-    </div>
-    <div class="product-details">
-        <div class="separator"></div>
-        <h3>{{ product.name }}</h3>
-        <p class="description">{{ product.description }}</p>
-        <p class="price">Rp {{ product.price | number }}</p>
-    </div>
+  <div class="product-image">
+    <img [src]="product.imageUrl || placeholderImage" alt="{{ product.prod_name }}" /> </div>
+  <div class="product-details">
+    <div class="separator"></div>
+    <h3>{{ product.prod_name }}</h3>
+    <p class="description">{{ product.descr }}</p>
+    <p class="price">{{ product.product_type_descr }}</p>
+    <p *ngIf="product.price">Price: {{ product.price | currency }}</p>
+  </div>
 </div>

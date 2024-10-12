@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Product } from '../../services/product.service';
 
 @Component({
   selector: 'app-product-card',
@@ -9,5 +10,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./product-card.component.css']
 })
 export class ProductCardComponent {
-  @Input() product: any;
+  @Input() product!: Product;
+  placeholderImage = 'assets/images/placeholder-image.png';
 }

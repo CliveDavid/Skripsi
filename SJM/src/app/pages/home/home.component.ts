@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { ProductService, Product } from '../../services/product.service';
 
 @Component({
   selector: 'app-home',
@@ -10,29 +11,42 @@ import { ProductCardComponent } from '../../components/product-card/product-card
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  pageTitle = 'Bibendum amet at molestie mattis.';
-  pageDescription = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...';
+  pageTitle = 'Our Newest Additions to the Product Line';
+  pageDescription = 'Explore our latest snack products, developed to enhance your offerings and meet the growing demand for quality and flavor.';
+  products: Product[] = [];
+  placeholderImage = 'assets/images/placeholder-image.png';
 
-  products = [
-    {
-      id: 1,
-      name: 'Product 1',
-      price: 4599000,
-      description: 'Description for product 1.',
-      imageUrl: 'path-to-image1.jpg'
-    },
-    {
-      id: 2,
-      name: 'Product 2',
-      price: 4000000,
-      description: 'Description for product 2.',
-      imageUrl: 'path-to-image2.jpg'
-    },
-    // Add more product objects as needed
-  ];
-
-  constructor() { }
+  constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
+    this.fetchProducts();
+  }
+
+  fetchProducts() {
+    this.productService.getAllProducts().subscribe({
+      next: (data) => {
+        this.products = data;
+        this.products.forEach(product => this.fetchProductImage(product));
+      },
+      error: (error) => {
+        console.error('Error fetching products:', error);
+      }
+    });
+  }
+
+  fetchProductImage(product: Product) {
+    this.productService.getProductImage(product.prod_id).subscribe({
+      next: (blob: Blob) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          product.imageUrl = reader.result as string;
+        };
+        reader.readAsDataURL(blob);
+      },
+      error: (error) => {
+        console.error(`Error fetching image for product ${product.prod_id}:`, error);
+        product.imageUrl = this.placeholderImage;
+      }
+    });
   }
 }

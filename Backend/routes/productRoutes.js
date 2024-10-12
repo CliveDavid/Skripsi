@@ -149,6 +149,19 @@ router.get('/image', asyncHandler(async (req, res) => {
     res.send(product.image);
 }));
 
+// Get Product Image for SJM Web
+router.get('/product-image/:id', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findByPk(id, {
+        attributes: ['image']
+    });
+    if (!product || !product.image) {
+        return res.status(404).json({ message: 'Image not found' });
+    }
+    res.contentType('image/jpeg');
+    res.send(product.image);
+}));
+
 router.post('/get-product-kvp', asyncHandler(async (req, res) => {
     const products = await Product.findAll({
         attributes: ['prod_id', 'prod_name'],
