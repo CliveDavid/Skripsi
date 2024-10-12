@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../../constants';
+import { FormsModule } from '@angular/forms';
+import { ProductService } from '../../services/product.service';
 
 interface ProductType {
   value: string;
@@ -16,13 +18,14 @@ interface ProductType {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, NgbDropdownModule, CommonModule],
+  imports: [RouterLink, NgbDropdownModule, CommonModule, FormsModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
   productTypes: ProductType[] = [];
   selectedType: string = 'All Products';
+  searchTerm: string = '';
 
   isLoggedIn$!: Observable<boolean>;
   baseUrl = BASE_URL;
@@ -31,7 +34,8 @@ export class HeaderComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private http: HttpClient,
-    private productTypeService: ProductTypeService
+    private productTypeService: ProductTypeService,
+    private productService: ProductService
   ) { }
 
   ngOnInit() {
@@ -69,6 +73,12 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
+  onSearch() {
+    this.productService.setSearchTerm(this.searchTerm);
+    if (this.router.url !== '/') {
+      this.router.navigate(['/']);
+    }
+  }
 
   logout() {
     this.authService.logout().subscribe({

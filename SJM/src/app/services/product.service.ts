@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { BASE_URL } from '../constants';
 
 export interface Product {
@@ -28,5 +28,12 @@ export class ProductService {
 
     getProductImage(prodId: number): Observable<Blob> {
         return this.http.get(`${this.apiUrl}/product/product-image/${prodId}`, { responseType: 'blob' });
+    }
+
+    private searchTermSubject = new BehaviorSubject<string>('');
+    searchTerm$ = this.searchTermSubject.asObservable();
+
+    setSearchTerm(term: string) {
+        this.searchTermSubject.next(term);
     }
 }

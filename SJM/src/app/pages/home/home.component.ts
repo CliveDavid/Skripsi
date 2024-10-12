@@ -4,7 +4,7 @@ import { ProductCardComponent } from '../../components/product-card/product-card
 import { ProductService, Product } from '../../services/product.service';
 import { ProductTypeService } from '../../services/product-type.service';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchProducts();
-    this.listenToProductTypeChanges();
+    this.listenToFilters();
   }
 
   ngOnDestroy() {
@@ -37,19 +37,23 @@ export class HomeComponent implements OnInit {
     this.unsubscribe$.complete();
   }
 
-  listenToProductTypeChanges() {
-    this.productTypeService.selectedType$
+  listenToFilters() {
+    combineLatest([
+      this.productTypeService.selectedType$,
+      this.productService.searchTerm$
+    ])
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(type => {
-        this.filterProducts(type);
+      .subscribe(([type, searchTerm]) => {
+        this.filterProducts(type, searchTerm);
       });
+    console.log(this.productService.searchTerm$)
   }
 
   fetchProducts() {
     this.productService.getAllActiveProducts().subscribe({
       next: (data) => {
         this.products = data;
-        this.filterProducts('all'); // Initial filter
+        this.filterProducts('all', '');
         this.products.forEach(product => this.fetchProductImage(product));
       },
       error: (error) => {
@@ -58,12 +62,12 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  filterProducts(type: string) {
-    if (type === 'all') {
-      this.filteredProducts = this.products;
-    } else {
-      this.filteredProducts = this.products.filter(product => product.prod_type_code === type);
-    }
+  filterProducts(type: string, searchTerm: string) {
+    this.filteredProducts = this.products.filter(product => {
+      const matchesType = type === 'all' || product.prod_type_code === type;
+      const matchesSearch = product.prod_name.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesType && matchesSearch;
+    });
 
     this.changeDetectorRef.detectChanges();
   }

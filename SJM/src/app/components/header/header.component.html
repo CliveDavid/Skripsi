@@ -43,7 +43,7 @@
       <div class="dropdown">
         <button class="btn btn-link dropdown-toggle fw-semibold text-dark text-decoration-none" type="button"
           id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-          All Products
+          {{ selectedType }}
           <i class="fas fa-chevron-down ms-1"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -54,10 +54,10 @@
         </ul>
       </div>
 
-      <form class="d-flex w-75 position-relative">
+      <form class="d-flex w-75 position-relative" (ngSubmit)="onSearch()">
         <i class="fas fa-search search-icon"></i>
         <input class="form-control ps-5 border-bottom-only" type="search" placeholder="Search for..."
-          aria-label="Search">
+          aria-label="Search" [(ngModel)]="searchTerm" name="search">
       </form>
 
       <a href="#" class="position-relative d-flex align-items-center ms-3 my-icon">
