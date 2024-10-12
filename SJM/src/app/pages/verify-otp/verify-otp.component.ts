@@ -36,8 +36,12 @@ export class VerifyOtpComponent implements OnInit {
             if (nextInput) {
                 nextInput.nativeElement.focus();
             } else {
-                // If it's the last input, trigger verification
-                this.onVerifyOtp();
+                setTimeout(() => {
+                    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+                    if (this.otp.length === 6) {
+                        this.onVerifyOtp();
+                    }
+                }, 100); // 100ms delay
             }
         } else if (input.value.length === 0 && prevInput) {
             prevInput.nativeElement.focus();
@@ -47,6 +51,7 @@ export class VerifyOtpComponent implements OnInit {
     }
 
     onVerifyOtp() {
+        this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
         if (this.otp.length !== 6) {
             alert('Please enter a 6-digit OTP.');
             return;
