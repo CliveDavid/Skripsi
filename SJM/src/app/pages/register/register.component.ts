@@ -32,7 +32,87 @@ export class RegisterComponent {
   emailError: string = '';
   passwordError: string = '';
 
+  // Dropdown data
+  provinces: any[] = [];
+  cities: any[] = [];
+  districts: any[] = [];
+  subdistricts: any[] = [];
+  zipcodes: any[] = [];
+
+  selectedProvince: string = '';
+  selectedCity: string = '';
+  selectedDistrict: string = '';
+  selectedSubdistrict: string = '';
+  selectedZipcode: string = '';
+
   constructor(private http: HttpClient, private router: Router) { }
+
+  ngOnInit() {
+    this.loadProvinces();
+  }
+
+  loadProvinces() {
+    this.http.get('https://alamat.thecloudalert.com/api/provinsi/get/')
+      .subscribe((response: any) => {
+        this.provinces = response.result;
+      });
+  }
+
+  onProvinceChange(event: any) {
+    const provinceId = event.target.value;
+    this.selectedProvince = provinceId;
+    this.http.get(`https://alamat.thecloudalert.com/api/kabkota/get/?d_provinsi_id=${provinceId}`)
+      .subscribe((response: any) => {
+        this.cities = response.result;
+        this.districts = [];
+        this.subdistricts = [];
+        this.zipcodes = [];
+        this.selectedCity = '';
+        this.selectedDistrict = '';
+        this.selectedSubdistrict = '';
+        this.selectedZipcode = '';
+      });
+  }
+
+  onCityChange(event: any) {
+    const cityId = event.target.value;
+    this.selectedCity = cityId;
+    this.http.get(`https://alamat.thecloudalert.com/api/kecamatan/get/?d_kabkota_id=${cityId}`)
+      .subscribe((response: any) => {
+        this.districts = response.result;
+        this.subdistricts = [];
+        this.zipcodes = [];
+        this.selectedDistrict = '';
+        this.selectedSubdistrict = '';
+        this.selectedZipcode = '';
+      });
+  }
+
+  onDistrictChange(event: any) {
+    const districtId = event.target.value;
+    this.selectedDistrict = districtId;
+    this.http.get(`https://alamat.thecloudalert.com/api/kelurahan/get/?d_kecamatan_id=${districtId}`)
+      .subscribe((response: any) => {
+        this.subdistricts = response.result;
+        this.zipcodes = [];
+        this.selectedSubdistrict = '';
+        this.selectedZipcode = '';
+      });
+  }
+
+  onSubdistrictChange(event: any) {
+    const subdistrictId = event.target.value;
+    this.selectedSubdistrict = subdistrictId;
+    this.loadZipcodes();
+  }
+
+  loadZipcodes() {
+    this.http.get(`https://alamat.thecloudalert.com/api/kodepos/get/?d_kabkota_id=${this.selectedCity}&d_kecamatan_id=${this.selectedDistrict}`)
+      .subscribe((response: any) => {
+        this.zipcodes = response.result;
+        this.selectedZipcode = '';
+      });
+  }
 
   get progressWidth(): string {
     return this.currentStep === 1 ? '50%' : '100%';
@@ -51,8 +131,10 @@ export class RegisterComponent {
   get isStep2Valid(): boolean {
     return (
       this.address.trim() !== '' &&
-      this.city.trim() !== '' &&
-      this.province.trim() !== '' &&
+      this.selectedProvince !== '' &&
+      this.selectedCity !== '' &&
+      this.selectedDistrict !== '' &&
+      this.selectedSubdistrict !== '' &&
       this.zipcode.trim() !== '' &&
       this.phone.trim() !== ''
     );
@@ -73,7 +155,12 @@ export class RegisterComponent {
   }
 
   nextStep() {
-    if (this.currentStep === 1 && this.isStep1Valid) {
+    // if (this.currentStep === 1 && this.isStep1Valid) {
+    //   this.step1Completed = true;
+    //   this.currentStep = 2;
+    // }
+
+    if (this.currentStep === 1) {
       this.step1Completed = true;
       this.currentStep = 2;
     }
@@ -89,8 +176,8 @@ export class RegisterComponent {
         phone: this.phone,
         address: this.address,
         addr_details: this.addr_details,
-        city: this.city,
-        province: this.province,
+        city: this.selectedCity,
+        province: this.selectedProvince,
         zipcode: this.zipcode
       };
 
