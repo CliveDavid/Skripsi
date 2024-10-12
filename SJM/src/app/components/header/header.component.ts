@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { ProductTypeService } from '../../services/product-type.service';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { BASE_URL } from '../../constants';
 
+interface ProductType {
+  value: string;
+  label: string;
+}
 
 @Component({
   selector: 'app-header',
@@ -13,17 +20,24 @@ import { CommonModule } from '@angular/common';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
+  productTypes: ProductType[] = [];
+  selectedType: string = 'All Products';
+
   isLoggedIn$!: Observable<boolean>;
+  baseUrl = BASE_URL;
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
+    private productTypeService: ProductTypeService
   ) { }
 
   ngOnInit() {
     this.authService.refreshAuthState();
     this.isLoggedIn$ = this.authService.authState$;
+    this.fetchProductTypes();
   }
 
   showNotifications() {
@@ -36,6 +50,25 @@ export class HeaderComponent {
     this.logout();
     console.log('Show profile');
   }
+
+  fetchProductTypes() {
+    this.http.post<ProductType[]>(`${this.baseUrl}/productType/get-product-type-kvp`, {}
+    ).subscribe(
+      (data) => {
+        this.productTypes = data;
+      },
+      (error) => {
+        console.error('Error fetching product types:', error);
+      }
+    );
+  }
+
+  selectProductType(value: string, label: string) {
+    this.selectedType = label;
+    this.productTypeService.setSelectedType(value);
+    this.router.navigate(['/']);
+  }
+
 
   logout() {
     this.authService.logout().subscribe({

@@ -5,8 +5,10 @@ import { BASE_URL } from '../constants';
 
 export interface Product {
     prod_id: number;
+    prod_code: string;
     prod_name: string;
     descr: string;
+    prod_type_code: string;
     product_type_descr: string;
     imageUrl?: string;
     price?: number;
@@ -20,7 +22,7 @@ export class ProductService {
 
     constructor(private http: HttpClient) { }
 
-    getAllProducts(): Observable<Product[]> {
+    getAllActiveProducts(): Observable<Product[]> {
         return this.http.post<Product[]>(`${this.apiUrl}/product/get-all-active`, {});
     }
 

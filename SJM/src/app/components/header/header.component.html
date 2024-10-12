@@ -46,9 +46,10 @@
           <i class="fas fa-chevron-down ms-1"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <li><a class="dropdown-item" href="#">All Products</a></li>
-          <li><a class="dropdown-item" href="#">Type 1</a></li>
-          <li><a class="dropdown-item" href="#">Type 2</a></li>
+          <li><a class="dropdown-item" href="#" (click)="selectProductType('all', 'All Products')">All Products</a></li>
+          <li *ngFor="let type of productTypes">
+            <a class="dropdown-item" href="#" (click)="selectProductType(type.value, type.label)">{{ type.label }}</a>
+          </li>
         </ul>
       </div>
 
