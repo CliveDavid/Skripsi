@@ -200,3 +200,23 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+:host ::ng-deep select,
+:host ::ng-deep textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--gray-color);
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: var(--input-bg);
+}
+
+:host ::ng-deep select:disabled {
+  background-color: #f2f2f2;
+  cursor: not-allowed;
+}
+
+:host ::ng-deep textarea {
+  resize: vertical;
+  min-height: 100px;
+}

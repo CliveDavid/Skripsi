@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ADDR_URL } from '../../constants';
+
 
 @Component({
   selector: 'app-register',
@@ -13,6 +15,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
+  addrApi = ADDR_URL;
+
   currentStep: number = 1;
   firstName: string = '';
   lastName: string = '';
@@ -52,7 +56,7 @@ export class RegisterComponent {
   }
 
   loadProvinces() {
-    this.http.get('https://alamat.thecloudalert.com/api/provinsi/get/')
+    this.http.get(`${this.addrApi}/provinsi/get/`)
       .subscribe((response: any) => {
         this.provinces = response.result;
       });
@@ -61,7 +65,7 @@ export class RegisterComponent {
   onProvinceChange(event: any) {
     const provinceId = event.target.value;
     this.selectedProvince = provinceId;
-    this.http.get(`https://alamat.thecloudalert.com/api/kabkota/get/?d_provinsi_id=${provinceId}`)
+    this.http.get(`${this.addrApi}/kabkota/get/?d_provinsi_id=${provinceId}`)
       .subscribe((response: any) => {
         this.cities = response.result;
         this.districts = [];
@@ -77,7 +81,7 @@ export class RegisterComponent {
   onCityChange(event: any) {
     const cityId = event.target.value;
     this.selectedCity = cityId;
-    this.http.get(`https://alamat.thecloudalert.com/api/kecamatan/get/?d_kabkota_id=${cityId}`)
+    this.http.get(`${this.addrApi}/kecamatan/get/?d_kabkota_id=${cityId}`)
       .subscribe((response: any) => {
         this.districts = response.result;
         this.subdistricts = [];
@@ -91,7 +95,7 @@ export class RegisterComponent {
   onDistrictChange(event: any) {
     const districtId = event.target.value;
     this.selectedDistrict = districtId;
-    this.http.get(`https://alamat.thecloudalert.com/api/kelurahan/get/?d_kecamatan_id=${districtId}`)
+    this.http.get(`${this.addrApi}/kelurahan/get/?d_kecamatan_id=${districtId}`)
       .subscribe((response: any) => {
         this.subdistricts = response.result;
         this.zipcodes = [];
@@ -107,7 +111,7 @@ export class RegisterComponent {
   }
 
   loadZipcodes() {
-    this.http.get(`https://alamat.thecloudalert.com/api/kodepos/get/?d_kabkota_id=${this.selectedCity}&d_kecamatan_id=${this.selectedDistrict}`)
+    this.http.get(`${this.addrApi}/kodepos/get/?d_kabkota_id=${this.selectedCity}&d_kecamatan_id=${this.selectedDistrict}`)
       .subscribe((response: any) => {
         this.zipcodes = response.result;
         this.selectedZipcode = '';

@@ -62,28 +62,31 @@
         <div *ngIf="currentStep === 2">
           <div class="form-group">
             <label for="province">Province</label>
-            <select id="province" [(ngModel)]="selectedProvince" (change)="onProvinceChange($event)">
-              <option value="" disabled selected>Select Province</option> <!-- Add this to show initial placeholder -->
+            <select id="province" [(ngModel)]="selectedProvince" (change)="onProvinceChange($event)" name="province">
+              <option value="" disabled selected>Select Province</option>
               <option *ngFor="let province of provinces" [value]="province.id">{{ province.text }}</option>
             </select>
           </div>
           <div class="form-group">
             <label for="city">City</label>
-            <select id="city" [(ngModel)]="selectedCity" (change)="onCityChange($event)">
+            <select id="city" [(ngModel)]="selectedCity" (change)="onCityChange($event)" name="city"
+              [disabled]="!selectedProvince">
               <option value="" disabled selected>Select City</option>
               <option *ngFor="let city of cities" [value]="city.id">{{ city.text }}</option>
             </select>
           </div>
           <div class="form-group">
             <label for="district">District (Kecamatan)</label>
-            <select id="district" [(ngModel)]="selectedDistrict" (change)="onDistrictChange($event)">
+            <select id="district" [(ngModel)]="selectedDistrict" (change)="onDistrictChange($event)" name="district"
+              [disabled]="!selectedCity">
               <option value="" disabled selected>Select District</option>
               <option *ngFor="let district of districts" [value]="district.id">{{ district.text }}</option>
             </select>
           </div>
           <div class="form-group">
             <label for="subdistrict">Sub-district (Kelurahan)</label>
-            <select id="subdistrict" [(ngModel)]="selectedSubdistrict" (change)="onSubdistrictChange($event)">
+            <select id="subdistrict" [(ngModel)]="selectedSubdistrict" (change)="onSubdistrictChange($event)"
+              name="subdistrict" [disabled]="!selectedDistrict">
               <option value="" disabled selected>Select Subdistrict</option>
               <option *ngFor="let subdistrict of subdistricts" [value]="subdistrict.id">{{ subdistrict.text }}</option>
             </select>
@@ -91,7 +94,7 @@
           <div class="form-group">
             <label for="zipcode">Zipcode</label>
             <select id="zipcode" [(ngModel)]="selectedZipcode" name="zipcode" [disabled]="!selectedSubdistrict">
-              <option value="" disabled>Select Zipcode</option>
+              <option value="" disabled selected>Select Zipcode</option>
               <option *ngFor="let zipcode of zipcodes" [value]="zipcode.text">{{ zipcode.text }}</option>
             </select>
           </div>
