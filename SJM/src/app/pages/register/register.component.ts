@@ -197,13 +197,11 @@ export class RegisterComponent {
     if (this.currentStep === 2 && this.isStep2Valid) {
       this.step2Completed = true;
 
-      // Find the text representations of the selected IDs
       const provinceText = this.provinces.find(p => p.id === this.selectedProvince)?.text || '';
       const cityText = this.cities.find(c => c.id === this.selectedCity)?.text || '';
       const districtText = this.districts.find(d => d.id === this.selectedDistrict)?.text || '';
       const subdistrictText = this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || '';
 
-      // Construct the full address
       const fullAddress = `${provinceText}, ${cityText}, ${districtText}, ${subdistrictText}, ${this.selectedZipcode}`;
 
       const registrationData = {
@@ -221,8 +219,7 @@ export class RegisterComponent {
       this.http.post(`${this.baseUrl}/distributor/register`, registrationData)
         .subscribe({
           next: (response) => {
-            console.log('Registration successful', response);
-            this.router.navigate(['/login']);
+            this.router.navigate(['/verify-otp'], { queryParams: { email: this.email } });
           },
           error: (error) => {
             console.error('Registration failed', error);

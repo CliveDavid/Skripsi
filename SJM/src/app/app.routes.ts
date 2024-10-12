@@ -18,6 +18,7 @@ export const routes: Routes = [
         children: [
             { path: 'login', loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) },
             { path: 'register', loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent) },
+            { path: 'verify-otp', loadComponent: () => import('./pages/verify-otp/verify-otp.component').then(m => m.VerifyOtpComponent) },
         ]
     },
     {

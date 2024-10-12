@@ -1,0 +1,23 @@
+<div class="otp-verification">
+  <img src="../../../assets/images/SJM.png" alt="SJM Logo" style="height: 50px; margin-bottom: 20px;">
+
+  <h1>Verify Your Email Address</h1>
+  <p>Please enter the 6-digit code sent to {{ email }}.</p>
+  <form (ngSubmit)="onVerifyOtp()">
+    <div class="otp-inputs">
+      <input type="text" class="otp-input" maxlength="1" (input)="onOtpInput($event, 0)" #otp1>
+      <input type="text" class="otp-input" maxlength="1" (input)="onOtpInput($event, 1)" #otp2>
+      <input type="text" class="otp-input" maxlength="1" (input)="onOtpInput($event, 2)" #otp3>
+      <input type="text" class="otp-input" maxlength="1" (input)="onOtpInput($event, 3)" #otp4>
+      <input type="text" class="otp-input" maxlength="1" (input)="onOtpInput($event, 4)" #otp5>
+      <input type="text" class="otp-input" maxlength="1" (input)="onOtpInput($event, 5)" #otp6>
+    </div>
+    <button type="submit">Verify Email</button>
+  </form>
+  <p class="resend-code">
+    Didn't receive the code?
+    <a href="#" (click)="resendCode($event)" [class.disabled]="isResendDisabled">
+      Resend Code{{ isResendDisabled ? ' (' + resendCountdown + 's)' : '' }}
+    </a>
+  </p>
+</div>

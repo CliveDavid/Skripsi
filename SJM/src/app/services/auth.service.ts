@@ -15,6 +15,11 @@ interface LogoutResponse {
   message: string;
 }
 
+interface VerifyOtpResponse {
+  success: boolean;
+  message: string;
+}
+
 interface AuthResult {
   success: boolean;
   email?: string;
@@ -59,6 +64,23 @@ export class AuthService {
         this.clearSession();
         this.authStateSubject.next(false);
         return of({ success: false, error: error.message });
+      })
+    );
+  }
+
+  verifyOtp(email: string, otp: string): Observable<VerifyOtpResponse> {
+    return this.http.post<VerifyOtpResponse>(`${this.apiUrl}/distributor/verify-otp`, { email, otp }).pipe(
+      map((response: VerifyOtpResponse) => {
+        if (response.success) {
+          return { success: true, message: response.message };
+        }
+        return { success: false, message: 'OTP verification failed' };
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return of({
+          success: false,
+          message: error.error.message || 'An unknown error occurred'
+        });
       })
     );
   }

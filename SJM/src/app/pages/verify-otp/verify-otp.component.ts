@@ -1,0 +1,99 @@
+import { Component, ViewChildren, QueryList, ElementRef, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+    selector: 'app-verify-otp',
+    standalone: true,
+    imports: [CommonModule, FormsModule, RouterModule],
+    templateUrl: './verify-otp.component.html',
+    styleUrls: ['./verify-otp.component.css']
+})
+export class VerifyOtpComponent implements OnInit {
+    @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: QueryList<ElementRef>;
+    otp: string = '';
+    email: string = '';
+    isResendDisabled: boolean = false;
+    resendCountdown: number = 0;
+
+    constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) { }
+
+    ngOnInit() {
+        this.email = this.route.snapshot.queryParamMap.get('email') || '';
+        if (!this.email) {
+            this.router.navigate(['/register']); // Redirect if no email is provided
+        }
+    }
+
+    onOtpInput(event: any, index: number) {
+        const input = event.target;
+        const nextInput = this.otpInputs.get(index + 1);
+        const prevInput = this.otpInputs.get(index - 1);
+
+        if (input.value.length === 1) {
+            if (nextInput) {
+                nextInput.nativeElement.focus();
+            } else {
+                // If it's the last input, trigger verification
+                this.onVerifyOtp();
+            }
+        } else if (input.value.length === 0 && prevInput) {
+            prevInput.nativeElement.focus();
+        }
+
+        this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+    }
+
+    onVerifyOtp() {
+        if (this.otp.length !== 6) {
+            alert('Please enter a 6-digit OTP.');
+            return;
+        }
+
+        this.authService.verifyOtp(this.email, this.otp).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.router.navigate(['/login']);
+                } else {
+                    alert('Invalid OTP, please try again.');
+                }
+            },
+            error: (error) => {
+                console.error('OTP verification failed', error);
+                alert('OTP verification failed. Please try again.');
+            }
+        });
+    }
+
+    resendCode(event: Event) {
+        event.preventDefault();
+        if (this.isResendDisabled) return;
+
+        this.isResendDisabled = true;
+        this.resendCountdown = 60; // 60 seconds cooldown
+
+        // this.authService.resendOtp(this.email).subscribe({
+        //     next: () => {
+        //         alert('New OTP sent. Please check your email.');
+        //         this.startResendCooldown();
+        //     },
+        //     error: (error) => {
+        //         console.error('Failed to resend OTP', error);
+        //         alert('Failed to resend OTP. Please try again.');
+        //         this.isResendDisabled = false;
+        //     }
+        // });
+    }
+
+    private startResendCooldown() {
+        const countdownInterval = setInterval(() => {
+            this.resendCountdown--;
+            if (this.resendCountdown <= 0) {
+                this.isResendDisabled = false;
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+    }
+}

@@ -280,7 +280,6 @@ router.post('/verify-otp', asyncHandler(async (req, res) => {
 
     // Check if OTP matches and is not expired
     if (distributor.otp === otp && new Date() < distributor.otp_expires_at) {
-        // OTP is valid, activate the user
         distributor.is_active = true;
         distributor.otp = null; // Clear OTP after successful verification
         distributor.otp_expires_at = null; // Clear expiration time
