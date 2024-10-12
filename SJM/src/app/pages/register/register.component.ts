@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { ADDR_URL } from '../../constants';
+import { ADDR_URL, BASE_URL } from '../../constants';
 
 
 @Component({
@@ -16,6 +16,7 @@ import { ADDR_URL } from '../../constants';
 })
 export class RegisterComponent {
   addrApi = ADDR_URL;
+  baseUrl = BASE_URL;
 
   currentStep: number = 1;
   firstName: string = '';
@@ -217,16 +218,17 @@ export class RegisterComponent {
         zipcode: this.selectedZipcode
       };
 
-      this.http.post('/distributor/register', registrationData).subscribe({
-        next: (response) => {
-          console.log('Registration successful', response);
-          this.router.navigate(['/login']);
-        },
-        error: (error) => {
-          console.error('Registration failed', error);
-          // Handle error (show error message to user)
-        }
-      });
+      this.http.post(`${this.baseUrl}/distributor/register`, registrationData)
+        .subscribe({
+          next: (response) => {
+            console.log('Registration successful', response);
+            this.router.navigate(['/login']);
+          },
+          error: (error) => {
+            console.error('Registration failed', error);
+            // Handle error (show error message to user)
+          }
+        });
     }
   }
 
