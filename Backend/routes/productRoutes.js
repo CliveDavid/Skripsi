@@ -42,6 +42,30 @@ router.post('/get-all', asyncHandler(async (req, res) => {
     res.json(flattenedProducts);
 }));
 
+router.post('/get-all-active', asyncHandler(async (req, res) => {
+    const products = await Product.findAll({
+        where: {
+            is_active: true  
+        },
+        include: [{
+            model: ProductType,
+            attributes: ['descr']
+        }],
+        attributes: { exclude: ['image'] }, 
+        raw: true, 
+        nest: true
+    });
+
+    const flattenedProducts = products.map(product => ({
+        ...product,
+        product_type_descr: product.product_type.descr, 
+        product_type: undefined
+    }));
+
+    res.json(flattenedProducts);
+}));
+
+
 // Get product by ID
 router.post('/get-by-id', asyncHandler(async (req, res) => {
     const { id } = req.body;

@@ -21,7 +21,7 @@ export class ProductService {
     constructor(private http: HttpClient) { }
 
     getAllProducts(): Observable<Product[]> {
-        return this.http.post<Product[]>(`${this.apiUrl}/product/get-all`, {});
+        return this.http.post<Product[]>(`${this.apiUrl}/product/get-all-active`, {});
     }
 
     getProductImage(prodId: number): Observable<Blob> {
