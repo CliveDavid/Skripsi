@@ -105,14 +105,18 @@
           </div>
           <div class="form-group">
             <label for="phone">Phone</label>
-            <input type="text" id="phone" name="phone" [(ngModel)]="phone" placeholder="Enter your phone number"
-              required>
+            <div class="phone-input-container">
+              <span class="phone-prefix">+62</span>
+              <input type="text" id="phone" name="phone" [(ngModel)]="phoneNumber" (input)="onPhoneInput($event)"
+                maxlength="13" placeholder="Enter your phone number" required>
+            </div>
+            <div *ngIf="phoneError" class="error-message">{{ phoneError }}</div>
           </div>
         </div>
 
         <!-- Buttons for navigation -->
         <button type="button" class="submit-btn" (click)="nextStep()" *ngIf="currentStep === 1">Continue</button>
-        <button type="submit" class="submit-btn" *ngIf="currentStep === 2">Sign Up</button>
+        <button type="submit" class="submit-btn" *ngIf="currentStep === 2">Register</button>
       </form>
       <p class="login-link">Already have an account? <a routerLink="/login">Log In</a></p>
     </div>

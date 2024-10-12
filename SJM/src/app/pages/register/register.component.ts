@@ -28,13 +28,14 @@ export class RegisterComponent {
   city: string = '';
   province: string = '';
   zipcode: string = '';
-  phone: string = '';
+  phoneNumber: string = '';
   showPassword: boolean = false;
   step1Completed: boolean = false;
   step2Completed: boolean = false;
 
   emailError: string = '';
   passwordError: string = '';
+  phoneError: string = '';
 
   // Dropdown data
   provinces: any[] = [];
@@ -134,13 +135,14 @@ export class RegisterComponent {
 
   get isStep2Valid(): boolean {
     return (
-      this.address.trim() !== '' &&
+      this.addr_details.trim() !== '' &&
       this.selectedProvince !== '' &&
       this.selectedCity !== '' &&
       this.selectedDistrict !== '' &&
       this.selectedSubdistrict !== '' &&
-      this.zipcode.trim() !== '' &&
-      this.phone.trim() !== ''
+      this.selectedZipcode !== '' &&
+      this.phoneNumber.trim() !== '' &&
+      this.phoneError === ''
     );
   }
 
@@ -158,13 +160,33 @@ export class RegisterComponent {
     return isValid;
   }
 
-  nextStep() {
-    // if (this.currentStep === 1 && this.isStep1Valid) {
-    //   this.step1Completed = true;
-    //   this.currentStep = 2;
-    // }
+  onPhoneInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, ''); // Remove non-digit characters
 
-    if (this.currentStep === 1) {
+    // Format the phone number as XXX-XXXX-XXXX
+    if (value.length > 3) {
+      value = value.slice(0, 3) + '-' + value.slice(3);
+    }
+    if (value.length > 8) {
+      value = value.slice(0, 8) + '-' + value.slice(8);
+    }
+
+    this.phoneNumber = value;
+    this.validatePhone();
+  }
+
+  validatePhone() {
+    const phoneRegex = /^(\+62|62)?[\s-]?0?8[1-9]{1}\d{1}[\s-]?\d{4}[\s-]?\d{2,5}$/;
+    if (!phoneRegex.test(this.phoneNumber)) {
+      this.phoneError = 'Please enter a valid Indonesian phone number';
+    } else {
+      this.phoneError = '';
+    }
+  }
+
+  nextStep() {
+    if (this.currentStep === 1 && this.isStep1Valid) {
       this.step1Completed = true;
       this.currentStep = 2;
     }
@@ -173,16 +195,26 @@ export class RegisterComponent {
   onSubmit() {
     if (this.currentStep === 2 && this.isStep2Valid) {
       this.step2Completed = true;
+
+      // Find the text representations of the selected IDs
+      const provinceText = this.provinces.find(p => p.id === this.selectedProvince)?.text || '';
+      const cityText = this.cities.find(c => c.id === this.selectedCity)?.text || '';
+      const districtText = this.districts.find(d => d.id === this.selectedDistrict)?.text || '';
+      const subdistrictText = this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || '';
+
+      // Construct the full address
+      const fullAddress = `${provinceText}, ${cityText}, ${districtText}, ${subdistrictText}, ${this.selectedZipcode}`;
+
       const registrationData = {
-        name: `${this.firstName} ${this.lastName}`,
+        name: `${this.firstName} ${this.lastName}`.trim(),
         email: this.email,
         password: this.password,
-        phone: this.phone,
-        address: this.address,
-        addr_details: this.addr_details,
-        city: this.selectedCity,
-        province: this.selectedProvince,
-        zipcode: this.zipcode
+        phone: '+62' + this.phoneNumber.replace(/\D/g, ''),
+        address: fullAddress,
+        addr_details: this.addr_details.trim(),
+        city: cityText,
+        province: provinceText,
+        zipcode: this.selectedZipcode
       };
 
       this.http.post('/distributor/register', registrationData).subscribe({

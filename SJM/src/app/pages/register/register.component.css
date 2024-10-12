@@ -220,3 +220,23 @@
   resize: vertical;
   min-height: 100px;
 }
+
+
+/* phone number */
+.phone-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.phone-prefix {
+  position: absolute;
+  left: 10px;
+  color: #555;
+  font-size: 16px;
+}
+
+.phone-input-container input {
+  padding-left: 50px;
+  /* Adjust based on the width of your prefix */
+}
