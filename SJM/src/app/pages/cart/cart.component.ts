@@ -2,6 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
+import { ShipmentService } from '../../services/shipment.service';
+
+interface ShipmentMethod {
+  shipment_code: string;
+  shipment_name: string;
+  capacity: number;
+}
 
 @Component({
   selector: 'app-cart',
@@ -12,32 +19,61 @@ import { CartService } from '../../services/cart.service';
 })
 export class CartComponent implements OnInit {
   cartItems: any[] = [];
-  shippingMethods = [
-    { value: 'method1', label: 'Shipping Method 1 (Min 500 boxes)' },
-    { value: 'method2', label: 'Shipping Method 2 (Min 500 boxes)' }
-  ];
-  selectedShippingMethod = 'method1';
+  shippingMethods: ShipmentMethod[] = [];
+  selectedShippingMethod: string = '';
   shippingAddress = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud';
   subtotal = 0;
   estimatedTax = 'N/A';
   total = 0;
   placeholderImage = 'assets/images/placeholder-image.png';
+  totalQuantity = 0;
 
-  constructor(private cartService: CartService) { }
+  constructor(
+    private cartService: CartService,
+    private shipmentService: ShipmentService
+  ) { }
 
   ngOnInit() {
+    this.loadCartItems();
+    this.loadShippingMethods();
+  }
+
+  loadCartItems() {
     this.cartItems = this.cartService.getCartItems();
     this.updateCart();
   }
 
+  loadShippingMethods() {
+    this.shipmentService.getAllShipmentMethods().subscribe({
+      next: (methods) => {
+        this.shippingMethods = methods;
+      },
+      error: (error) => console.error('Error fetching shipment methods:', error)
+    });
+  }
+
   updateCart() {
-    this.subtotal = this.cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    this.subtotal = this.cartItems.reduce((sum, item) => sum + (item.totalPrice * item.quantity), 0);
     this.total = this.subtotal; // Assuming no additional fees or taxes
+    this.totalQuantity = this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
     this.cartService.updateCart(this.cartItems);
   }
 
+  isValidOrder(): boolean {
+    if (this.cartItems.length === 0) return false;
+    if (!this.selectedShippingMethod) return false;
+
+    const selectedMethod = this.shippingMethods.find(m => m.shipment_code === this.selectedShippingMethod);
+    if (!selectedMethod) return false;
+
+    return this.totalQuantity >= selectedMethod.capacity;
+  }
+
   proceedToCheckout() {
-    // Implement checkout logic
-    console.log('Proceeding to checkout');
+    if (this.isValidOrder()) {
+      console.log('Proceeding to checkout');
+    } else {
+      console.log('Invalid order');
+    }
   }
 }

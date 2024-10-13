@@ -8,12 +8,12 @@
           <div class="card h-100">
             <div class="card-body">
               <h5 class="card-title">Delivery Method</h5>
-              <div *ngFor="let method of shippingMethods; let i = index">
+              <div *ngFor="let method of shippingMethods; let i = index" class="delivery-method">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" [id]="'shipping' + i" [value]="method.value"
-                    [(ngModel)]="selectedShippingMethod">
+                  <input class="form-check-input" type="radio" [id]="'shipping' + i" [value]="method.shipment_code"
+                    [(ngModel)]="selectedShippingMethod" [disabled]="totalQuantity < method.capacity">
                   <label class="form-check-label" [for]="'shipping' + i">
-                    {{ method.label }}
+                    {{ method.shipment_name }} (min {{ method.capacity }} boxes)
                   </label>
                 </div>
               </div>
@@ -40,17 +40,19 @@
             <div class="col-md-2">
               <img [src]="item.product.imageUrl || placeholderImage" [alt]="item.product.prod_name" class="img-fluid">
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
               <h5 class="card-title">{{ item.product.prod_name }}</h5>
               <p class="card-text">{{ item.product.descr }}</p>
               <p class="card-text"><small class="text-muted">ITEM # {{ item.product.prod_code }}</small></p>
+              <p class="card-text"><small class="text-muted">Box Type: {{ item.boxType }}</small></p>
             </div>
             <div class="col-md-2">
               <input type="number" class="form-control" [(ngModel)]="item.quantity" (change)="updateCart()">
             </div>
-            <div class="col-md-3 text-end">
+            <div class="col-md-4 text-end">
               <p class="card-text mb-0">Price</p>
               <p class="card-text"><strong>Rp {{ item.totalPrice | number }}</strong> / each</p>
+              <p class="card-text"><strong>Rp {{ item.totalPrice * item.quantity | number }}</strong> total</p>
             </div>
           </div>
         </div>
@@ -74,7 +76,8 @@
             <p><strong>Estimated Total</strong></p>
             <p><strong>Rp {{ total | number }}</strong></p>
           </div>
-          <button class="btn btn-primary w-100" (click)="proceedToCheckout()">Proceed to Checkout</button>
+          <button class="btn btn-primary w-100" (click)="proceedToCheckout()" [disabled]="!isValidOrder()">Proceed to
+            Checkout</button>
         </div>
       </div>
     </div>

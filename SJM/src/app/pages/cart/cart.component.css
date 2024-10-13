@@ -53,3 +53,11 @@
 .card-body .form-control {
   max-width: 80px;
 }
+
+.delivery-method {
+  margin-bottom: 10px;
+}
+
+.form-check-input:disabled+.form-check-label {
+  color: #6c757d;
+}

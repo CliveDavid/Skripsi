@@ -18,7 +18,7 @@ router.post('/get-shipment-method-kvp', asyncHandler(async (req, res) => {
 }));
 
 router.post('/get-all', asyncHandler(async (req, res) => {
-    const admins = await ShipmentMethod.findAll({
+    const shipmentMethods = await ShipmentMethod.findAll({
         attributes: ['shipment_code', 'shipment_name', 'capacity']
     });
     res.json(shipmentMethods);
