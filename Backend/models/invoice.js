@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false
         },
-        tax: {
+        discount: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
             defaultValue: 0
@@ -69,10 +69,10 @@ module.exports = (sequelize, DataTypes) => {
                     invoice.due_dt = dueDate;
                 }
 
-                // Calculate total: subtotal + tax + additional_fee
-                const tax = invoice.tax || 0;
+                // Calculate total: subtotal - discount + additional_fee
+                const discount = invoice.discount || 0;
                 const additionalFee = invoice.additional_fee || 0;
-                invoice.total = parseFloat(invoice.subtotal) + parseFloat(tax) + parseFloat(additionalFee);
+                invoice.total = parseFloat(invoice.subtotal) - parseFloat(discount) + parseFloat(additionalFee);
             }
         }
     });

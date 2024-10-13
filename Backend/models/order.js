@@ -41,5 +41,12 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'order'
     });
 
+    Order.associate = (models) => {
+        Order.hasMany(models.OrderAddress, {
+            foreignKey: 'order_id',
+            as: 'addresses'
+        });
+    };
+
     return Order;
 };

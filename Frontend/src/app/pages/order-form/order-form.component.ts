@@ -43,7 +43,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       shipment_code: ['', Validators.required],
       order_notes: [''],
       orderItems: this.fb.array([]),
-      tax: [0],
+      discount: [0],
       additional_fee: [0],
       invoice_dt: [new Date().toISOString().split('T')[0]],
       payment_status: ['Unpaid']
@@ -277,7 +277,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
             const formattedInvoiceDate = invoice.invoice_dt ? new Date(invoice.invoice_dt).toISOString().split('T')[0] : null;
             this.orderForm.patchValue({
               invoice_dt: formattedInvoiceDate,
-              tax: invoice.tax,
+              discount: invoice.discount,
               additional_fee: invoice.additional_fee,
               payment_status: invoice.payment_status
             });
@@ -285,7 +285,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
             // If no invoice data, set default values or clear the fields
             this.orderForm.patchValue({
               invoice_dt: new Date().toISOString().split('T')[0],
-              tax: 0,
+              discount: 0,
               additional_fee: 0,
               payment_status: 'Unpaid'
             });
@@ -320,7 +320,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   updateInvoiceFields(status: string) {
-    const invoiceFields = ['tax', 'additional_fee', 'invoice_dt', 'payment_status'];
+    const invoiceFields = ['discount', 'additional_fee', 'invoice_dt', 'payment_status'];
     if (status === 'Invoiced' || status === 'Delivered') {
       invoiceFields.forEach(field => {
         this.orderForm.get(field)?.setValidators(Validators.required);
@@ -332,7 +332,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         this.orderForm.get(field)?.disable();
       });
     }
-    this.orderForm.get('tax')?.updateValueAndValidity();
+    this.orderForm.get('discount')?.updateValueAndValidity();
     this.orderForm.get('additional_fee')?.updateValueAndValidity();
     this.orderForm.get('invoice_dt')?.updateValueAndValidity();
     this.orderForm.get('payment_status')?.updateValueAndValidity();
@@ -391,7 +391,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       invoice_dt: formValue.invoice_dt,
       order_id: orderId,
       subtotal: formValue.total_price,
-      tax: formValue.tax,
+      discount: formValue.discount,
       additional_fee: formValue.additional_fee,
       payment_status: formValue.payment_status
     };

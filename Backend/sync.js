@@ -11,7 +11,8 @@ const {
     Company,
     Admin,
     AdminNotif,
-    Price
+    Price,
+    OrderAddress
 } = require('./models');
 
 async function syncModels() {
@@ -31,6 +32,7 @@ async function syncModels() {
         await OrderItem.sync({ alter: true, transaction });
         await Invoice.sync({ alter: true, transaction });
         await Price.sync({ alter: true, transaction });
+        await OrderAddress.sync({ alter: true, transaction });
 
 
         await transaction.commit(); // Commit the transaction if all syncs are successful

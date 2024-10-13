@@ -74,7 +74,7 @@ async function generateInvoicePDF(invoice_id) {
             .replace('{{ notes }}', invoice.order.notes || '-')
             .replace('{{ subtotal }}', formatNumber(invoice.subtotal))
             .replace('{{ additional_fee }}', formatNumber(invoice.additional_fee))
-            .replace('{{ tax }}', formatNumber(invoice.tax))
+            .replace('{{ discount }}', formatNumber(invoice.discount))
             .replace('{{ total }}', formatNumber(invoice.total))
             .replace('{{ shipment_method }}', invoice.order.shipment_method.shipment_name)
             .replace('{{ company_name }}', company.company_name)

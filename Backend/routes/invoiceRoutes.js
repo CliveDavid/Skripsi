@@ -13,7 +13,7 @@ const asyncHandler = (fn) => (req, res, next) =>
 // Get all invoices
 router.post('/get-all', asyncHandler(async (req, res) => {
     const invoices = await Invoice.findAll({
-        attributes: ['invoice_id', 'invoice_number', 'invoice_dt', 'due_dt', 'order_id', 'subtotal', 'tax', 'total', 'payment_status', 'additional_fee']
+        attributes: ['invoice_id', 'invoice_number', 'invoice_dt', 'due_dt', 'order_id', 'subtotal', 'discount', 'total', 'payment_status', 'additional_fee']
     });
     res.json(invoices);
 }));
@@ -22,7 +22,7 @@ router.post('/get-all', asyncHandler(async (req, res) => {
 router.post('/get-by-id', asyncHandler(async (req, res) => {
     const { id } = req.body;
     const invoice = await Invoice.findByPk(id, {
-        attributes: ['invoice_id', 'invoice_number', 'invoice_dt', 'due_dt', 'order_id', 'subtotal', 'tax', 'total', 'payment_status', 'additional_fee']
+        attributes: ['invoice_id', 'invoice_number', 'invoice_dt', 'due_dt', 'order_id', 'subtotal', 'discount', 'total', 'payment_status', 'additional_fee']
     });
 
     if (!invoice) {
@@ -42,7 +42,7 @@ router.post('/get-by-order-id', asyncHandler(async (req, res) => {
 
     const invoice = await Invoice.findOne({
         where: { order_id },
-        attributes: ['invoice_id', 'invoice_number', 'invoice_dt', 'due_dt', 'order_id', 'subtotal', 'tax', 'total', 'payment_status', 'additional_fee']
+        attributes: ['invoice_id', 'invoice_number', 'invoice_dt', 'due_dt', 'order_id', 'subtotal', 'discount', 'total', 'payment_status', 'additional_fee']
     });
 
     // If no invoice is found, return an empty object instead of an error
@@ -51,7 +51,7 @@ router.post('/get-by-order-id', asyncHandler(async (req, res) => {
 
 // Create new invoice
 router.post('/create', asyncHandler(async (req, res) => {
-    const { invoice_dt, order_id, subtotal, tax, additional_fee, payment_status } = req.body;
+    const { invoice_dt, order_id, subtotal, discount, additional_fee, payment_status } = req.body;
 
     // Validate required fields
     if (!invoice_dt || !order_id || !subtotal) {
@@ -66,7 +66,7 @@ router.post('/create', asyncHandler(async (req, res) => {
         invoice = await invoice.update({
             invoice_dt: new Date(invoice_dt),
             subtotal,
-            tax: tax || 0,
+            discount: discount || 0,
             additional_fee: additional_fee || 0,
             payment_status: payment_status || 'Unpaid'
         });
@@ -76,7 +76,7 @@ router.post('/create', asyncHandler(async (req, res) => {
             invoice_dt: new Date(invoice_dt),
             order_id,
             subtotal,
-            tax: tax || 0,
+            discount: discount || 0,
             additional_fee: additional_fee || 0,
             payment_status: payment_status || 'Unpaid'
         });
@@ -89,7 +89,7 @@ router.post('/create', asyncHandler(async (req, res) => {
         due_dt: invoice.due_dt,
         order_id: invoice.order_id,
         subtotal: invoice.subtotal,
-        tax: invoice.tax,
+        discount: invoice.discount,
         additional_fee: invoice.additional_fee,
         total: invoice.total,
         payment_status: invoice.payment_status

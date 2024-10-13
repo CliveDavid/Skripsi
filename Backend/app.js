@@ -82,6 +82,8 @@ const orderRoutes = require('./routes/orderRoutes');
 const shipmentMethodRoutes = require('./routes/shipmentMethodRoutes');
 const priceRoutes = require('./routes/priceRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
+const orderAddressRoutes = require('./routes/orderAddressRoutes');
+
 
 // Routes
 app.use('/admin', adminRoutes);
@@ -92,7 +94,9 @@ app.use('/boxType', boxTypeRoutes);
 app.use('/orders', orderRoutes);
 app.use('/shipmentMethods', shipmentMethodRoutes);
 app.use('/price', priceRoutes);
-app.use('/invoices', invoiceRoutes)
+app.use('/invoices', invoiceRoutes);
+app.use('/orderAddress', orderAddressRoutes);
+
 
 // 404 Handler
 app.use((req, res, next) => {
