@@ -333,6 +333,27 @@ router.post('/verify-otp', asyncHandler(async (req, res) => {
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
 }
+
+// Get distributor address
+router.post('/get-address', asyncHandler(async (req, res) => {
+    const { distributor_id } = req.body;
+
+    if (!distributor_id) {
+        return res.status(400).json({ message: 'Distributor ID is required' });
+    }
+
+    const distributor = await Distributor.findByPk(distributor_id, {
+        attributes: ['address', 'addr_details', 'city', 'province', 'zipcode']
+    });
+
+    if (!distributor) {
+        return res.status(404).json({ message: 'Distributor not found' });
+    }
+
+    const fullAddress = `${distributor.address}${distributor.addr_details ? ', ' + distributor.addr_details : ''}, ${distributor.city}, ${distributor.province} ${distributor.zipcode}`;
+
+    res.json({ address: fullAddress });
+}));
   
 
 

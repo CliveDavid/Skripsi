@@ -3,11 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BASE_URL } from '../constants';
 
-interface Address {
-    id: number;
-    name: string;
+interface AddressResponse {
     address: string;
-    addr_details: string;
 }
 
 @Injectable({
@@ -16,7 +13,7 @@ interface Address {
 export class AddressService {
     constructor(private http: HttpClient) { }
 
-    getAllAddresses(): Observable<Address[]> {
-        return this.http.post<Address[]>(`${BASE_URL}/distributor/get-address`, {});
+    getAddress(distributorId: string): Observable<AddressResponse> {
+        return this.http.post<AddressResponse>(`${BASE_URL}/distributor/get-address`, { distributor_id: distributorId });
     }
 }

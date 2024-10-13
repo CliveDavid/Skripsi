@@ -3,11 +3,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { ShipmentService } from '../../services/shipment.service';
+import { AddressService } from '../../services/address.service';
+import { AuthService } from '../../services/auth.service';
 
 interface ShipmentMethod {
   shipment_code: string;
   shipment_name: string;
   capacity: number;
+}
+
+interface AddressResponse {
+  address: string;
 }
 
 @Component({
@@ -21,7 +27,7 @@ export class CartComponent implements OnInit {
   cartItems: any[] = [];
   shippingMethods: ShipmentMethod[] = [];
   selectedShippingMethod: string = '';
-  shippingAddress = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud';
+  shippingAddress = '';
   subtotal = 0;
   estimatedTax = 'N/A';
   total = 0;
@@ -30,12 +36,15 @@ export class CartComponent implements OnInit {
 
   constructor(
     private cartService: CartService,
-    private shipmentService: ShipmentService
+    private shipmentService: ShipmentService,
+    private addressService: AddressService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
     this.loadCartItems();
     this.loadShippingMethods();
+    this.loadShippingAddress();
   }
 
   loadCartItems() {
@@ -52,9 +61,23 @@ export class CartComponent implements OnInit {
     });
   }
 
+  loadShippingAddress() {
+    const distributorId = this.authService.getDistributorId();
+    if (distributorId) {
+      this.addressService.getAddress(distributorId).subscribe({
+        next: (response: AddressResponse) => {
+          this.shippingAddress = response.address;
+        },
+        error: (error: any) => console.error('Error fetching shipping address:', error)
+      });
+    } else {
+      console.error('No distributor ID found');
+    }
+  }
+
   updateCart() {
     this.subtotal = this.cartItems.reduce((sum, item) => sum + (item.totalPrice * item.quantity), 0);
-    this.total = this.subtotal; // Assuming no additional fees or taxes
+    this.total = this.subtotal;
     this.totalQuantity = this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
     this.cartService.updateCart(this.cartItems);
   }

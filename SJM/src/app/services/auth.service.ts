@@ -104,6 +104,10 @@ export class AuthService {
     return localStorage.getItem('email');
   }
 
+  getDistributorId(): string | null {
+    return localStorage.getItem('distributor_id');
+  }
+
   private setSession(authResult: LoginResponse): void {
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('email', authResult.email);
