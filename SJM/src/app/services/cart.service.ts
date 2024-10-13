@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { ProductService } from './product.service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +11,7 @@ export class CartService {
 
     cartItemCount$ = this.cartItemCount.asObservable();
 
-    constructor() {
+    constructor(private productService: ProductService) {
         this.loadCart();
     }
 
@@ -28,8 +29,14 @@ export class CartService {
     }
 
     addToCart(item: any) {
-        this.cartItems.push(item);
-        this.saveCart();
+        this.productService.getPrice(item.product.prod_id, item.boxType).subscribe({
+            next: (priceData) => {
+                item.price = priceData.price;
+                this.cartItems.push(item);
+                this.saveCart();
+            },
+            error: (error) => console.error('Error fetching price:', error)
+        });
     }
 
     getCartItems() {

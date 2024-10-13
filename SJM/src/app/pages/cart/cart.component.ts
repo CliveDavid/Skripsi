@@ -69,6 +69,14 @@ export class CartComponent implements OnInit {
     return this.totalQuantity >= selectedMethod.capacity;
   }
 
+  removeItem(item: any) {
+    const index = this.cartItems.indexOf(item);
+    if (index > -1) {
+      this.cartItems.splice(index, 1);
+      this.updateCart();
+    }
+  }
+
   proceedToCheckout() {
     if (this.isValidOrder()) {
       console.log('Proceeding to checkout');

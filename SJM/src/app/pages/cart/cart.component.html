@@ -26,7 +26,7 @@
               <h5 class="card-title">Shipping Address</h5>
               <p>{{ shippingAddress }}</p>
               <button class="btn btn-sm btn-outline-primary">
-                <i class="fas fa-edit"></i> Edit
+                <i class="fas fa-edit"></i> Change
               </button>
             </div>
           </div>
@@ -47,7 +47,12 @@
               <p class="card-text"><small class="text-muted">Box Type: {{ item.boxType }}</small></p>
             </div>
             <div class="col-md-2">
-              <input type="number" class="form-control" [(ngModel)]="item.quantity" (change)="updateCart()">
+              <div class="input-group">
+                <input type="number" class="form-control" [(ngModel)]="item.quantity" (change)="updateCart()">
+                <button class="btn btn-outline-danger" (click)="removeItem(item)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
             </div>
             <div class="col-md-4 text-end">
               <p class="card-text mb-0">Price</p>
