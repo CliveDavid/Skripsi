@@ -4,6 +4,9 @@
     <p>{{ pageDescription }}</p>
   </div>
   <div class="product-grid">
-    <app-product-card *ngFor="let product of filteredProducts" [product]="product"></app-product-card>
+    <app-product-card *ngFor="let product of filteredProducts" [product]="product" (click)="openProductDetail(product)">
+    </app-product-card>
   </div>
 </div>
+<app-product-detail *ngIf="selectedProduct" [product]="selectedProduct" (close)="closeProductDetail()">
+</app-product-detail>

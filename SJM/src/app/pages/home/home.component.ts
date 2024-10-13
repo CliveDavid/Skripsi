@@ -5,11 +5,12 @@ import { ProductService, Product } from '../../services/product.service';
 import { ProductTypeService } from '../../services/product-type.service';
 import { takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
+import { ProductDetailComponent } from '../../components/product-detail/product-detail.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent],
+  imports: [CommonModule, ProductCardComponent, ProductDetailComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit {
   products: Product[] = [];
   placeholderImage = 'assets/images/placeholder-image.png';
   private unsubscribe$ = new Subject<void>();
+  selectedProduct: Product | null = null;
 
   constructor(
     private productService: ProductService,
@@ -86,5 +88,13 @@ export class HomeComponent implements OnInit {
         product.imageUrl = this.placeholderImage;
       }
     });
+  }
+
+  openProductDetail(product: Product) {
+    this.selectedProduct = product;
+  }
+
+  closeProductDetail() {
+    this.selectedProduct = null;
   }
 }

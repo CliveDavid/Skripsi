@@ -3,12 +3,13 @@ import { Router, RouterLink } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductTypeService } from '../../services/product-type.service';
 import { AuthService } from '../../services/auth.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../../constants';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
 
 interface ProductType {
   value: string;
@@ -26,6 +27,8 @@ export class HeaderComponent implements OnInit {
   productTypes: ProductType[] = [];
   selectedType: string = 'All Products';
   searchTerm: string = '';
+  cartItemCount: number = 0;
+  private cartSubscription!: Subscription;
 
   isLoggedIn$!: Observable<boolean>;
   baseUrl = BASE_URL;
@@ -35,13 +38,24 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private productTypeService: ProductTypeService,
-    private productService: ProductService
+    private productService: ProductService,
+    private cartService: CartService
   ) { }
 
   ngOnInit() {
     this.authService.refreshAuthState();
     this.isLoggedIn$ = this.authService.authState$;
     this.fetchProductTypes();
+
+    this.cartSubscription = this.cartService.cartItemCount$.subscribe(
+      count => this.cartItemCount = count
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
   }
 
   showNotifications() {

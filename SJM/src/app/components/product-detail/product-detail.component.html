@@ -1,0 +1,35 @@
+<div class="popup-overlay" (click)="closePopup()">
+  <div class="popup-content" (click)="$event.stopPropagation()">
+    <div class="product-details">
+      <div class="product-image">
+        <img [src]="product.imageUrl || placeholderImage" [alt]="product.prod_name">
+      </div>
+      <div class="product-info">
+        <h2 class="brand">SJM</h2>
+        <h1 class="product-name">{{ product.prod_name }}</h1>
+        <p class="product-description">{{ product.descr }}</p>
+        <p class="sku">SKU#: {{ product.prod_code }}</p>
+
+        <div class="price">
+          <span class="current-price">Rp {{ priceMap[selectedBoxType] | number }}</span>
+        </div>
+
+        <div class="box-type">
+          <label for="boxType">Box Type</label>
+          <select id="boxType" [(ngModel)]="selectedBoxType" (change)="updatePrice()">
+            <option *ngFor="let boxType of boxTypes" [value]="boxType.value">{{ boxType.label }}</option>
+          </select>
+        </div>
+
+        <div class="quantity-cart">
+          <div class="quantity">
+            <label for="quantity">Qty</label>
+            <input type="number" id="quantity" [(ngModel)]="quantity" (ngModelChange)="updateTotalPrice()" min="1">
+          </div>
+          <button class="add-to-cart" (click)="addToCart()" [disabled]="!selectedBoxType || quantity < 1">Add to
+            Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

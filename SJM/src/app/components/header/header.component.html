@@ -75,10 +75,11 @@
           aria-label="Search" [(ngModel)]="searchTerm" name="search">
       </form>
 
-      <a href="/cart" class="position-relative d-flex align-items-center ms-3 my-icon">
+      <a routerLink="/cart" class="position-relative d-flex align-items-center ms-3 my-icon">
         <i class="fas fa-shopping-cart my-icon-fa"></i>
         <span class="ms-2 fw-semibold my-icon-text">My Cart</span>
-        <span class="position-absolute translate-middle badge rounded-pill bg-danger icon-badge">9</span>
+        <span
+          class="position-absolute translate-middle badge rounded-pill bg-danger icon-badge">{{ cartItemCount }}</span>
       </a>
     </div>
   </div>

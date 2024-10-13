@@ -14,6 +14,11 @@ export interface Product {
     price?: number;
 }
 
+interface BoxType {
+    value: string;
+    label: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -35,5 +40,13 @@ export class ProductService {
 
     setSearchTerm(term: string) {
         this.searchTermSubject.next(term);
+    }
+
+    getBoxTypes(): Observable<BoxType[]> {
+        return this.http.post<BoxType[]>(`${BASE_URL}/boxType/get-box-type-kvp`, {});
+    }
+
+    getPrice(productId: number, boxTypeCode: string): Observable<{ price: number }> {
+        return this.http.post<{ price: number }>(`${BASE_URL}/price/get-price`, { productId, boxTypeCode });
     }
 }
