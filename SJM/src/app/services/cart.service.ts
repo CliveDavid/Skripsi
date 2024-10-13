@@ -10,11 +10,26 @@ export class CartService {
 
     cartItemCount$ = this.cartItemCount.asObservable();
 
-    constructor() { }
+    constructor() {
+        this.loadCart();
+    }
+
+    private loadCart() {
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            this.cartItems = JSON.parse(savedCart);
+            this.cartItemCount.next(this.cartItems.length);
+        }
+    }
+
+    private saveCart() {
+        localStorage.setItem('cart', JSON.stringify(this.cartItems));
+        this.cartItemCount.next(this.cartItems.length);
+    }
 
     addToCart(item: any) {
         this.cartItems.push(item);
-        this.cartItemCount.next(this.cartItems.length);
+        this.saveCart();
     }
 
     getCartItems() {
@@ -23,10 +38,15 @@ export class CartService {
 
     updateCart(items: any[]) {
         this.cartItems = items;
-        this.cartItemCount.next(this.cartItems.length);
+        this.saveCart();
     }
 
     getCartItemCount() {
         return this.cartItemCount$;
+    }
+
+    clearCart() {
+        this.cartItems = [];
+        this.saveCart();
     }
 }

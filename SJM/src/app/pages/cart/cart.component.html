@@ -1,41 +1,46 @@
 <div class="container mt-4">
-  <h1>Cart</h1>
+  <h1 class="cart-title mb-4">Cart</h1>
 
   <div class="row">
     <div class="col-md-8">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Delivery Method</h5>
-          <div *ngFor="let method of shippingMethods; let i = index">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" [id]="'shipping' + i" [value]="method.value"
-                [(ngModel)]="selectedShippingMethod">
-              <label class="form-check-label" [for]="'shipping' + i">
-                {{ method.label }}
-              </label>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Delivery Method</h5>
+              <div *ngFor="let method of shippingMethods; let i = index">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" [id]="'shipping' + i" [value]="method.value"
+                    [(ngModel)]="selectedShippingMethod">
+                  <label class="form-check-label" [for]="'shipping' + i">
+                    {{ method.label }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Shipping Address</h5>
+              <p>{{ shippingAddress }}</p>
+              <button class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-edit"></i> Edit
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Shipping Address</h5>
-          <p>{{ shippingAddress }}</p>
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="fas fa-edit"></i> Edit
-          </button>
-        </div>
-      </div>
-
-      <h2>My Products</h2>
+      <h2 class="product-list-title mb-3">Items in Cart</h2>
       <div class="card mb-3" *ngFor="let item of cartItems">
         <div class="card-body">
-          <div class="row">
+          <div class="row align-items-center">
             <div class="col-md-2">
               <img [src]="item.product.imageUrl || placeholderImage" [alt]="item.product.prod_name" class="img-fluid">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
               <h5 class="card-title">{{ item.product.prod_name }}</h5>
               <p class="card-text">{{ item.product.descr }}</p>
               <p class="card-text"><small class="text-muted">ITEM # {{ item.product.prod_code }}</small></p>
@@ -43,9 +48,9 @@
             <div class="col-md-2">
               <input type="number" class="form-control" [(ngModel)]="item.quantity" (change)="updateCart()">
             </div>
-            <div class="col-md-2">
-              <p class="card-text">Price</p>
-              <p class="card-text">Rp {{ item.totalPrice | number }} / each</p>
+            <div class="col-md-3 text-end">
+              <p class="card-text mb-0">Price</p>
+              <p class="card-text"><strong>Rp {{ item.totalPrice | number }}</strong> / each</p>
             </div>
           </div>
         </div>
