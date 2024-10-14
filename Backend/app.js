@@ -119,6 +119,7 @@ sequelize.authenticate()
         console.log('Database connection has been established successfully.');
         app.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
+            console.log(`Swagger documentation available at http://localhost:${port}/swagger`);
         });
     })
     .catch(err => {

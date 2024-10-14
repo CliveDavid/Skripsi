@@ -18,4 +18,5 @@ swaggerAutogen(outputFile, endpointsFiles, doc)
   })
   .catch((error) => {
     console.error('Error generating Swagger documentation:', error);
+    process.exit(1);
   });
