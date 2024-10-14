@@ -202,7 +202,7 @@ export class RegisterComponent {
       const districtText = this.districts.find(d => d.id === this.selectedDistrict)?.text || '';
       const subdistrictText = this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || '';
 
-      const fullAddress = `${provinceText}, ${cityText}, ${districtText}, ${subdistrictText}, ${this.selectedZipcode}`;
+      const fullAddress = `${subdistrictText}, ${districtText}, ${cityText}, ${provinceText}, ${this.selectedZipcode}`;
 
       const registrationData = {
         name: `${this.firstName} ${this.lastName}`.trim(),

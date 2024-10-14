@@ -1,0 +1,61 @@
+<div class="address-change-overlay" (click)="onOverlayClick($event)">
+  <div class="address-change-popup" role="dialog" aria-labelledby="address-change-title">
+    <button class="close-button" (click)="cancel()" aria-label="Close">×</button>
+    <h2 id="address-change-title">Change Address</h2>
+    <form (ngSubmit)="useThisAddress()" #addressForm="ngForm">
+      <div class="form-group">
+        <label for="province">Province</label>
+        <select id="province" [(ngModel)]="selectedProvince" (change)="onProvinceChange($event)" name="province"
+          required>
+          <option value="" disabled selected>Select Province</option>
+          <option *ngFor="let province of provinces" [value]="province.id">{{ province.text }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <select id="city" [(ngModel)]="selectedCity" (change)="onCityChange($event)" name="city"
+          [disabled]="!selectedProvince" required>
+          <option value="" disabled selected>Select City</option>
+          <option *ngFor="let city of cities" [value]="city.id">{{ city.text }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="district">District (Kecamatan)</label>
+        <select id="district" [(ngModel)]="selectedDistrict" (change)="onDistrictChange($event)" name="district"
+          [disabled]="!selectedCity" required>
+          <option value="" disabled selected>Select District</option>
+          <option *ngFor="let district of districts" [value]="district.id">{{ district.text }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="subdistrict">Sub-district (Kelurahan)</label>
+        <select id="subdistrict" [(ngModel)]="selectedSubdistrict" (change)="onSubdistrictChange($event)"
+          name="subdistrict" [disabled]="!selectedDistrict" required>
+          <option value="" disabled selected>Select Subdistrict</option>
+          <option *ngFor="let subdistrict of subdistricts" [value]="subdistrict.id">{{ subdistrict.text }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="zipcode">Zipcode</label>
+        <select id="zipcode" [(ngModel)]="selectedZipcode" name="zipcode" [disabled]="!selectedSubdistrict" required>
+          <option value="" disabled selected>Select Zipcode</option>
+          <option *ngFor="let zipcode of zipcodes" [value]="zipcode.text">{{ zipcode.text }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="address">Detailed Address</label>
+        <textarea id="address" name="address" [(ngModel)]="addr_details" placeholder="Enter full address details"
+          required></textarea>
+      </div>
+      <div *ngIf="formattedAddress" class="address-preview">
+        <strong>Address Preview:</strong>
+        <p>{{ formattedAddress }}</p>
+      </div>
+      <div *ngIf="errorMessage" class="error-message" role="alert">
+        {{ errorMessage }}
+      </div>
+      <button class="submit-btn" type="submit" [disabled]="!addressForm.form.valid || isAnyLoading()">Use This
+        Address</button>
+    </form>
+  </div>
+</div>

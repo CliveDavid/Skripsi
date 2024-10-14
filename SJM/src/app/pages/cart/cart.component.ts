@@ -6,6 +6,7 @@ import { ShipmentService } from '../../services/shipment.service';
 import { AddressService } from '../../services/address.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { AddressChangeComponent } from '../../components/address-change/address-change.component';
 
 interface ShipmentMethod {
   shipment_code: string;
@@ -20,7 +21,7 @@ interface AddressResponse {
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AddressChangeComponent],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
@@ -34,6 +35,7 @@ export class CartComponent implements OnInit {
   total = 0;
   placeholderImage = 'assets/images/placeholder-image.png';
   totalQuantity = 0;
+  showAddressChangePopup = false;
 
   constructor(
     private cartService: CartService,
@@ -100,6 +102,19 @@ export class CartComponent implements OnInit {
       this.cartItems.splice(index, 1);
       this.updateCart();
     }
+  }
+
+  openAddressChangePopup() {
+    this.showAddressChangePopup = true;
+  }
+
+  onAddressChanged(newAddress: string) {
+    this.shippingAddress = newAddress;
+    this.showAddressChangePopup = false;
+  }
+
+  onAddressChangeCancelled() {
+    this.showAddressChangePopup = false;
   }
 
   proceedToCheckout() {

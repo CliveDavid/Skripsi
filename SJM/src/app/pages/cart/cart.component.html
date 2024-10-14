@@ -25,7 +25,7 @@
             <div class="card-body">
               <h5 class="card-title">Shipping Address</h5>
               <p>{{ shippingAddress }}</p>
-              <button class="btn btn-sm btn-outline-primary">
+              <button class="btn btn-sm btn-outline-primary" (click)="openAddressChangePopup()">
                 <i class="fas fa-edit"></i> Change
               </button>
             </div>
@@ -88,3 +88,8 @@
     </div>
   </div>
 </div>
+
+<!-- Address Change Popup -->
+<app-address-change *ngIf="showAddressChangePopup" (addressChanged)="onAddressChanged($event)"
+  (cancelled)="onAddressChangeCancelled()">
+</app-address-change>

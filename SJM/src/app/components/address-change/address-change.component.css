@@ -1,0 +1,116 @@
+.address-change-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.address-change-popup {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+select,
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+select:disabled {
+  background-color: #f2f2f2;
+  cursor: not-allowed;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.loading-indicator {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.error-message {
+  color: #d9534f;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.address-preview {
+  margin-top: 1rem
+}
+
+:host ::ng-deep .submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: var(--text-color-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+:host ::ng-deep select,
+:host ::ng-deep textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--gray-color);
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: var(--input-bg);
+}
+
+:host ::ng-deep select:disabled {
+  background-color: #f2f2f2;
+  cursor: not-allowed;
+}
+
+:host ::ng-deep textarea {
+  resize: vertical;
+  min-height: 100px;
+}
