@@ -4,6 +4,7 @@ import { BASE_URL } from '../constants';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { CartService } from './cart.service';
 
 interface LoginResponse {
   message: string;
@@ -34,7 +35,11 @@ export class AuthService {
   private authStateSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
   authState$ = this.authStateSubject.asObservable();
 
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private cartService: CartService
+  ) { }
 
   login(email: string, password: string): Observable<AuthResult> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/distributor/login`, { email, password })
@@ -60,7 +65,6 @@ export class AuthService {
       map(() => ({ success: true })),
       catchError((error) => {
         console.error('Logout failed', error);
-        // Clear session even if server-side logout fails
         this.clearSession();
         this.authStateSubject.next(false);
         return of({ success: false, error: error.message });
@@ -123,6 +127,7 @@ export class AuthService {
     localStorage.removeItem('email');
     localStorage.removeItem('distributor_id');
     localStorage.removeItem('expires_at');
+    this.cartService.clearCart();
   }
 
   private handleError(error: HttpErrorResponse): Observable<AuthResult> {
