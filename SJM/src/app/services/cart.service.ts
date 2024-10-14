@@ -55,5 +55,6 @@ export class CartService {
     clearCart() {
         this.cartItems = [];
         this.saveCart();
+        localStorage.removeItem('cart');
     }
 }

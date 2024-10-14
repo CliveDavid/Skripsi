@@ -1,0 +1,66 @@
+.post-checkout-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.post-checkout-message {
+  max-width: 750px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-checkout-message h1 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.post-checkout-message p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.post-checkout-message h2 {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.post-checkout-message ul {
+  list-style: none;
+  padding: 0;
+  font-size: 1rem;
+  color: #34495e;
+}
+
+.post-checkout-message ul li {
+  margin-bottom: 0.8rem;
+}
+
+.post-checkout-message a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.post-checkout-message .home-btn {
+  background-color: #3498db;
+  color: #fff;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+}
+
+.post-checkout-message .home-btn:hover {
+  background-color: #2980b9;
+}
+
+.check-icon {
+  color: #28a745;
+  font-size: 6rem;
+  margin-bottom: 1rem;
+}

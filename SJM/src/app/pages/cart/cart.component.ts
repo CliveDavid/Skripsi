@@ -141,8 +141,10 @@ export class CartComponent implements OnInit {
   proceedToCheckout() {
     if (this.isValidOrder()) {
       if (this.authService.isLoggedIn()) {
-        console.log('Proceeding to checkout');
+        this.cartService.clearCart();
+        localStorage.removeItem('shippingAddress');
         // Add your checkout logic here
+        this.router.navigate(['/post-checkout']);
       } else {
         console.log('User not logged in. Redirecting to login page.');
         localStorage.setItem('redirectUrl', this.router.url);
