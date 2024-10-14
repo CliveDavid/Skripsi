@@ -9,7 +9,8 @@ export const routes: Routes = [
         component: MainLayoutComponent,
         children: [
             { path: '', loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent) },
-            { path: 'cart', loadComponent: () => import('./pages/cart/cart.component').then(m => m.CartComponent), canActivate: [AuthGuard] }
+            { path: 'cart', loadComponent: () => import('./pages/cart/cart.component').then(m => m.CartComponent) },
+            // { path: 'cart', loadComponent: () => import('./pages/cart/cart.component').then(m => m.CartComponent), canActivate: [AuthGuard] }
         ]
     },
     {

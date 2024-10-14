@@ -48,6 +48,7 @@ router.post('/logout', (req, res) => {
 //#endregion
 
 // Get all admins
+// @swagger
 router.post('/get-all', asyncHandler(async (req, res) => {
     const admins = await Admin.findAll({
         attributes: ['admin_id', 'username', 'is_active', 'createdAt', 'updatedAt']

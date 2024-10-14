@@ -26,8 +26,14 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe({
       next: (result) => {
         if (result.success) {
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-          this.router.navigateByUrl(returnUrl);
+          const redirectUrl = localStorage.getItem('redirectUrl');
+          if (redirectUrl) {
+            localStorage.removeItem('redirectUrl');
+            this.router.navigateByUrl(redirectUrl);
+          } else {
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+            this.router.navigateByUrl(returnUrl);
+          }
         } else {
           this.errorMessage = 'Login failed. Please try again.';
         }

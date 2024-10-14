@@ -5,6 +5,7 @@ import { CartService } from '../../services/cart.service';
 import { ShipmentService } from '../../services/shipment.service';
 import { AddressService } from '../../services/address.service';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 interface ShipmentMethod {
   shipment_code: string;
@@ -38,7 +39,8 @@ export class CartComponent implements OnInit {
     private cartService: CartService,
     private shipmentService: ShipmentService,
     private addressService: AddressService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -102,7 +104,14 @@ export class CartComponent implements OnInit {
 
   proceedToCheckout() {
     if (this.isValidOrder()) {
-      console.log('Proceeding to checkout');
+      if (this.authService.isLoggedIn()) {
+        console.log('Proceeding to checkout');
+        // Add your checkout logic here
+      } else {
+        console.log('User not logged in. Redirecting to login page.');
+        localStorage.setItem('redirectUrl', this.router.url);
+        this.router.navigate(['/login']);
+      }
     } else {
       console.log('Invalid order');
     }

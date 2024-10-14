@@ -5,9 +5,13 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize = require('./config/database');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger-output.json');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // CORS Options
 const corsOptions = {
