@@ -49,6 +49,11 @@ export class CartComponent implements OnInit {
     this.loadCartItems();
     this.loadShippingMethods();
     this.loadShippingAddress();
+
+    const savedAddress = localStorage.getItem('shippingAddress');
+    if (savedAddress) {
+      this.shippingAddress = savedAddress;
+    }
   }
 
   loadCartItems() {
@@ -110,6 +115,7 @@ export class CartComponent implements OnInit {
 
   onAddressChanged(newAddress: string) {
     this.shippingAddress = newAddress;
+    localStorage.setItem('shippingAddress', newAddress);
     this.showAddressChangePopup = false;
   }
 
