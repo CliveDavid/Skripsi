@@ -61,3 +61,17 @@
 .form-check-input:disabled+.form-check-label {
   color: #6c757d;
 }
+
+.addr-btn {
+  background-color: transparent;
+  border: none;
+  color: #0056b3;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0px;
+  font-weight: 500;
+}
+
+.addr-btn:hover {
+  text-decoration: underline;
+}

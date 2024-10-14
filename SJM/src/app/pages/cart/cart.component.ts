@@ -48,11 +48,13 @@ export class CartComponent implements OnInit {
   ngOnInit() {
     this.loadCartItems();
     this.loadShippingMethods();
-    this.loadShippingAddress();
 
     const savedAddress = localStorage.getItem('shippingAddress');
     if (savedAddress) {
       this.shippingAddress = savedAddress;
+    }
+    else {
+      this.loadShippingAddress();
     }
   }
 
@@ -76,19 +78,28 @@ export class CartComponent implements OnInit {
       this.addressService.getAddress(distributorId).subscribe({
         next: (response: AddressResponse) => {
           this.shippingAddress = response.address;
+          localStorage.setItem('shippingAddress', response.address);
         },
         error: (error: any) => console.error('Error fetching shipping address:', error)
       });
     } else {
       console.error('No distributor ID found');
     }
+
   }
 
   updateCart() {
-    this.subtotal = this.cartItems.reduce((sum, item) => sum + (item.totalPrice * item.quantity), 0);
+    this.subtotal = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     this.total = this.subtotal;
     this.totalQuantity = this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
     this.cartService.updateCart(this.cartItems);
+  }
+
+  onQuantityChange(item: any) {
+    if (item.quantity < 1) {
+      item.quantity = 1;
+    }
+    this.updateCart();
   }
 
   isValidOrder(): boolean {
@@ -111,6 +122,10 @@ export class CartComponent implements OnInit {
 
   openAddressChangePopup() {
     this.showAddressChangePopup = true;
+  }
+
+  useDefaultAddress() {
+    this.loadShippingAddress();
   }
 
   onAddressChanged(newAddress: string) {

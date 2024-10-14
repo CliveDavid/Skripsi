@@ -25,8 +25,12 @@
             <div class="card-body">
               <h5 class="card-title">Shipping Address</h5>
               <p>{{ shippingAddress }}</p>
-              <button class="btn btn-sm btn-outline-primary" (click)="openAddressChangePopup()">
-                <i class="fas fa-edit"></i> Change
+              <button class="addr-btn" (click)="openAddressChangePopup()">
+                <i class="fas fa-edit"></i>
+              </button>
+              or
+              <button class="addr-btn" (click)="useDefaultAddress()">
+                Use Default Address
               </button>
             </div>
           </div>
@@ -48,7 +52,8 @@
             </div>
             <div class="col-md-2">
               <div class="input-group">
-                <input type="number" class="form-control" [(ngModel)]="item.quantity" (change)="updateCart()">
+                <input type="number" class="form-control" [(ngModel)]="item.quantity" (change)="onQuantityChange(item)"
+                  min="1" max="1200">
                 <button class="btn btn-outline-danger" (click)="removeItem(item)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
@@ -56,8 +61,8 @@
             </div>
             <div class="col-md-4 text-end">
               <p class="card-text mb-0">Price</p>
-              <p class="card-text"><strong>Rp {{ item.totalPrice | number }}</strong> / each</p>
-              <p class="card-text"><strong>Rp {{ item.totalPrice * item.quantity | number }}</strong> total</p>
+              <p class="card-text"><strong>Rp {{ item.price | number }}</strong> / each</p>
+              <p class="card-text"><strong>Rp {{ item.price * item.quantity | number }}</strong> total</p>
             </div>
           </div>
         </div>
