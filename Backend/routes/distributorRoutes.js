@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Distributor, DistributorAddress, OTP } = require('../models');
+const { sequelize, Distributor, DistributorAddress, OTP } = require('../models');
 const { Op, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { sendMail } = require('../utils/email'); 

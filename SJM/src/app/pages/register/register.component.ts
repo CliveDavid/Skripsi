@@ -5,12 +5,14 @@ import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ADDR_URL, BASE_URL } from '../../constants';
+import { ToastrService } from '../../services/toastr.service';
+import { ToastrComponent } from '../../shared/toastr/toastr.component';
 
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ToastrComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -51,7 +53,7 @@ export class RegisterComponent {
   selectedSubdistrict: string = '';
   selectedZipcode: string = '';
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.loadProvinces();
@@ -213,17 +215,20 @@ export class RegisterComponent {
         addr_details: this.addr_details.trim(),
         city: cityText,
         province: provinceText,
-        zipcode: this.selectedZipcode
+        zipcode: this.selectedZipcode,
+        district: districtText,
+        subdistrict: subdistrictText
       };
 
       this.http.post(`${this.baseUrl}/distributor/register`, registrationData)
         .subscribe({
-          next: (response) => {
+          next: (response: any) => {
+            this.toastr.success(response.message || 'Registration successful. Please check your email for the OTP.');
             this.router.navigate(['/verify-otp'], { queryParams: { email: this.email } });
           },
           error: (error) => {
-            console.error('Registration failed', error);
-            // Handle error (show error message to user)
+            console.error('Registration error:', error);
+            this.toastr.error(error.error?.message || 'Registration failed. Please try again.');
           }
         });
     }

@@ -3,11 +3,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastrComponent } from '../../shared/toastr/toastr.component';
+import { ToastrService } from '../../services/toastr.service';
 
 @Component({
     selector: 'app-verify-otp',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [CommonModule, FormsModule, RouterModule, ToastrComponent],
     templateUrl: './verify-otp.component.html',
     styleUrls: ['./verify-otp.component.css']
 })
@@ -18,7 +20,7 @@ export class VerifyOtpComponent implements OnInit {
     isResendDisabled: boolean = false;
     resendCountdown: number = 0;
 
-    constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) { }
+    constructor(private authService: AuthService, private toastr: ToastrService, private route: ActivatedRoute, private router: Router) { }
 
     ngOnInit() {
         this.email = this.route.snapshot.queryParamMap.get('email') || '';
@@ -53,22 +55,22 @@ export class VerifyOtpComponent implements OnInit {
     onVerifyOtp() {
         this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
         if (this.otp.length !== 6) {
-            alert('Please enter a 6-digit OTP.');
+            this.toastr.error('Please enter a 6-digit OTP.');
             return;
         }
 
         this.authService.verifyOtp(this.email, this.otp).subscribe({
             next: (response) => {
                 if (response.message === "Account verified successfully") {
-                    alert('Account verified successfully. You can now log in.');
+                    this.toastr.success('Account verified successfully. You can now log in.');
                     this.router.navigate(['/login']);
                 } else {
-                    alert('Invalid OTP, please try again.');
+                    this.toastr.error('Invalid OTP, please try again.');
                 }
             },
             error: (error) => {
                 console.error('OTP verification failed', error);
-                alert(error.error.message || 'OTP verification failed. Please try again.');
+                this.toastr.error(error.error.message || 'OTP verification failed. Please try again.');
             }
         });
     }
@@ -82,12 +84,12 @@ export class VerifyOtpComponent implements OnInit {
 
         this.authService.resendOtp(this.email).subscribe({
             next: (response) => {
-                alert(response.message);
+                this.toastr.error(response.message);
                 this.startResendCooldown();
             },
             error: (error) => {
                 console.error('Failed to resend OTP', error);
-                alert(error.error.message || 'Failed to resend OTP. Please try again.');
+                this.toastr.error(error.error.message || 'Failed to resend OTP. Please try again.');
                 this.isResendDisabled = false;
             }
         });
