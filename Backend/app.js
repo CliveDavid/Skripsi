@@ -104,13 +104,18 @@ app.use('/orderAddress', orderAddressRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {
-    res.status(404).send({ message: 'Route not found' });
+    res.status(404).send({
+        message: 'Route not found'
+    });
 });
 
 // Error handler middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send({ message: 'Something broke!', error: err.message});
+    res.status(500).send({
+        message: 'Something broke!',
+        error: err.message
+    });
 });
 
 // Start the server

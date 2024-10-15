@@ -1,0 +1,114 @@
+<div class="edit-profile-container">
+  <h2>Edit Profile</h2>
+  <div class="profile-sections">
+    <div class="personal-info">
+      <h3>Personal Information</h3>
+      <form #profileForm="ngForm">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="firstName">First Name</label>
+            <input type="text" class="form-control" id="firstName" [(ngModel)]="firstName" name="firstName" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="lastName">Last Name</label>
+            <input type="text" class="form-control" id="lastName" [(ngModel)]="lastName" name="lastName" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" id="email" [(ngModel)]="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input type="password" class="form-control" id="currentPassword" [(ngModel)]="currentPassword"
+            name="currentPassword">
+        </div>
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" class="form-control" id="newPassword" [(ngModel)]="newPassword" name="newPassword">
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm New Password</label>
+          <input type="password" class="form-control" id="confirmPassword" [(ngModel)]="confirmPassword"
+            name="confirmPassword">
+        </div>
+      </form>
+    </div>
+    <div class="address-info">
+      <h3>Address Information</h3>
+      <form #addressForm="ngForm">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="province">Province</label>
+            <select class="form-control" id="province" [(ngModel)]="selectedProvince" name="province"
+              (change)="onProvinceChange($event)" required>
+              <option value="">Select Province</option>
+              <option *ngFor="let province of provinces" [value]="province.id">{{province.text}}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="city">City</label>
+            <select class="form-control" id="city" [(ngModel)]="selectedCity" name="city"
+              (change)="onCityChange($event)" [disabled]="!selectedProvince" required>
+              <option value="">Select City</option>
+              <option *ngFor="let city of cities" [value]="city.id">{{city.text}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="district">District (Kecamatan)</label>
+            <select class="form-control" id="district" [(ngModel)]="selectedDistrict" name="district"
+              (change)="onDistrictChange($event)" [disabled]="!selectedCity" required>
+              <option value="">Select District</option>
+              <option *ngFor="let district of districts" [value]="district.id">{{district.text}}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="subdistrict">Sub-district (Kelurahan)</label>
+            <select class="form-control" id="subdistrict" [(ngModel)]="selectedSubdistrict" name="subdistrict"
+              (change)="onSubdistrictChange($event)" [disabled]="!selectedDistrict" required>
+              <option value="">Select Subdistrict</option>
+              <option *ngFor="let subdistrict of subdistricts" [value]="subdistrict.id">{{subdistrict.text}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="zipcode">Zipcode</label>
+            <select class="form-control" id="zipcode" [(ngModel)]="selectedZipcode" name="zipcode"
+              [disabled]="!selectedSubdistrict" required>
+              <option value="">Select Zipcode</option>
+              <option *ngFor="let zipcode of zipcodes" [value]="zipcode.text">{{zipcode.text}}</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="phone">Phone</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">+62</span>
+              </div>
+              <input type="tel" class="form-control" id="phone" [(ngModel)]="phoneNumber" name="phone"
+                (input)="onPhoneInput($event)" required>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="addr_details">Detailed Address</label>
+          <textarea class="form-control" id="addr_details" [(ngModel)]="addr_details" name="addr_details" rows="3"
+            required></textarea>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="action-buttons">
+    <button class="btn btn-danger-text fw-bold" (click)="deleteAccount()">
+      <i class="fas fa-times"></i> Delete Account
+    </button>
+    <div class="right-buttons">
+      <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveChanges()"
+        [disabled]="!profileForm.form.valid || !addressForm.form.valid">Save Changes</button>
+    </div>
+  </div>
+</div>

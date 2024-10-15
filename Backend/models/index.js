@@ -15,6 +15,8 @@ const Price = require('./price')(sequelize, Sequelize.DataTypes);
 const Invoice = require('./invoice')(sequelize, Sequelize.DataTypes);
 const ShipmentMethod = require('./shipment_method')(sequelize, Sequelize.DataTypes);
 const OrderAddress = require('./order_address')(sequelize, Sequelize.DataTypes);
+const DistributorAddress = require('./distributor_address')(sequelize, Sequelize.DataTypes);
+const OTP = require('./otp')(sequelize, Sequelize.DataTypes);
 
 // Relation (foreign keys) 
 Order.belongsTo(Distributor, { foreignKey: 'distributor_id' });
@@ -45,6 +47,12 @@ Order.hasMany(OrderAddress, { foreignKey: 'order_id', as: 'addresses' });
 
 OrderAddress.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });   
 
+Distributor.hasMany(OTP, { foreignKey: 'distributor_id' });
+
+OTP.belongsTo(Distributor, { foreignKey: 'distributor_id' });
+
+Distributor.belongsTo(DistributorAddress, { foreignKey: 'address_id' });
+
 module.exports = {
     sequelize,
     Sequelize,
@@ -60,5 +68,7 @@ module.exports = {
     Admin,
     AdminNotif,
     Price,
-    OrderAddress
+    OrderAddress,
+    DistributorAddress,
+    OTP
 };
