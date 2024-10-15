@@ -25,6 +25,7 @@ interface AuthResult {
   success: boolean;
   email?: string;
   error?: string;
+  message?: string;
 }
 
 @Injectable({
@@ -48,11 +49,17 @@ export class AuthService {
           if (response.message === 'Logged in successfully') {
             this.setSession(response);
             this.authStateSubject.next(true);
-            return { success: true, email: response.email };
+            return { success: true, email: response.email, message: response.message };
           }
-          return { success: false };
+          return { success: false, message: response.message };
         }),
-        catchError(this.handleError)
+        catchError((error: HttpErrorResponse) => {
+          console.error('An error occurred:', error);
+          return of({
+            success: false,
+            message: error.error.message || 'An unknown error occurred'
+          });
+        })
       );
   }
 

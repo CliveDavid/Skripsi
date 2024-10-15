@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router'; // Import Router
+import { ToastrComponent } from '../../shared/toastr/toastr.component';
+import { ToastrService } from '../../services/toastr.service';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ToastrComponent],
   providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
@@ -20,7 +22,12 @@ export class LoginComponent {
   showPassword: boolean = false;
   errorMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) { }
 
   onSubmit() {
     this.authService.login(this.email, this.password).subscribe({
@@ -35,12 +42,15 @@ export class LoginComponent {
             this.router.navigateByUrl(returnUrl);
           }
         } else {
-          this.errorMessage = 'Login failed. Please try again.';
+          this.errorMessage = result.message || 'Login failed. Please try again.';
+          this.toastr.error(this.errorMessage);
         }
       },
       error: (error) => {
         console.error('Login error', error);
-        this.errorMessage = error.error || 'An unknown error occurred';
+        // Use the message from the error response
+        this.errorMessage = error.error?.message || 'An unknown error occurred';
+        this.toastr.error(this.errorMessage);
       }
     });
   }
