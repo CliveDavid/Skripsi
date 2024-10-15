@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Distributor } = require('../models');
+const { Distributor, DistributorAddress, OTP } = require('../models');
 const { Op, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { sendMail } = require('../utils/email'); 
@@ -127,38 +127,41 @@ router.post('/create', asyncHandler(async (req, res) => {
         city,
         province,
         zipcode,
+        district,
+        subdistrict,
         is_active
     } = req.body;
         
-    const existingDistributor = await Distributor.findOne({
-        where: {
-            email
-        }
-    });
+    const existingDistributor = await Distributor.findOne({ where: { email } });
     if (existingDistributor) {
-        return res.status(400).json({
-            message: 'Email already exists'
-        });
+        return res.status(400).json({ message: 'Email already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newDistributor = await Distributor.create({
-        name,
-        email,
-        password: hashedPassword,
-        phone,
-        address,
-        addr_details,
-        city,
-        province,
-        zipcode,
-        is_active
+    const result = await sequelize.transaction(async (t) => {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newDistributor = await Distributor.create({
+            name,
+            email,
+            password: hashedPassword,
+            phone,
+            is_active
+        }, { transaction: t });
+
+        await DistributorAddress.create({
+            distributor_id: newDistributor.distributor_id,
+            address,
+            addr_details,
+            city,
+            province,
+            zipcode,
+            district,
+            subdistrict
+        }, { transaction: t });
+
+        return newDistributor;
     });
 
-    const {
-        password: _,
-        ...distributorWithoutPassword
-    } = newDistributor.toJSON();
+    const { password: _, ...distributorWithoutPassword } = result.toJSON();
     res.status(201).json(distributorWithoutPassword);
 }));
 
@@ -175,37 +178,33 @@ router.post('/update', asyncHandler(async (req, res) => {
         city,
         province,
         zipcode,
+        district,
+        subdistrict,
         is_active
     } = req.body;
-    const distributor = await Distributor.findByPk(distributor_id);
-    if (!distributor) {
-        return res.status(404).json({
-            message: 'Distributor not found'
-        });
-    }
 
-    const updates = {
-        name,
-        email,
-        phone,
-        address,
-        addr_details,
-        city,
-        province,
-        zipcode,
-        is_active
-    };
+    const result = await sequelize.transaction(async (t) => {
+        const distributor = await Distributor.findByPk(distributor_id, { transaction: t });
+        if (!distributor) {
+            throw new Error('Distributor not found');
+        }
 
-    if (password) {
-        updates.password = await bcrypt.hash(password, 10);
-    }
+        const updates = { name, email, phone, is_active };
+        if (password) {
+            updates.password = await bcrypt.hash(password, 10);
+        }
 
-    await distributor.update(updates);
+        await distributor.update(updates, { transaction: t });
 
-    const {
-        password: _,
-        ...updatedDistributorWithoutPassword
-    } = distributor.toJSON();
+        await DistributorAddress.update(
+            { address, addr_details, city, province, zipcode, district, subdistrict },
+            { where: { distributor_id }, transaction: t }
+        );
+
+        return distributor;
+    });
+
+    const { password: _, ...updatedDistributorWithoutPassword } = result.toJSON();
     res.json(updatedDistributorWithoutPassword);
 }));
 
@@ -213,46 +212,35 @@ router.post('/update', asyncHandler(async (req, res) => {
 // Register
 router.post('/register', asyncHandler(async (req, res) => {
     const {
-        name,
-        email,
-        password,
-        phone,
-        address,
-        addr_details,
-        city,
-        province,
-        zipcode
+        name, email, password, phone,
+        address, addr_details, city, province, zipcode, district, subdistrict
     } = req.body;
         
-    // Check if the email already exists
-    const existingDistributor = await Distributor.findOne({
-        where: { email }
-    });
+    const existingDistributor = await Distributor.findOne({ where: { email } });
     if (existingDistributor) {
         return res.status(400).json({ message: 'Email already exists' });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Generate OTP and set expiration time (e.g., 15 minutes from now)
     const otp = generateOTP();
-    const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // OTP expires in 15 minutes
+    const otpExpiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Create a new distributor 
-    const newDistributor = await Distributor.create({
-        name,
-        email,
-        password: hashedPassword,
-        phone,
-        address,
-        addr_details,
-        city,
-        province,
-        zipcode,
-        otp,
-        otp_expires_at: otpExpiresAt,
-        is_active: false
+    const result = await sequelize.transaction(async (t) => {
+        const newDistributor = await Distributor.create({
+            name, email, password: hashedPassword, phone, is_active: false
+        }, { transaction: t });
+
+        await DistributorAddress.create({
+            distributor_id: newDistributor.distributor_id,
+            address, addr_details, city, province, zipcode, district, subdistrict
+        }, { transaction: t });
+
+        await OTP.create({
+            distributor_id: newDistributor.distributor_id,
+            otp, otp_expires_at: otpExpiresAt
+        }, { transaction: t });
+
+        return newDistributor;
     });
 
     // Send OTP via email
@@ -272,7 +260,6 @@ router.post('/register', asyncHandler(async (req, res) => {
 router.post('/resend-otp', asyncHandler(async (req, res) => {
     const { email } = req.body;
 
-    // Find the distributor by email
     const distributor = await Distributor.findOne({ where: { email } });
 
     if (!distributor) {
@@ -288,7 +275,6 @@ router.post('/resend-otp', asyncHandler(async (req, res) => {
     const newOtp = generateOTP();
     const newOtpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // New OTP expires in 15 minutes
 
-    // Update distributor with new OTP and expiration time
     await distributor.update({
         otp: newOtp,
         otp_expires_at: newOtpExpiresAt
@@ -310,19 +296,23 @@ router.post('/resend-otp', asyncHandler(async (req, res) => {
 router.post('/verify-otp', asyncHandler(async (req, res) => {
     const { email, otp } = req.body;
 
-    // Find the user by email
     const distributor = await Distributor.findOne({ where: { email } });
 
     if (!distributor) {
         return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Check if OTP matches and is not expired
-    if (distributor.otp === otp && new Date() < distributor.otp_expires_at) {
-        distributor.is_active = true;
-        distributor.otp = null; // Clear OTP after successful verification
-        distributor.otp_expires_at = null; // Clear expiration time
-        await distributor.save();
+    const otpRecord = await OTP.findOne({
+        where: { 
+            distributor_id: distributor.distributor_id,
+            otp: otp,
+            otp_expires_at: { [Op.gt]: new Date() }
+        }
+    });
+
+    if (otpRecord) {
+        await Distributor.update({ is_active: true }, { where: { distributor_id: distributor.distributor_id } });
+        await OTP.destroy({ where: { distributor_id: distributor.distributor_id } });
 
         return res.status(200).json({ success: true, message: 'Account verified successfully' });
     } else {
@@ -343,17 +333,22 @@ router.post('/get-address', asyncHandler(async (req, res) => {
     }
 
     const distributor = await Distributor.findByPk(distributor_id, {
-        attributes: ['address', 'addr_details', 'city', 'province', 'zipcode']
+        include: [{
+            model: DistributorAddress,
+            attributes: ['address', 'addr_details', 'city', 'province', 'zipcode', 'district', 'subdistrict']
+        }]
     });
 
-    if (!distributor) {
-        return res.status(404).json({ message: 'Distributor not found' });
+    if (!distributor || !distributor.distributor_address) {
+        return res.status(404).json({ message: 'Distributor or address not found' });
     }
 
-    const fullAddress = `${distributor.address}${distributor.addr_details ? ', ' + distributor.addr_details : ''}, ${distributor.city}, ${distributor.province} ${distributor.zipcode}`;
+    const addr = distributor.distributor_address;
+    const fullAddress = `${addr.address}${addr.addr_details ? ', ' + addr.addr_details : ''}, ${addr.subdistrict}, ${addr.district}, ${addr.city}, ${addr.province} ${addr.zipcode}`;
 
     res.json({ address: fullAddress });
 }));
+
   
 
 
