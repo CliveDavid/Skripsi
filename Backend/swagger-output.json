@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "My API",
-    "description": "Description of my API",
+    "title": "SJM API",
+    "description": "All APIs used in SJM Program",
     "version": "1.0.0"
   },
   "host": "localhost:3000",
@@ -38,7 +38,10 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": [
+          "Admin"
+        ]
       }
     },
     "/admin/logout": {
@@ -51,7 +54,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Admin"
+        ]
       }
     },
     "/admin/get-all": {
@@ -81,7 +87,10 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": [
+          "Admin"
+        ]
       }
     },
     "/admin/get-by-id": {
@@ -117,7 +126,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Admin"
+        ]
       }
     },
     "/admin/create": {
@@ -153,7 +165,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Admin"
+        ]
       }
     },
     "/admin/update": {
@@ -192,7 +207,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Admin"
+        ]
       }
     },
     "/distributor/login": {
@@ -222,7 +240,10 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/logout": {
@@ -235,7 +256,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/get-all": {
@@ -265,7 +289,10 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/search": {
@@ -298,7 +325,10 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/get-by-id": {
@@ -334,7 +364,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/create": {
@@ -374,6 +407,12 @@
                 "zipcode": {
                   "example": "any"
                 },
+                "district": {
+                  "example": "any"
+                },
+                "subdistrict": {
+                  "example": "any"
+                },
                 "is_active": {
                   "example": "any"
                 }
@@ -394,7 +433,10 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/update": {
@@ -437,6 +479,12 @@
                 "zipcode": {
                   "example": "any"
                 },
+                "district": {
+                  "example": "any"
+                },
+                "subdistrict": {
+                  "example": "any"
+                },
                 "is_active": {
                   "example": "any"
                 }
@@ -450,11 +498,11 @@
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/register": {
@@ -493,6 +541,12 @@
                 },
                 "zipcode": {
                   "example": "any"
+                },
+                "district": {
+                  "example": "any"
+                },
+                "subdistrict": {
+                  "example": "any"
                 }
               }
             }
@@ -511,7 +565,10 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/resend-otp": {
@@ -547,7 +604,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/verify-otp": {
@@ -586,7 +646,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/distributor/get-address": {
@@ -625,7 +688,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Distributor"
+        ]
       }
     },
     "/product/get-all": {
@@ -635,7 +701,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/product/get-all-active": {
@@ -645,7 +714,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/product/get-by-id": {
@@ -672,7 +744,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/product/create": {
@@ -720,7 +795,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/product/update": {
@@ -771,7 +849,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/product/image": {
@@ -791,7 +872,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/product/product-image/{id}": {
@@ -812,7 +896,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/product/get-product-kvp": {
@@ -822,7 +909,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Product"
+        ]
       }
     },
     "/productType/get-product-type-kvp": {
@@ -832,7 +922,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "ProductType"
+        ]
       }
     },
     "/boxType/get-box-type-kvp": {
@@ -842,7 +935,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "BoxType"
+        ]
       }
     },
     "/orders/get-all": {
@@ -852,7 +948,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Orders"
+        ]
       }
     },
     "/orders/get-by-id": {
@@ -879,7 +978,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Orders"
+        ]
       }
     },
     "/orders/create": {
@@ -927,7 +1029,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Orders"
+        ]
       }
     },
     "/orders/update": {
@@ -969,7 +1074,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Orders"
+        ]
       }
     },
     "/orders/get-by-distributor": {
@@ -993,7 +1101,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Orders"
+        ]
       }
     },
     "/orders/get-by-status": {
@@ -1017,7 +1128,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Orders"
+        ]
       }
     },
     "/shipmentMethods/get-shipment-method-kvp": {
@@ -1027,7 +1141,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "ShipmentMethods"
+        ]
       }
     },
     "/shipmentMethods/get-all": {
@@ -1037,7 +1154,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "ShipmentMethods"
+        ]
       }
     },
     "/price/get-price": {
@@ -1067,7 +1187,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Price"
+        ]
       }
     },
     "/invoices/get-all": {
@@ -1077,7 +1200,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Invoices"
+        ]
       }
     },
     "/invoices/get-by-id": {
@@ -1104,7 +1230,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Invoices"
+        ]
       }
     },
     "/invoices/get-by-order-id": {
@@ -1131,7 +1260,10 @@
           "400": {
             "description": "Bad Request"
           }
-        }
+        },
+        "tags": [
+          "Invoices"
+        ]
       }
     },
     "/invoices/create": {
@@ -1176,7 +1308,10 @@
           "400": {
             "description": "Bad Request"
           }
-        }
+        },
+        "tags": [
+          "Invoices"
+        ]
       }
     },
     "/invoices/generate-pdf": {
@@ -1206,7 +1341,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Invoices"
+        ]
       }
     },
     "/invoices/send-invoice-email": {
@@ -1233,7 +1371,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Invoices"
+        ]
       }
     },
     "/orderAddress/create": {
@@ -1269,7 +1410,10 @@
           "201": {
             "description": "Created"
           }
-        }
+        },
+        "tags": [
+          "OrderAddress"
+        ]
       }
     },
     "/orderAddress/get-order-addresses": {
@@ -1314,8 +1458,43 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "OrderAddress"
+        ]
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Admin"
+    },
+    {
+      "name": "Distributor"
+    },
+    {
+      "name": "Product"
+    },
+    {
+      "name": "ProductType"
+    },
+    {
+      "name": "BoxType"
+    },
+    {
+      "name": "Orders"
+    },
+    {
+      "name": "ShipmentMethods"
+    },
+    {
+      "name": "Price"
+    },
+    {
+      "name": "Invoices"
+    },
+    {
+      "name": "OrderAddress"
+    }
+  ]
 }
