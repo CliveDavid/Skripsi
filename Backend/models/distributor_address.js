@@ -6,6 +6,14 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true
         },
+        distributor_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'distributor',
+                key: 'distributor_id'
+            }
+        },
         address: {
             type: DataTypes.TEXT,
             allowNull: false

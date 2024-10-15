@@ -275,7 +275,9 @@ router.post('/resend-otp', asyncHandler(async (req, res) => {
     const newOtp = generateOTP();
     const newOtpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // New OTP expires in 15 minutes
 
-    await distributor.update({
+    // Update or create OTP record
+    await OTP.upsert({
+        distributor_id: distributor.distributor_id,
         otp: newOtp,
         otp_expires_at: newOtpExpiresAt
     });

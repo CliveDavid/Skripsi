@@ -40,18 +40,16 @@ Order.belongsTo(ShipmentMethod, { foreignKey: 'shipment_code', targetKey: 'shipm
 AdminNotif.belongsTo(Admin, { foreignKey: 'admin_id' });
 
 Price.belongsTo(ProductType, { foreignKey: 'prod_type_code' });
-
 Price.belongsTo(BoxType, { foreignKey: 'box_type_code' });
 
 Order.hasMany(OrderAddress, { foreignKey: 'order_id', as: 'addresses' });  
-
 OrderAddress.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });   
 
 Distributor.hasMany(OTP, { foreignKey: 'distributor_id' });
-
 OTP.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 
-Distributor.belongsTo(DistributorAddress, { foreignKey: 'address_id' });
+Distributor.hasOne(DistributorAddress, { foreignKey: 'distributor_id' });
+DistributorAddress.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 
 module.exports = {
     sequelize,

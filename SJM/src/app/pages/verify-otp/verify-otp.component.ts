@@ -84,7 +84,7 @@ export class VerifyOtpComponent implements OnInit {
 
         this.authService.resendOtp(this.email).subscribe({
             next: (response) => {
-                this.toastr.error(response.message);
+                this.toastr.success(response.message);
                 this.startResendCooldown();
             },
             error: (error) => {
