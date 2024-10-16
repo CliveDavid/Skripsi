@@ -5,6 +5,11 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true
         },
+        order_number: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
+        },
         distributor_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -34,11 +39,23 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         notes: {
-            type: DataTypes.TEXT, 
+            type: DataTypes.TEXT,
             allowNull: true
         }
     }, {
-        tableName: 'order'
+        tableName: 'order',
+        hooks: {
+            beforeValidate: (order) => {
+                // Auto-generate order number (e.g., format: ORDER-20240928-001)
+                if (!order.order_number) {
+                    const date = new Date(order.order_dt);
+                    const orderNumber = `ORDER-${date.getFullYear()}${(date.getMonth() + 1)
+                        .toString()
+                        .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+                    order.order_number = orderNumber;
+                }
+            }
+        }
     });
 
     Order.associate = (models) => {
