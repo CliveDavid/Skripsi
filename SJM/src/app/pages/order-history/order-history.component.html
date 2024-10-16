@@ -1,1 +1,39 @@
-<p>order-history works!</p>
+<!-- order-history.component.html -->
+<div class="order-history-container">
+  <div class="order-list">
+    <h1 class="fw-bold">Shipments</h1>
+
+    <div class="tabs">
+      <button [class.active]="activeTab === 'upcoming'" (click)="setActiveTab('upcoming')">UPCOMING</button>
+      <button [class.active]="activeTab === 'history'" (click)="setActiveTab('history')">HISTORY</button>
+    </div>
+
+    <div class="shipments-list" *ngIf="activeTab === 'history'">
+      <div class="shipment-item" *ngFor="let shipment of shipments" (click)="selectShipment(shipment)"
+        [class.selected]="selectedShipment?.id === shipment.id">
+        <div class="shipment-info">
+          <h3>Delivered on {{ shipment.date }}</h3>
+          <p>{{ shipment.items }} items • ${{ shipment.total.toFixed(2) }}</p>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+
+    <div class="support-section">
+      <h2>Got questions? Message Support</h2>
+      <p>Our friendly support team is here for questions about billing, shipping, and account changes.</p>
+      <p class="response-time">24 hour response time</p>
+      <button class="support-button">MESSAGE SUPPORT</button>
+    </div>
+  </div>
+
+  <div class="order-details" *ngIf="selectedShipment">
+    <h2>Order Details</h2>
+    <p><strong>Date:</strong> {{ selectedShipment.date }}</p>
+    <p><strong>Total:</strong> ${{ selectedShipment.total.toFixed(2) }}</p>
+    <h3>Items:</h3>
+    <ul>
+      <li *ngFor="let item of selectedShipment.details">{{ item }}</li>
+    </ul>
+  </div>
+</div>

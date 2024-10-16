@@ -1,0 +1,138 @@
+/* order-history.component.css */
+.order-history-container {
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+}
+
+.order-list {
+  flex: 1;
+  margin-right: 20px;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #666;
+}
+
+.tabs button.active {
+  color: #000;
+  border-bottom: 2px solid #000;
+  font-weight: bold;
+}
+
+.shipments-list {
+  margin-bottom: 40px;
+}
+
+.shipment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.shipment-item:hover,
+.shipment-item.selected {
+  background-color: #f0f0f0;
+}
+
+.shipment-info h3 {
+  font-size: 16px;
+  margin: 0 0 5px 0;
+}
+
+.shipment-info p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.chevron {
+  font-size: 24px;
+  color: #666;
+}
+
+.support-section {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.support-section h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.support-section p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.response-time {
+  font-weight: bold;
+}
+
+.support-button {
+  background-color: #fff;
+  border: 1px solid #000;
+  color: #000;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.support-button:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.order-details {
+  flex: 1;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.order-details h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.order-details p {
+  margin-bottom: 10px;
+}
+
+.order-details ul {
+  padding-left: 20px;
+}
+
+.order-details li {
+  margin-bottom: 5px;
+}

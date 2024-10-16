@@ -37,8 +37,8 @@
 }
 
 .tabs button.active {
-  color: #3498db;
-  border-bottom: 2px solid #3498db;
+  color: black;
+  border-bottom: 2px solid black;
 }
 
 .profile-sections {
