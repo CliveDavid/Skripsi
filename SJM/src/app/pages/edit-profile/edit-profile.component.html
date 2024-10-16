@@ -1,8 +1,17 @@
 <div class="edit-profile-container">
-  <h2>Edit Profile</h2>
-  <div class="profile-sections">
+  <div class="header">
+    <i class="fas fa-arrow-left"></i>
+    <h2 class="fw-bold">Edit Profile</h2>
+  </div>
+
+  <div class="tabs">
+    <button [class.active]="activeTab === 'personal'" (click)="setActiveTab('personal')">Personal Information</button>
+    <button [class.active]="activeTab === 'address'" (click)="setActiveTab('address')">Address Information</button>
+  </div>
+
+  <div class="profile-sections"
+    [ngClass]="{'personal-active': activeTab === 'personal', 'address-active': activeTab === 'address'}">
     <div class="personal-info">
-      <h3>Personal Information</h3>
       <form #profileForm="ngForm">
         <div class="form-row">
           <div class="form-group col-md-6">
@@ -32,10 +41,14 @@
           <input type="password" class="form-control" id="confirmPassword" [(ngModel)]="confirmPassword"
             name="confirmPassword">
         </div>
+        <div class="form-group">
+          <button class="btn btn-danger-text fw-bold" (click)="deleteAccount()">
+            <i class="fas fa-times"></i> Delete Account
+          </button>
+        </div>
       </form>
     </div>
     <div class="address-info">
-      <h3>Address Information</h3>
       <form #addressForm="ngForm">
         <div class="form-row">
           <div class="form-group col-md-6">
@@ -84,7 +97,7 @@
           </div>
           <div class="form-group col-md-6">
             <label for="phone">Phone</label>
-            <div class="input-group">
+            <div class="input-group phone-input">
               <div class="input-group-prepend">
                 <span class="input-group-text">+62</span>
               </div>
@@ -102,9 +115,6 @@
     </div>
   </div>
   <div class="action-buttons">
-    <button class="btn btn-danger-text fw-bold" (click)="deleteAccount()">
-      <i class="fas fa-times"></i> Delete Account
-    </button>
     <div class="right-buttons">
       <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
       <button class="btn btn-primary" (click)="saveChanges()"

@@ -16,6 +16,8 @@ export class EditProfileComponent implements OnInit {
     addrApi = ADDR_URL;
     baseUrl = BASE_URL;
 
+    activeTab: 'personal' | 'address' = 'personal';
+
     firstName: string = '';
     lastName: string = '';
     email: string = '';
@@ -48,6 +50,10 @@ export class EditProfileComponent implements OnInit {
     ngOnInit() {
         this.loadUserData();
         this.loadProvinces();
+    }
+
+    setActiveTab(tab: 'personal' | 'address') {
+        this.activeTab = tab;
     }
 
     loadUserData() {
