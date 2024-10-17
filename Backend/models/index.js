@@ -52,8 +52,8 @@ OTP.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 Distributor.hasOne(DistributorAddress, { foreignKey: 'distributor_id' });
 DistributorAddress.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 
-Order.hasMany(OrderStatusHistory, { foreignKey: 'order_id', as: 'statusHistory' });
-OrderStatusHistory.belongsTo(Order, { foreignKey: 'order_id' });
+Order.hasMany(OrderStatusHistory, { foreignKey: 'order_id' });
+OrderStatusHistory.belongsTo(Order, { foreignKey: 'order_id', as: 'order'});
 
 module.exports = {
     sequelize,

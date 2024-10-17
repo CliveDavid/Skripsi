@@ -1,4 +1,3 @@
-<!-- order-history.component.html -->
 <div class="order-history-container">
   <div class="order-list">
     <h1 class="fw-bold">Shipments</h1>
@@ -8,12 +7,11 @@
       <button [class.active]="activeTab === 'history'" (click)="setActiveTab('history')">HISTORY</button>
     </div>
 
-    <div class="shipments-list" *ngIf="activeTab === 'history'">
-      <div class="shipment-item" *ngFor="let shipment of shipments" (click)="selectShipment(shipment)"
-        [class.selected]="selectedShipment?.id === shipment.id">
+    <div class="shipments-list">
+      <div class="shipment-item" *ngFor="let order of displayedOrders" (click)="viewOrderDetails(order.id)">
         <div class="shipment-info">
-          <h3>Delivered on {{ shipment.date }}</h3>
-          <p>{{ shipment.items }} items • ${{ shipment.total.toFixed(2) }}</p>
+          <h3>{{ order.status }} on {{ order.date }}</h3>
+          <p>{{ order.items }} items • ${{ order.total.toFixed(2) }}</p>
         </div>
         <span class="chevron">›</span>
       </div>
@@ -26,14 +24,6 @@
       <button class="support-button">MESSAGE SUPPORT</button>
     </div>
   </div>
-
-  <div class="order-details" *ngIf="selectedShipment">
-    <h2>Order Details</h2>
-    <p><strong>Date:</strong> {{ selectedShipment.date }}</p>
-    <p><strong>Total:</strong> ${{ selectedShipment.total.toFixed(2) }}</p>
-    <h3>Items:</h3>
-    <ul>
-      <li *ngFor="let item of selectedShipment.details">{{ item }}</li>
-    </ul>
-  </div>
 </div>
+
+<app-toastr></app-toastr>

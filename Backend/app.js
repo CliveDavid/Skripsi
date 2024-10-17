@@ -87,6 +87,7 @@ const shipmentMethodRoutes = require('./routes/shipmentMethodRoutes');
 const priceRoutes = require('./routes/priceRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
 const orderAddressRoutes = require('./routes/orderAddressRoutes');
+const companyRoutes = require('./routes/companyRoutes');
 
 
 // Routes
@@ -100,6 +101,7 @@ app.use('/shipmentMethods', shipmentMethodRoutes);
 app.use('/price', priceRoutes);
 app.use('/invoices', invoiceRoutes);
 app.use('/orderAddress', orderAddressRoutes);
+app.use('/company', companyRoutes);
 
 
 // 404 Handler

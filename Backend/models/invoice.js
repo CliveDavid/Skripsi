@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0
         },
         total: {
-            type: DataTypes.DECIMAL(10, 2),
+            type: DataTypes.DECIMAL(15, 2),
             allowNull: false
         },
         payment_status: {

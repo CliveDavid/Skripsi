@@ -1,35 +1,65 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { OrderService } from '../../services/order.service';
+import { AuthService } from '../../services/auth.service';
+import { ToastrComponent } from '../../shared/toastr/toastr.component';
+import { ToastrService } from '../../services/toastr.service';
 
-interface Shipment {
+interface Order {
   id: number;
+  orderNumber: string;
   date: string;
+  status: string;
   items: number;
   total: number;
-  details: string[];
 }
 
 @Component({
   selector: 'app-order-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ToastrComponent],
   templateUrl: './order-history.component.html',
   styleUrls: ['./order-history.component.css']
 })
-export class OrderHistoryComponent {
+export class OrderHistoryComponent implements OnInit {
   activeTab: 'upcoming' | 'history' = 'history';
-  selectedShipment: Shipment | null = null;
-  shipments: Shipment[] = [
-    { id: 1, date: 'May 15, 2020', items: 3, total: 65.26, details: ['Item 1', 'Item 2', 'Item 3'] },
-    { id: 2, date: 'Mar 10, 2020', items: 3, total: 65.26, details: ['Item 4', 'Item 5', 'Item 6'] },
-    { id: 3, date: 'Jan 1, 2020', items: 3, total: 65.26, details: ['Item 7', 'Item 8', 'Item 9'] }
-  ];
+  upcomingOrders: Order[] = [];
+  historyOrders: Order[] = [];
+
+  constructor(
+    private orderService: OrderService,
+    private router: Router,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) { }
+
+  ngOnInit() {
+    this.loadOrders();
+  }
+
+  loadOrders() {
+    const distributorId = this.authService.getDistributorId();
+    if (distributorId) {
+      const distributorIdNumber = parseInt(distributorId, 10);
+      this.orderService.getOrderHistory(distributorIdNumber).subscribe(data => {
+        this.upcomingOrders = data.upcomingOrders;
+        this.historyOrders = data.historyOrders;
+      });
+    } else {
+      this.toastr.error('No distributor ID found');
+    }
+  }
 
   setActiveTab(tab: 'upcoming' | 'history') {
     this.activeTab = tab;
   }
 
-  selectShipment(shipment: Shipment) {
-    this.selectedShipment = shipment;
+  viewOrderDetails(orderId: number) {
+    this.router.navigate(['/order-details', orderId]);
+  }
+
+  get displayedOrders(): Order[] {
+    return this.activeTab === 'upcoming' ? this.upcomingOrders : this.historyOrders;
   }
 }

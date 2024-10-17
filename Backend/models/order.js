@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         total_price: {
-            type: DataTypes.DECIMAL(10, 2),
+            type: DataTypes.DECIMAL(15, 2),
             allowNull: false
         },
         shipment_code: {
@@ -73,7 +73,11 @@ module.exports = (sequelize, DataTypes) => {
         });
         Order.hasMany(models.OrderStatusHistory, {
             foreignKey: 'order_id',
-            as: 'statusHistory'
+            as: 'order_status_histories'
+        });
+        Order.hasMany(models.OrderItem, {
+            foreignKey: 'order_id',
+            as: 'order_items'
         });
     };
 

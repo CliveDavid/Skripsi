@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { format } = require('date-fns');
-const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType } = require('../models');
+const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType, OrderStatusHistory } = require('../models');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -12,19 +12,33 @@ router.post('/get-all', asyncHandler(async (req, res) => {
     const orders = await Order.findAll({
         include: [
             { model: Distributor, attributes: ['name'] },
-            { model: ShipmentMethod, attributes: ['shipment_name'] }
+            { model: ShipmentMethod, attributes: ['shipment_name'] },
+            { 
+                model: OrderItem,
+                attributes: [[sequelize.fn('SUM', sequelize.col('qty')), 'total_items']]
+            },
+            {
+                model: OrderStatusHistory,
+                attributes: ['status', 'changed_at'],
+                order: [['changed_at', 'DESC']],
+                limit: 1
+            }
         ],
+        group: ['Order.order_id'],
         order: [['updatedAt', 'DESC']],
-        raw: true,
+        raw: false,
         nest: true
     });
 
     const flattenedOrders = orders.map(order => ({
-        ...order,
+        id: order.order_id,
+        orderNumber: order.order_number,
+        date: format(new Date(order.order_dt), 'yyyy-MM-dd'),
+        status: order.order_status_histories[0]?.status || order.status,
+        items: order.order_items[0]?.dataValues.total_items || 0,
+        total: order.total_price,
         distributor_name: order.distributor.name,
-        shipment_method_name: order.shipment_method.shipment_name,
-        distributor: undefined,
-        shipment_method: undefined
+        shipment_method_name: order.shipment_method.shipment_name
     }));
 
     res.json(flattenedOrders);
@@ -246,6 +260,55 @@ router.post('/get-by-status', asyncHandler(async (req, res) => {
     }));
 
     res.json(flattenedOrders);
+}));
+
+// Get orders for order history (upcoming and history) for a specific distributor
+router.post('/get-for-history', asyncHandler(async (req, res) => {
+    const { distributor_id } = req.body;
+
+    if (!distributor_id) {
+        return res.status(400).json({ message: "distributor_id is required" });
+    }
+
+    const upcomingStatuses = ['Pending', 'Processing', 'Invoiced'];
+    const historyStatuses = ['Delivered', 'Cancelled'];
+
+    const orders = await Order.findAll({
+        where: { distributor_id },
+        attributes: [
+            'order_id',
+            'order_number',
+            'order_dt',
+            'status',
+            'total_price',
+            [sequelize.literal('(SELECT SUM(qty) FROM order_items WHERE order_items.order_id = "order".order_id)'), 'total_items']
+        ],
+        include: [
+            {
+                model: OrderStatusHistory,
+                as: 'order_status_histories',
+                attributes: ['status', 'changed_at'],
+                order: [['changed_at', 'DESC']],
+                limit: 1,
+                separate: true
+            }
+        ],
+        order: [['order_dt', 'DESC']]
+    });
+
+    const formattedOrders = orders.map(order => ({
+        id: order.order_id,
+        orderNumber: order.order_number,
+        date: format(new Date(order.order_dt), 'yyyy-MM-dd'),
+        status: order.order_status_histories[0]?.status || order.status,
+        items: parseInt(order.dataValues.total_items) || 0,
+        total: order.total_price
+    }));
+
+    const upcomingOrders = formattedOrders.filter(order => upcomingStatuses.includes(order.status));
+    const historyOrders = formattedOrders.filter(order => historyStatuses.includes(order.status));
+
+    res.json({ upcomingOrders, historyOrders });
 }));
 
 module.exports = router;
