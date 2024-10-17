@@ -24,7 +24,10 @@
           <div class="card h-100">
             <div class="card-body">
               <h5 class="card-title">Shipping Address</h5>
-              <p>{{ shippingAddress }}</p>
+              <p>
+                {{ shippingAddress.address }}<br>
+                {{ shippingAddress.addr_details }}
+              </p>
               <button class="addr-btn" (click)="openAddressChangePopup()">
                 <i class="fas fa-edit"></i>
               </button>
@@ -98,3 +101,6 @@
 <app-address-change *ngIf="showAddressChangePopup" (addressChanged)="onAddressChanged($event)"
   (cancelled)="onAddressChangeCancelled()">
 </app-address-change>
+
+
+<app-toastr></app-toastr>

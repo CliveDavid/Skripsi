@@ -9,6 +9,17 @@ interface AddressItem {
   text: string;
 }
 
+interface AddressInfo {
+  address?: string;
+  addr_details?: string;
+  city?: string;
+  province?: string;
+  zipcode?: string;
+  district?: string;
+  subdistrict?: string;
+  phone?: string;
+}
+
 @Component({
   selector: 'app-address-change',
   standalone: true,
@@ -153,26 +164,6 @@ export class AddressChangeComponent implements OnInit {
     return Object.values(this.isLoading).some(value => value);
   }
 
-  updateFormattedAddress() {
-    if (this.isAddressValid()) {
-      const provinceText = this.provinces.find(p => p.id === this.selectedProvince)?.text || '';
-      const cityText = this.cities.find(c => c.id === this.selectedCity)?.text || '';
-      const districtText = this.districts.find(d => d.id === this.selectedDistrict)?.text || '';
-      const subdistrictText = this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || '';
-
-      this.formattedAddress = `${this.addr_details}, ${subdistrictText}, ${districtText}, ${cityText}, ${provinceText}, ${this.selectedZipcode}`;
-    } else {
-      this.formattedAddress = '';
-    }
-  }
-
-  useThisAddress() {
-    this.updateFormattedAddress();
-    if (this.formattedAddress) {
-      this.addressChanged.emit(this.formattedAddress);
-    }
-  }
-
   cancel() {
     this.cancelled.emit();
   }
@@ -180,6 +171,39 @@ export class AddressChangeComponent implements OnInit {
   onOverlayClick(event: MouseEvent) {
     if ((event.target as HTMLElement).classList.contains('address-change-overlay')) {
       this.cancel();
+    }
+  }
+
+  getAddressInfo(): AddressInfo {
+    const addressInfo: AddressInfo = {
+      addr_details: this.addr_details,
+      city: this.cities.find(c => c.id === this.selectedCity)?.text || '',
+      province: this.provinces.find(p => p.id === this.selectedProvince)?.text || '',
+      zipcode: this.selectedZipcode,
+      district: this.districts.find(d => d.id === this.selectedDistrict)?.text || '',
+      subdistrict: this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || ''
+    };
+
+    addressInfo.address = this.formatFullAddress(addressInfo);
+
+    return addressInfo;
+  }
+
+  private formatFullAddress(addr: AddressInfo): string {
+    const components = [
+      addr.subdistrict,
+      addr.district,
+      addr.city,
+      addr.province,
+      addr.zipcode
+    ];
+    return components.filter(Boolean).join(', ');
+  }
+
+  useThisAddress() {
+    if (this.isAddressValid()) {
+      const addressInfo = this.getAddressInfo();
+      this.addressChanged.emit(JSON.stringify(addressInfo));
     }
   }
 }

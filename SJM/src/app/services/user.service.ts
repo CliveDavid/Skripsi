@@ -3,10 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BASE_URL } from '../constants';
 
-interface DistributorFullAddressResponse {
-    address: string;
-}
-
 interface PersonalInfo {
     firstName: string;
     lastName: string;
@@ -28,10 +24,6 @@ interface AddressInfo {
 })
 export class UserService {
     constructor(private http: HttpClient) { }
-
-    getDistributorFullAddress(distributorId: string): Observable<DistributorFullAddressResponse> {
-        return this.http.post<DistributorFullAddressResponse>(`${BASE_URL}/distributor/get-address`, { distributor_id: distributorId });
-    }
 
     getPersonalInfo(distributorId: string): Observable<PersonalInfo> {
         return this.http.post<PersonalInfo>(`${BASE_URL}/distributor/get-personal-info`, { distributor_id: distributorId });

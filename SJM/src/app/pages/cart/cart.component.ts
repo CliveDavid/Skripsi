@@ -7,6 +7,9 @@ import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { AddressChangeComponent } from '../../components/address-change/address-change.component';
+import { ToastrService } from '../../services/toastr.service';
+import { ToastrComponent } from '../../shared/toastr/toastr.component';
+import { OrderService } from '../../services/order.service';
 
 interface ShipmentMethod {
   shipment_code: string;
@@ -14,14 +17,40 @@ interface ShipmentMethod {
   capacity: number;
 }
 
-interface AddressResponse {
-  address: string;
+interface AddressInfo {
+  address?: string;
+  addr_details?: string;
+  city?: string;
+  province?: string;
+  zipcode?: string;
+  district?: string;
+  subdistrict?: string;
+  phone?: string;
+}
+
+interface CartItem {
+  product: {
+    prod_id: number;
+    prod_code: string;
+    prod_name: string;
+    prod_type_code: string;
+    descr: string;
+    is_active: boolean;
+    createdAt: string;
+    updatedAt: string;
+    product_type_descr: string;
+    imageUrl: string;
+  };
+  boxType: string;
+  quantity: number;
+  totalPrice: number;
+  price: string;
 }
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FormsModule, AddressChangeComponent],
+  imports: [CommonModule, FormsModule, AddressChangeComponent, ToastrComponent],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
@@ -29,7 +58,7 @@ export class CartComponent implements OnInit {
   cartItems: any[] = [];
   shippingMethods: ShipmentMethod[] = [];
   selectedShippingMethod: string = '';
-  shippingAddress = '';
+  shippingAddress: AddressInfo = {};
   subtotal = 0;
   estimatedTax = 'N/A';
   total = 0;
@@ -40,9 +69,11 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private shipmentService: ShipmentService,
-    private addressService: UserService,
+    private userService: UserService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService,
+    private orderService: OrderService
   ) { }
 
   ngOnInit() {
@@ -51,7 +82,7 @@ export class CartComponent implements OnInit {
 
     const savedAddress = localStorage.getItem('shippingAddress');
     if (savedAddress) {
-      this.shippingAddress = savedAddress;
+      this.shippingAddress = JSON.parse(savedAddress);
     }
     else {
       this.loadShippingAddress();
@@ -68,24 +99,23 @@ export class CartComponent implements OnInit {
       next: (methods) => {
         this.shippingMethods = methods;
       },
-      error: (error) => console.error('Error fetching shipment methods:', error)
+      error: (error) => this.toastr.error('Error fetching shipment methods')
     });
   }
 
   loadShippingAddress() {
     const distributorId = this.authService.getDistributorId();
     if (distributorId) {
-      this.addressService.getDistributorFullAddress(distributorId).subscribe({
-        next: (response: AddressResponse) => {
-          this.shippingAddress = response.address;
-          localStorage.setItem('shippingAddress', response.address);
+      this.userService.getAddress(distributorId).subscribe({
+        next: (addressInfo: AddressInfo) => {
+          this.shippingAddress = addressInfo;
+          localStorage.setItem('shippingAddress', JSON.stringify(addressInfo));
         },
-        error: (error: any) => console.error('Error fetching shipping address:', error)
+        error: (error: any) => this.toastr.error('Error fetching shipping address')
       });
     } else {
-      console.error('No distributor ID found');
+      this.toastr.error('No distributor ID found');
     }
-
   }
 
   updateCart() {
@@ -129,7 +159,7 @@ export class CartComponent implements OnInit {
   }
 
   onAddressChanged(newAddress: string) {
-    this.shippingAddress = newAddress;
+    this.shippingAddress = JSON.parse(newAddress);
     localStorage.setItem('shippingAddress', newAddress);
     this.showAddressChangePopup = false;
   }
@@ -141,17 +171,51 @@ export class CartComponent implements OnInit {
   proceedToCheckout() {
     if (this.isValidOrder()) {
       if (this.authService.isLoggedIn()) {
-        this.cartService.clearCart();
-        localStorage.removeItem('shippingAddress');
-        // Add your checkout logic here
-        this.router.navigate(['/post-checkout']);
+        this.createOrder();
       } else {
-        console.log('User not logged in. Redirecting to login page.');
+        this.toastr.error('User not logged in. Redirecting to login page.');
         localStorage.setItem('redirectUrl', this.router.url);
         this.router.navigate(['/login']);
       }
     } else {
-      console.log('Invalid order');
+      this.toastr.error('Invalid order');
     }
+  }
+
+  createOrder() {
+    const orderData = {
+      distributor_id: this.authService.getDistributorId(),
+      order_dt: new Date().toISOString(),
+      status: 'Pending',
+      total_price: this.total,
+      shipment_code: this.selectedShippingMethod,
+      notes: '',
+      orderItems: this.cartItems.map((item: CartItem) => ({
+        product_id: item.product.prod_id,
+        box_type_code: item.boxType,
+        qty: item.quantity,
+        total_item_price: item.totalPrice
+      })),
+      addresses: [{
+        address: this.shippingAddress.address,
+        addr_details: this.shippingAddress.addr_details,
+        city: this.shippingAddress.city,
+        province: this.shippingAddress.province,
+        zipcode: this.shippingAddress.zipcode,
+        district: this.shippingAddress.district,
+        subdistrict: this.shippingAddress.subdistrict
+      }]
+    };
+
+    this.orderService.createOrder(orderData).subscribe({
+      next: (response) => {
+        this.toastr.success('Order placed successfully');
+        this.cartService.clearCart();
+        this.router.navigate(['/post-checkout']);
+      },
+      error: (error) => {
+        this.toastr.error('Error creating order: ' + error.message);
+      }
+    });
   }
 }

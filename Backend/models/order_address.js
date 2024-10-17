@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
+        addr_details: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
         city: {
             type: DataTypes.STRING(100),
             allowNull: false
@@ -27,6 +31,14 @@ module.exports = (sequelize, DataTypes) => {
         },
         zipcode: {
             type: DataTypes.STRING(20),
+            allowNull: false
+        },
+        district: {
+            type: DataTypes.STRING(100),
+            allowNull: false
+        },
+        subdistrict: {
+            type: DataTypes.STRING(100),
             allowNull: false
         }
     }, {

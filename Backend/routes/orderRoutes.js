@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { format } = require('date-fns');
-const { sequelize, Order, OrderItem, Distributor, ShipmentMethod, Product, BoxType } = require('../models');
+const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType } = require('../models');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -75,10 +75,19 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 
 // Create new order
 router.post('/create', asyncHandler(async (req, res) => {
-    const { distributor_id, order_dt, status, total_price, shipment_code, orderItems } = req.body;
+    const { 
+        distributor_id, 
+        order_dt, 
+        status, 
+        total_price, 
+        shipment_code, 
+        notes,
+        orderItems,
+        addresses
+    } = req.body;
     
     // Basic validation
-    if (!distributor_id || !order_dt || !status || !shipment_code) {
+    if (!distributor_id || !order_dt || !status || !total_price || !shipment_code) {
         return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -90,21 +99,43 @@ router.post('/create', asyncHandler(async (req, res) => {
                 order_dt,
                 status,
                 total_price,
-                shipment_code
+                shipment_code,
+                notes
             }, { transaction: t });
 
             // Create the order items
             if (orderItems && orderItems.length > 0) {
                 const orderItemsWithOrderId = orderItems.map(item => ({
-                    ...item,
-                    order_id: newOrder.order_id
+                    order_id: newOrder.order_id,
+                    product_id: item.product_id,
+                    box_type_code: item.box_type_code,
+                    qty: item.qty,
+                    total_item_price: item.total_item_price
                 }));
                 await OrderItem.bulkCreate(orderItemsWithOrderId, { transaction: t });
             }
 
-            // Fetch the full order with items
+            // Create the order addresses
+            if (addresses && addresses.length > 0) {
+                const orderAddressesWithOrderId = addresses.map(address => ({
+                    order_id: newOrder.order_id,
+                    address: address.address,
+                    addr_details: address.addr_details,
+                    city: address.city,
+                    province: address.province,
+                    zipcode: address.zipcode,
+                    district: address.district,
+                    subdistrict: address.subdistrict
+                }));
+                await OrderAddress.bulkCreate(orderAddressesWithOrderId, { transaction: t });
+            }
+
+            // Fetch the full order with items and addresses
             return Order.findByPk(newOrder.order_id, {
-                include: [OrderItem],
+                include: [
+                    { model: OrderItem },
+                    { model: OrderAddress, as: 'addresses' }
+                ],
                 transaction: t
             });
         });

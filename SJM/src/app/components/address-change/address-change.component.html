@@ -47,10 +47,6 @@
         <textarea id="address" name="address" [(ngModel)]="addr_details" placeholder="Enter full address details"
           required></textarea>
       </div>
-      <div *ngIf="formattedAddress" class="address-preview">
-        <strong>Address Preview:</strong>
-        <p>{{ formattedAddress }}</p>
-      </div>
       <div *ngIf="errorMessage" class="error-message" role="alert">
         {{ errorMessage }}
       </div>

@@ -324,31 +324,6 @@ function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
 }
 
-// Get distributor full address
-router.post('/get-distributor-full-address', asyncHandler(async (req, res) => {
-    const { distributor_id } = req.body;
-
-    if (!distributor_id) {
-        return res.status(400).json({ message: 'Distributor ID is required' });
-    }
-
-    const distributor = await Distributor.findByPk(distributor_id, {
-        include: [{
-            model: DistributorAddress,
-            attributes: ['address', 'addr_details', 'city', 'province', 'zipcode', 'district', 'subdistrict']
-        }]
-    });
-
-    if (!distributor || !distributor.distributor_address) {
-        return res.status(404).json({ message: 'Distributor or address not found' });
-    }
-
-    const addr = distributor.distributor_address;
-    const fullAddress = `${addr.address}${addr.addr_details ? ', ' + addr.addr_details : ''}, ${addr.subdistrict}, ${addr.district}, ${addr.city}, ${addr.province} ${addr.zipcode}`;
-
-    res.json({ address: fullAddress });
-}));
-
 // distributor get address
 router.post('/get-address', async (req, res) => {
     try {
