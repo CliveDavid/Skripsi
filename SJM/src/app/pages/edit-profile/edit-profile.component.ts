@@ -8,7 +8,7 @@ import { UserService } from '../../services/user.service';
 import { ToastrService } from '../../services/toastr.service';
 import { AuthService } from '../../services/auth.service';
 import { catchError, tap, filter } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-edit-profile',
@@ -17,8 +17,6 @@ import { of } from 'rxjs';
     templateUrl: './edit-profile.component.html',
     styleUrls: ['./edit-profile.component.css']
 })
-
-
 export class EditProfileComponent implements OnInit {
     addrApi = ADDR_URL;
     baseUrl = BASE_URL;
@@ -59,7 +57,6 @@ export class EditProfileComponent implements OnInit {
 
     ngOnInit() {
         this.loadUserData();
-        this.loadProvinces();
     }
 
     setActiveTab(tab: 'personal' | 'address') {
@@ -69,122 +66,124 @@ export class EditProfileComponent implements OnInit {
     loadUserData() {
         const distributorId = this.authService.getDistributorId();
         if (distributorId) {
-            this.userService.getPersonalInfo(distributorId).subscribe(
-                (personalInfo) => {
+            forkJoin({
+                personalInfo: this.userService.getPersonalInfo(distributorId),
+                addressInfo: this.userService.getAddress(distributorId),
+                provinces: this.http.get<any>(`${this.addrApi}/provinsi/get/`)
+            }).subscribe({
+                next: ({ personalInfo, addressInfo, provinces }) => {
+                    // Set personal info
                     this.firstName = personalInfo.firstName;
                     this.lastName = personalInfo.lastName;
                     this.email = personalInfo.email;
                     this.phoneNumber = personalInfo.phone.replace('+62', '');
-                },
-                (error) => {
-                    console.error('Error loading personal info:', error);
-                }
-            );
 
-            this.userService.getAddress(distributorId).pipe(
-                catchError((error: any) => {
-                    this.toastr.error('Error loading address info: ' + error.message);
-                    return of(null);
-                }),
-                filter(addressInfo => !!addressInfo),
-            ).subscribe(
-                (addressInfo) => {
+                    // Set address info
                     this.addr_details = addressInfo?.addr_details ?? '';
-                    this.selectedProvince = addressInfo?.province ?? '';
-                    this.selectedCity = addressInfo?.city ?? '';
-                    this.selectedDistrict = addressInfo?.district ?? '';
-                    this.selectedSubdistrict = addressInfo?.subdistrict ?? '';
-                    this.selectedZipcode = addressInfo?.zipcode ?? '';
+                    this.provinces = provinces.result;
 
-                    if (this.selectedProvince) {
-                        this.loadProvinces().then(() => {
-                            if (this.selectedCity) {
-                                this.onProvinceChange({ target: { value: this.selectedProvince } });
-                            }
-                        });
+                    // Find and set the province
+                    const provinceObj = this.provinces.find(p => p.text === addressInfo?.province);
+                    if (provinceObj) {
+                        this.selectedProvince = provinceObj.id;
+                        this.loadCities(provinceObj.id, addressInfo);
                     }
+                },
+                error: (error) => {
+                    this.toastr.error('Error loading user data: ' + error.message);
                 }
-            );
+            });
         } else {
             this.toastr.error('No distributor ID found');
         }
     }
 
-    loadProvinces(): Promise<void> {
-        return new Promise((resolve) => {
-            this.http.get(`${this.addrApi}/provinsi/get/`)
-                .subscribe((response: any) => {
-                    this.provinces = response.result;
-                    resolve();
-                });
-        });
+    loadCities(provinceId: string, addressInfo: any) {
+        this.http.get<any>(`${this.addrApi}/kabkota/get/?d_provinsi_id=${provinceId}`)
+            .subscribe({
+                next: (response) => {
+                    this.cities = response.result;
+                    const cityObj = this.cities.find(c => c.text === addressInfo?.city);
+                    if (cityObj) {
+                        this.selectedCity = cityObj.id;
+                        this.loadDistricts(cityObj.id, addressInfo);
+                    }
+                },
+                error: (error) => this.toastr.error('Error loading cities: ' + error.message)
+            });
     }
+
+    loadDistricts(cityId: string, addressInfo: any) {
+        this.http.get<any>(`${this.addrApi}/kecamatan/get/?d_kabkota_id=${cityId}`)
+            .subscribe({
+                next: (response) => {
+                    this.districts = response.result;
+                    const districtObj = this.districts.find(d => d.text === addressInfo?.district);
+                    if (districtObj) {
+                        this.selectedDistrict = districtObj.id;
+                        this.loadSubdistricts(districtObj.id, addressInfo);
+                    }
+                },
+                error: (error) => this.toastr.error('Error loading districts: ' + error.message)
+            });
+    }
+
+    loadSubdistricts(districtId: string, addressInfo: any) {
+        this.http.get<any>(`${this.addrApi}/kelurahan/get/?d_kecamatan_id=${districtId}`)
+            .subscribe({
+                next: (response) => {
+                    this.subdistricts = response.result;
+                    const subdistrictObj = this.subdistricts.find(s => s.text === addressInfo?.subdistrict);
+                    if (subdistrictObj) {
+                        this.selectedSubdistrict = subdistrictObj.id;
+                        this.loadZipcodes(this.selectedCity, districtId, addressInfo?.zipcode);
+                    }
+                },
+                error: (error) => this.toastr.error('Error loading subdistricts: ' + error.message)
+            });
+    }
+
+    loadZipcodes(cityId: string, districtId: string, selectedZipcode?: string) {
+        this.http.get<any>(`${this.addrApi}/kodepos/get/?d_kabkota_id=${cityId}&d_kecamatan_id=${districtId}`)
+            .subscribe({
+                next: (response) => {
+                    this.zipcodes = response.result;
+                    if (selectedZipcode) {
+                        const zipcodeObj = this.zipcodes.find(z => z.text === selectedZipcode);
+                        if (zipcodeObj) {
+                            this.selectedZipcode = zipcodeObj.text;
+                        }
+                    }
+                },
+                error: (error) => this.toastr.error('Error loading zipcodes: ' + error.message)
+            });
+    }
+
     onProvinceChange(event: any) {
         const provinceId = event.target.value;
         this.selectedProvince = provinceId;
-        this.http.get(`${this.addrApi}/kabkota/get/?d_provinsi_id=${provinceId}`)
-            .subscribe((response: any) => {
-                this.cities = response.result;
-                this.resetSelections(['district', 'subdistrict', 'zipcode']);
-
-                if (this.selectedCity) {
-                    const cityObject = this.cities.find(city => city.text === this.selectedCity);
-                    if (cityObject) {
-                        this.selectedCity = cityObject.id;
-                        this.onCityChange({ target: { value: this.selectedCity } });
-                    }
-                }
-            });
+        this.loadCities(provinceId, null);
+        this.resetSelections(['city', 'district', 'subdistrict', 'zipcode']);
     }
 
     onCityChange(event: any) {
         const cityId = event.target.value;
         this.selectedCity = cityId;
-        this.http.get(`${this.addrApi}/kecamatan/get/?d_kabkota_id=${cityId}`)
-            .subscribe((response: any) => {
-                this.districts = response.result;
-                this.resetSelections(['subdistrict', 'zipcode']);
-
-                if (this.selectedDistrict) {
-                    const districtObject = this.districts.find(district => district.text === this.selectedDistrict);
-                    if (districtObject) {
-                        this.selectedDistrict = districtObject.id;
-                        this.onDistrictChange({ target: { value: this.selectedDistrict } });
-                    }
-                }
-            });
+        this.loadDistricts(cityId, null);
+        this.resetSelections(['district', 'subdistrict', 'zipcode']);
     }
 
     onDistrictChange(event: any) {
         const districtId = event.target.value;
         this.selectedDistrict = districtId;
-        this.http.get(`${this.addrApi}/kelurahan/get/?d_kecamatan_id=${districtId}`)
-            .subscribe((response: any) => {
-                this.subdistricts = response.result;
-                this.resetSelections(['zipcode']);
-
-                if (this.selectedSubdistrict) {
-                    const subdistrictObject = this.subdistricts.find(subdistrict => subdistrict.text === this.selectedSubdistrict);
-                    if (subdistrictObject) {
-                        this.selectedSubdistrict = subdistrictObject.id;
-                        this.onSubdistrictChange({ target: { value: this.selectedSubdistrict } });
-                    }
-                }
-            });
+        this.loadSubdistricts(districtId, null);
+        this.resetSelections(['subdistrict', 'zipcode']);
     }
 
     onSubdistrictChange(event: any) {
         const subdistrictId = event.target.value;
         this.selectedSubdistrict = subdistrictId;
-        this.loadZipcodes();
-    }
-
-    loadZipcodes() {
-        this.http.get(`${this.addrApi}/kodepos/get/?d_kabkota_id=${this.selectedCity}&d_kecamatan_id=${this.selectedDistrict}`)
-            .subscribe((response: any) => {
-                this.zipcodes = response.result;
-                this.selectedZipcode = '';
-            });
+        this.loadZipcodes(this.selectedCity, this.selectedDistrict);
     }
 
     resetSelections(fields: string[]) {
