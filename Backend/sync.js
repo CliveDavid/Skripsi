@@ -14,7 +14,8 @@ const {
     Price,
     OrderAddress,
     DistributorAddress,
-    OTP
+    OTP,
+    OrderStatusHistory
 } = require('./models');
 
 async function syncModels() {
@@ -37,6 +38,7 @@ async function syncModels() {
         await Price.sync({ alter: true, transaction });
         await OrderAddress.sync({ alter: true, transaction });
         await OTP.sync({ alter: true, transaction });
+        await OrderStatusHistory.sync({ alter: true, transaction });
 
 
         await transaction.commit(); // Commit the transaction if all syncs are successful

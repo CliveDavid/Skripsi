@@ -17,6 +17,7 @@ const ShipmentMethod = require('./shipment_method')(sequelize, Sequelize.DataTyp
 const OrderAddress = require('./order_address')(sequelize, Sequelize.DataTypes);
 const DistributorAddress = require('./distributor_address')(sequelize, Sequelize.DataTypes);
 const OTP = require('./otp')(sequelize, Sequelize.DataTypes);
+const OrderStatusHistory = require('./order_status_history')(sequelize, Sequelize.DataTypes);
 
 // Relation (foreign keys) 
 Order.belongsTo(Distributor, { foreignKey: 'distributor_id' });
@@ -51,6 +52,9 @@ OTP.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 Distributor.hasOne(DistributorAddress, { foreignKey: 'distributor_id' });
 DistributorAddress.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 
+Order.hasMany(OrderStatusHistory, { foreignKey: 'order_id', as: 'statusHistory' });
+OrderStatusHistory.belongsTo(Order, { foreignKey: 'order_id' });
+
 module.exports = {
     sequelize,
     Sequelize,
@@ -68,5 +72,6 @@ module.exports = {
     Price,
     OrderAddress,
     DistributorAddress,
-    OTP
+    OTP,
+    OrderStatusHistory
 };

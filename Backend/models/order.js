@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status: {
-            type: DataTypes.STRING(50),
+            type: DataTypes.STRING(50), // Pending, Processing, Invoiced, Delivered, Cancelled
             allowNull: false
         },
         total_price: {
@@ -54,6 +54,14 @@ module.exports = (sequelize, DataTypes) => {
                         .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
                     order.order_number = orderNumber;
                 }
+            },
+            afterUpdate: async (order, options) => {
+                if (order.changed('status')) {
+                    await sequelize.models.order_status_history.create({
+                        order_id: order.order_id,
+                        status: order.status,
+                    }, { transaction: options.transaction });
+                }
             }
         }
     });
@@ -62,6 +70,10 @@ module.exports = (sequelize, DataTypes) => {
         Order.hasMany(models.OrderAddress, {
             foreignKey: 'order_id',
             as: 'addresses'
+        });
+        Order.hasMany(models.OrderStatusHistory, {
+            foreignKey: 'order_id',
+            as: 'statusHistory'
         });
     };
 
