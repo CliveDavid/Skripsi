@@ -11,7 +11,6 @@ interface PersonalInfo {
     firstName: string;
     lastName: string;
     email: string;
-    phone: string;
 }
 
 interface AddressInfo {
@@ -21,6 +20,7 @@ interface AddressInfo {
     zipcode?: string;
     district?: string;
     subdistrict?: string;
+    phone?: string;
 }
 
 

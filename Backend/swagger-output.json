@@ -782,9 +782,6 @@
                 "email": {
                   "example": "any"
                 },
-                "phone": {
-                  "example": "any"
-                },
                 "currentPassword": {
                   "example": "any"
                 },
@@ -843,6 +840,9 @@
                   "example": "any"
                 },
                 "subdistrict": {
+                  "example": "any"
+                },
+                "phone": {
                   "example": "any"
                 }
               }

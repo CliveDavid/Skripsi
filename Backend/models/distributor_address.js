@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         subdistrict: {
             type: DataTypes.STRING(100),
             allowNull: false
+        },
+        phone: {
+            type: DataTypes.STRING(20),
+            allowNull: false
         }
     }, {
         tableName: 'distributor_address'

@@ -10,6 +10,8 @@ import { BASE_URL } from '../../constants';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
+import { ToastrComponent } from '../../shared/toastr/toastr.component';
+import { ToastrService } from '../../services/toastr.service';
 
 interface ProductType {
   value: string;
@@ -19,7 +21,7 @@ interface ProductType {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, NgbDropdownModule, CommonModule, FormsModule],
+  imports: [RouterLink, NgbDropdownModule, CommonModule, FormsModule, ToastrComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
@@ -39,7 +41,8 @@ export class HeaderComponent implements OnInit {
     private http: HttpClient,
     private productTypeService: ProductTypeService,
     private productService: ProductService,
-    private cartService: CartService
+    private cartService: CartService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
@@ -91,13 +94,15 @@ export class HeaderComponent implements OnInit {
   logout() {
     this.authService.logout().subscribe({
       next: () => {
-        console.log('Logged out successfully');
-        this.router.navigate(['/']);
+        this.toastr.success('Logged out successfully');
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 2000);
       },
       error: (error) => {
-        console.error('Logout failed', error);
-        // Handle logout error (show a message to the user, etc.)
+        this.toastr.error('Logout failed: ' + error);
       }
     });
   }
+
 }

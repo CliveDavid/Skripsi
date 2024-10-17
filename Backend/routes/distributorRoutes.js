@@ -142,7 +142,6 @@ router.post('/create', asyncHandler(async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            phone,
             is_active
         }, { transaction: t });
 
@@ -154,7 +153,8 @@ router.post('/create', asyncHandler(async (req, res) => {
             province,
             zipcode,
             district,
-            subdistrict
+            subdistrict,
+            phone
         }, { transaction: t });
 
         return newDistributor;
@@ -188,7 +188,7 @@ router.post('/update', asyncHandler(async (req, res) => {
             throw new Error('Distributor not found');
         }
 
-        const updates = { name, email, phone, is_active };
+        const updates = { name, email, is_active };
         if (password) {
             updates.password = await bcrypt.hash(password, 10);
         }
@@ -196,7 +196,7 @@ router.post('/update', asyncHandler(async (req, res) => {
         await distributor.update(updates, { transaction: t });
 
         await DistributorAddress.update(
-            { address, addr_details, city, province, zipcode, district, subdistrict },
+            { address, addr_details, city, province, zipcode, district, subdistrict, phone },
             { where: { distributor_id }, transaction: t }
         );
 
@@ -225,12 +225,12 @@ router.post('/register', asyncHandler(async (req, res) => {
 
     const result = await sequelize.transaction(async (t) => {
         const newDistributor = await Distributor.create({
-            name, email, password: hashedPassword, phone, is_active: false
+            name, email, password: hashedPassword, is_active: false
         }, { transaction: t });
 
         await DistributorAddress.create({
             distributor_id: newDistributor.distributor_id,
-            address, addr_details, city, province, zipcode, district, subdistrict
+            address, addr_details, city, province, zipcode, district, subdistrict, phone
         }, { transaction: t });
 
         await OTP.create({
@@ -373,7 +373,7 @@ router.post('/get-personal-info', async (req, res) => {
     try {
         const { distributor_id } = req.body;
         const distributor = await Distributor.findByPk(distributor_id, {
-            attributes: ['name', 'email', 'phone']
+            attributes: ['name', 'email']
         });
 
         if (!distributor) {
@@ -386,8 +386,7 @@ router.post('/get-personal-info', async (req, res) => {
         res.json({
             firstName,
             lastName,
-            email: distributor.email,
-            phone: distributor.phone
+            email: distributor.email
         });
     } catch (error) {
         console.error('Error fetching personal info:', error);
@@ -398,7 +397,7 @@ router.post('/get-personal-info', async (req, res) => {
 // Update personal information
 router.post('/update-personal-info', async (req, res) => {
     try {
-        const { distributor_id, firstName, lastName, email, phone, currentPassword, newPassword } = req.body;
+        const { distributor_id, firstName, lastName, email, currentPassword, newPassword } = req.body;
         const distributor = await Distributor.findByPk(distributor_id);
 
         if (!distributor) {
@@ -414,7 +413,6 @@ router.post('/update-personal-info', async (req, res) => {
         // Update distributor information
         distributor.name = `${firstName} ${lastName}`.trim();
         distributor.email = email;
-        distributor.phone = phone;
 
         if (newPassword) {
             distributor.password = await bcrypt.hash(newPassword, 10);
@@ -432,7 +430,7 @@ router.post('/update-personal-info', async (req, res) => {
 // Update address information
 router.post('/update-address', async (req, res) => {
     try {
-        const { distributor_id, addr_details, city, province, zipcode, district, subdistrict } = req.body;
+        const { distributor_id, addr_details, city, province, zipcode, district, subdistrict, phone } = req.body;
         const [address, created] = await DistributorAddress.findOrCreate({
             where: { distributor_id },
             defaults: { distributor_id }
@@ -445,6 +443,7 @@ router.post('/update-address', async (req, res) => {
         address.zipcode = zipcode;
         address.district = district;
         address.subdistrict = subdistrict;
+        address.phone = phone;
 
         await address.save();
 

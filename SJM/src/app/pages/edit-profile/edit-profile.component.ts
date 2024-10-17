@@ -76,11 +76,11 @@ export class EditProfileComponent implements OnInit {
                     this.firstName = personalInfo.firstName;
                     this.lastName = personalInfo.lastName;
                     this.email = personalInfo.email;
-                    this.phoneNumber = personalInfo.phone.replace('+62', '');
 
                     // Set address info
                     this.addr_details = addressInfo?.addr_details ?? '';
                     this.provinces = provinces.result;
+                    this.phoneNumber = addressInfo?.phone?.replace('+62', '') || '';
 
                     // Find and set the province
                     const provinceObj = this.provinces.find(p => p.text === addressInfo?.province);
@@ -90,7 +90,7 @@ export class EditProfileComponent implements OnInit {
                     }
                 },
                 error: (error) => {
-                    this.toastr.error('Error loading user data: ' + error.message);
+                    this.toastr.error('Error loading user data');
                 }
             });
         } else {
@@ -109,7 +109,7 @@ export class EditProfileComponent implements OnInit {
                         this.loadDistricts(cityObj.id, addressInfo);
                     }
                 },
-                error: (error) => this.toastr.error('Error loading cities: ' + error.message)
+                error: (error) => this.toastr.error('Error loading cities')
             });
     }
 
@@ -124,7 +124,7 @@ export class EditProfileComponent implements OnInit {
                         this.loadSubdistricts(districtObj.id, addressInfo);
                     }
                 },
-                error: (error) => this.toastr.error('Error loading districts: ' + error.message)
+                error: (error) => this.toastr.error('Error loading districts')
             });
     }
 
@@ -139,7 +139,7 @@ export class EditProfileComponent implements OnInit {
                         this.loadZipcodes(this.selectedCity, districtId, addressInfo?.zipcode);
                     }
                 },
-                error: (error) => this.toastr.error('Error loading subdistricts: ' + error.message)
+                error: (error) => this.toastr.error('Error loading subdistricts')
             });
     }
 
@@ -155,7 +155,7 @@ export class EditProfileComponent implements OnInit {
                         }
                     }
                 },
-                error: (error) => this.toastr.error('Error loading zipcodes: ' + error.message)
+                error: (error) => this.toastr.error('Error loading zipcodes')
             });
     }
 
@@ -250,7 +250,6 @@ export class EditProfileComponent implements OnInit {
             firstName: this.firstName,
             lastName: this.lastName,
             email: this.email,
-            phone: '+62' + this.phoneNumber.replace(/\D/g, ''),
             currentPassword: this.currentPassword,
             newPassword: this.newPassword
         };
@@ -261,7 +260,8 @@ export class EditProfileComponent implements OnInit {
             province: this.provinces.find(p => p.id === this.selectedProvince)?.text || '',
             zipcode: this.selectedZipcode,
             district: this.districts.find(d => d.id === this.selectedDistrict)?.text || '',
-            subdistrict: this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || ''
+            subdistrict: this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || '',
+            phone: '+62' + this.phoneNumber.replace(/\D/g, ''),
         };
 
         this.userService.updatePersonalInfo(distributorId, personalInfo).subscribe(
