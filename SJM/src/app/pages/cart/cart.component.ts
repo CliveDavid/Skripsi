@@ -211,7 +211,7 @@ export class CartComponent implements OnInit {
       next: (response) => {
         this.toastr.success('Order placed successfully');
         this.cartService.clearCart();
-        this.router.navigate(['/post-checkout']);
+        this.router.navigate(['/post-checkout', response.order_number]);
       },
       error: (error) => {
         this.toastr.error('Error creating order: ' + error.message);

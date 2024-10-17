@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-post-checkout',
@@ -7,10 +7,16 @@ import { Router } from '@angular/router';
     styleUrls: ['./post-checkout.component.css'],
     standalone: true,
 })
-export class PostCheckoutComponent {
-    orderNumber: string = '7DVJGTZLSK';
+export class PostCheckoutComponent implements OnInit {
+    orderNumber: string = '';
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private route: ActivatedRoute) { }
+
+    ngOnInit() {
+        this.route.params.subscribe(params => {
+            this.orderNumber = params['order_number'];
+        });
+    }
 
     goHome() {
         this.router.navigate(['/']);
