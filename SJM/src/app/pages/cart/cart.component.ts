@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { ShipmentService } from '../../services/shipment.service';
-import { AddressService } from '../../services/address.service';
+import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { AddressChangeComponent } from '../../components/address-change/address-change.component';
@@ -40,7 +40,7 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private shipmentService: ShipmentService,
-    private addressService: AddressService,
+    private addressService: UserService,
     private authService: AuthService,
     private router: Router
   ) { }
@@ -75,7 +75,7 @@ export class CartComponent implements OnInit {
   loadShippingAddress() {
     const distributorId = this.authService.getDistributorId();
     if (distributorId) {
-      this.addressService.getAddress(distributorId).subscribe({
+      this.addressService.getDistributorFullAddress(distributorId).subscribe({
         next: (response: AddressResponse) => {
           this.shippingAddress = response.address;
           localStorage.setItem('shippingAddress', response.address);

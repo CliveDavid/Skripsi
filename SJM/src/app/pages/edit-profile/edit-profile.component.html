@@ -1,6 +1,5 @@
 <div class="edit-profile-container">
   <div class="header">
-    <i class="fas fa-arrow-left"></i>
     <h2 class="fw-bold">Edit Profile</h2>
   </div>
 
@@ -56,7 +55,8 @@
             <select class="form-control" id="province" [(ngModel)]="selectedProvince" name="province"
               (change)="onProvinceChange($event)" required>
               <option value="">Select Province</option>
-              <option *ngFor="let province of provinces" [value]="province.id">{{province.text}}</option>
+              <option *ngFor="let province of provinces" [value]="province.id"
+                [selected]="province.id === selectedProvince">{{province.text}}</option>
             </select>
           </div>
           <div class="form-group col-md-6">
@@ -64,7 +64,8 @@
             <select class="form-control" id="city" [(ngModel)]="selectedCity" name="city"
               (change)="onCityChange($event)" [disabled]="!selectedProvince" required>
               <option value="">Select City</option>
-              <option *ngFor="let city of cities" [value]="city.id">{{city.text}}</option>
+              <option *ngFor="let city of cities" [value]="city.id" [selected]="city.id === selectedCity">{{city.text}}
+              </option>
             </select>
           </div>
         </div>
@@ -74,7 +75,8 @@
             <select class="form-control" id="district" [(ngModel)]="selectedDistrict" name="district"
               (change)="onDistrictChange($event)" [disabled]="!selectedCity" required>
               <option value="">Select District</option>
-              <option *ngFor="let district of districts" [value]="district.id">{{district.text}}</option>
+              <option *ngFor="let district of districts" [value]="district.id"
+                [selected]="district.id === selectedDistrict">{{district.text}}</option>
             </select>
           </div>
           <div class="form-group col-md-6">
@@ -82,7 +84,8 @@
             <select class="form-control" id="subdistrict" [(ngModel)]="selectedSubdistrict" name="subdistrict"
               (change)="onSubdistrictChange($event)" [disabled]="!selectedDistrict" required>
               <option value="">Select Subdistrict</option>
-              <option *ngFor="let subdistrict of subdistricts" [value]="subdistrict.id">{{subdistrict.text}}</option>
+              <option *ngFor="let subdistrict of subdistricts" [value]="subdistrict.id"
+                [selected]="subdistrict.id === selectedSubdistrict">{{subdistrict.text}}</option>
             </select>
           </div>
         </div>
@@ -92,7 +95,8 @@
             <select class="form-control" id="zipcode" [(ngModel)]="selectedZipcode" name="zipcode"
               [disabled]="!selectedSubdistrict" required>
               <option value="">Select Zipcode</option>
-              <option *ngFor="let zipcode of zipcodes" [value]="zipcode.text">{{zipcode.text}}</option>
+              <option *ngFor="let zipcode of zipcodes" [value]="zipcode.text"
+                [selected]="zipcode.text === selectedZipcode">{{zipcode.text}}</option>
             </select>
           </div>
           <div class="form-group col-md-6">

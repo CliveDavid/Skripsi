@@ -4,6 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ADDR_URL, BASE_URL } from '../../constants';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import { ToastrService } from '../../services/toastr.service';
+import { AuthService } from '../../services/auth.service';
+import { catchError, tap, filter } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
     selector: 'app-edit-profile',
@@ -12,6 +17,8 @@ import { Router } from '@angular/router';
     templateUrl: './edit-profile.component.html',
     styleUrls: ['./edit-profile.component.css']
 })
+
+
 export class EditProfileComponent implements OnInit {
     addrApi = ADDR_URL;
     baseUrl = BASE_URL;
@@ -44,7 +51,10 @@ export class EditProfileComponent implements OnInit {
 
     constructor(
         private http: HttpClient,
-        private router: Router
+        private router: Router,
+        private userService: UserService,
+        private toastr: ToastrService,
+        private authService: AuthService
     ) { }
 
     ngOnInit() {
@@ -57,13 +67,46 @@ export class EditProfileComponent implements OnInit {
     }
 
     loadUserData() {
-        // TODO: Implement API call to load user data
-        // For now, we'll use placeholder data
-        this.firstName = 'John';
-        this.lastName = 'Doe';
-        this.email = 'john.doe@example.com';
-        this.phoneNumber = '123-4567-8901';
-        this.addr_details = '123 Main St';
+        const distributorId = this.authService.getDistributorId();
+        if (distributorId) {
+            this.userService.getPersonalInfo(distributorId).subscribe(
+                (personalInfo) => {
+                    this.firstName = personalInfo.firstName;
+                    this.lastName = personalInfo.lastName;
+                    this.email = personalInfo.email;
+                    this.phoneNumber = personalInfo.phone.replace('+62', '');
+                },
+                (error) => {
+                    console.error('Error loading personal info:', error);
+                }
+            );
+
+            this.userService.getAddress(distributorId).pipe(
+                catchError((error: any) => {
+                    this.toastr.error('Error loading address info: ' + error.message);
+                    return of(null);
+                }),
+                tap(addressInfo => {
+                    console.log('Received address info:', addressInfo); // For debugging
+                }),
+                filter(addressInfo => !!addressInfo), // Only proceed if addressInfo is not null/undefined
+            ).subscribe(
+                (addressInfo) => {
+                    this.addr_details = addressInfo?.addr_details ?? '';
+                    this.selectedProvince = addressInfo?.province ?? '';
+                    this.selectedCity = addressInfo?.city ?? '';
+                    this.selectedDistrict = addressInfo?.district ?? '';
+                    this.selectedSubdistrict = addressInfo?.subdistrict ?? '';
+                    this.selectedZipcode = addressInfo?.zipcode ?? '';
+
+                    if (this.selectedProvince) {
+                        this.loadProvinces();
+                    }
+                }
+            );
+        } else {
+            this.toastr.error('No distributor ID found');
+        }
     }
 
     loadProvinces() {
@@ -79,7 +122,13 @@ export class EditProfileComponent implements OnInit {
         this.http.get(`${this.addrApi}/kabkota/get/?d_provinsi_id=${provinceId}`)
             .subscribe((response: any) => {
                 this.cities = response.result;
-                this.resetSelections(['city', 'district', 'subdistrict', 'zipcode']);
+                this.districts = [];
+                this.subdistricts = [];
+                this.zipcodes = [];
+                this.selectedCity = '';
+                this.selectedDistrict = '';
+                this.selectedSubdistrict = '';
+                this.selectedZipcode = '';
             });
     }
 
@@ -89,7 +138,11 @@ export class EditProfileComponent implements OnInit {
         this.http.get(`${this.addrApi}/kecamatan/get/?d_kabkota_id=${cityId}`)
             .subscribe((response: any) => {
                 this.districts = response.result;
-                this.resetSelections(['district', 'subdistrict', 'zipcode']);
+                this.subdistricts = [];
+                this.zipcodes = [];
+                this.selectedDistrict = '';
+                this.selectedSubdistrict = '';
+                this.selectedZipcode = '';
             });
     }
 
@@ -99,7 +152,9 @@ export class EditProfileComponent implements OnInit {
         this.http.get(`${this.addrApi}/kelurahan/get/?d_kecamatan_id=${districtId}`)
             .subscribe((response: any) => {
                 this.subdistricts = response.result;
-                this.resetSelections(['subdistrict', 'zipcode']);
+                this.zipcodes = [];
+                this.selectedSubdistrict = '';
+                this.selectedZipcode = '';
             });
     }
 
@@ -167,33 +222,50 @@ export class EditProfileComponent implements OnInit {
 
     saveChanges() {
         if (this.newPassword !== this.confirmPassword) {
-            alert('New passwords do not match!');
+            this.toastr.error('New passwords do not match!');
             return;
         }
 
-        const provinceText = this.provinces.find(p => p.id === this.selectedProvince)?.text || '';
-        const cityText = this.cities.find(c => c.id === this.selectedCity)?.text || '';
-        const districtText = this.districts.find(d => d.id === this.selectedDistrict)?.text || '';
-        const subdistrictText = this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || '';
+        const distributorId = this.authService.getDistributorId();
+        if (!distributorId) {
+            this.toastr.error('No distributor ID found');
+            return;
+        }
 
-        const fullAddress = `${subdistrictText}, ${districtText}, ${cityText}, ${provinceText}, ${this.selectedZipcode}`;
-
-        const userData = {
-            name: `${this.firstName} ${this.lastName}`.trim(),
+        const personalInfo = {
+            firstName: this.firstName,
+            lastName: this.lastName,
             email: this.email,
-            currentPassword: this.currentPassword,
-            newPassword: this.newPassword,
             phone: '+62' + this.phoneNumber.replace(/\D/g, ''),
-            address: fullAddress,
-            addr_details: this.addr_details.trim(),
-            city: cityText,
-            province: provinceText,
-            zipcode: this.selectedZipcode
+            currentPassword: this.currentPassword,
+            newPassword: this.newPassword
         };
 
-        // TODO: Implement API call to update user data
-        console.log('User data to be updated:', userData);
-        alert('Profile updated successfully!');
+        const addressInfo = {
+            addr_details: this.addr_details.trim(),
+            city: this.cities.find(c => c.id === this.selectedCity)?.text || '',
+            province: this.provinces.find(p => p.id === this.selectedProvince)?.text || '',
+            zipcode: this.selectedZipcode,
+            district: this.districts.find(d => d.id === this.selectedDistrict)?.text || '',
+            subdistrict: this.subdistricts.find(s => s.id === this.selectedSubdistrict)?.text || ''
+        };
+
+        this.userService.updatePersonalInfo(distributorId, personalInfo).subscribe(
+            () => {
+                this.toastr.success('Personal info updated successfully');
+                this.userService.updateAddress(distributorId, addressInfo).subscribe(
+                    () => {
+                        this.toastr.success('Profile updated successfully!');
+                    },
+                    (error) => {
+                        this.toastr.error('Failed to update address. Please try again.');
+                    }
+                );
+            },
+            (error) => {
+                this.toastr.error('Failed to update personal info. Please try again.');
+            }
+        );
     }
 
     cancel() {

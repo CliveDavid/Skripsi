@@ -652,7 +652,7 @@
         ]
       }
     },
-    "/distributor/get-address": {
+    "/distributor/get-distributor-full-address": {
       "post": {
         "description": "",
         "parameters": [
@@ -687,6 +687,174 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        },
+        "tags": [
+          "Distributor"
+        ]
+      }
+    },
+    "/distributor/get-address": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "distributor_id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Distributor"
+        ]
+      }
+    },
+    "/distributor/get-personal-info": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "distributor_id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Distributor"
+        ]
+      }
+    },
+    "/distributor/update-personal-info": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "distributor_id": {
+                  "example": "any"
+                },
+                "firstName": {
+                  "example": "any"
+                },
+                "lastName": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "phone": {
+                  "example": "any"
+                },
+                "currentPassword": {
+                  "example": "any"
+                },
+                "newPassword": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Distributor"
+        ]
+      }
+    },
+    "/distributor/update-address": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "distributor_id": {
+                  "example": "any"
+                },
+                "addr_details": {
+                  "example": "any"
+                },
+                "city": {
+                  "example": "any"
+                },
+                "province": {
+                  "example": "any"
+                },
+                "zipcode": {
+                  "example": "any"
+                },
+                "district": {
+                  "example": "any"
+                },
+                "subdistrict": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "tags": [

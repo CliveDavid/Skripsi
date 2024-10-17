@@ -38,7 +38,6 @@ router.post('/login', asyncHandler(async (req, res) => {
     });
 }));
 
-
 // Distributor Logout
 router.post('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -208,7 +207,6 @@ router.post('/update', asyncHandler(async (req, res) => {
     res.json(updatedDistributorWithoutPassword);
 }));
 
-
 // Register
 router.post('/register', asyncHandler(async (req, res) => {
     const {
@@ -326,8 +324,8 @@ function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
 }
 
-// Get distributor address
-router.post('/get-address', asyncHandler(async (req, res) => {
+// Get distributor full address
+router.post('/get-distributor-full-address', asyncHandler(async (req, res) => {
     const { distributor_id } = req.body;
 
     if (!distributor_id) {
@@ -350,6 +348,113 @@ router.post('/get-address', asyncHandler(async (req, res) => {
 
     res.json({ address: fullAddress });
 }));
+
+// distributor get address
+router.post('/get-address', async (req, res) => {
+    try {
+        const { distributor_id } = req.body;
+        const address = await DistributorAddress.findOne({
+            where: { distributor_id }
+        });
+
+        if (!address) {
+            return res.status(404).json({ message: 'Address not found' });
+        }
+
+        res.json(address);
+    } catch (error) {
+        console.error('Error fetching address:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get personal information for edit
+router.post('/get-personal-info', async (req, res) => {
+    try {
+        const { distributor_id } = req.body;
+        const distributor = await Distributor.findByPk(distributor_id, {
+            attributes: ['name', 'email', 'phone']
+        });
+
+        if (!distributor) {
+            return res.status(404).json({ message: 'Distributor not found' });
+        }
+
+        const [firstName, ...lastNameParts] = distributor.name.split(' ');
+        const lastName = lastNameParts.join(' ');
+
+        res.json({
+            firstName,
+            lastName,
+            email: distributor.email,
+            phone: distributor.phone
+        });
+    } catch (error) {
+        console.error('Error fetching personal info:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Update personal information
+router.post('/update-personal-info', async (req, res) => {
+    try {
+        const { distributor_id, firstName, lastName, email, phone, currentPassword, newPassword } = req.body;
+        const distributor = await Distributor.findByPk(distributor_id);
+
+        if (!distributor) {
+            return res.status(404).json({ message: 'Distributor not found' });
+        }
+
+        // Verify current password
+        const isPasswordValid = await bcrypt.compare(currentPassword, distributor.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+
+        // Update distributor information
+        distributor.name = `${firstName} ${lastName}`.trim();
+        distributor.email = email;
+        distributor.phone = phone;
+
+        if (newPassword) {
+            distributor.password = await bcrypt.hash(newPassword, 10);
+        }
+
+        await distributor.save();
+
+        res.json({ message: 'Personal information updated successfully' });
+    } catch (error) {
+        console.error('Error updating personal info:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Update address information
+router.post('/update-address', async (req, res) => {
+    try {
+        const { distributor_id, addr_details, city, province, zipcode, district, subdistrict } = req.body;
+        const [address, created] = await DistributorAddress.findOrCreate({
+            where: { distributor_id },
+            defaults: { distributor_id }
+        });
+
+        address.address = `${subdistrict}, ${district}, ${city}, ${province}, ${zipcode}`;
+        address.addr_details = addr_details;
+        address.city = city;
+        address.province = province;
+        address.zipcode = zipcode;
+        address.district = district;
+        address.subdistrict = subdistrict;
+
+        await address.save();
+
+        res.json({ message: 'Address updated successfully' });
+    } catch (error) {
+        console.error('Error updating address:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
   
 
