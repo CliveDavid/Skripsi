@@ -454,8 +454,24 @@ router.post('/update-address', async (req, res) => {
     }
 });
 
+// Delete (Deactivate) distributor account
+router.post('/deactivate-distributor', asyncHandler(async (req, res) => {
+    const { distributor_id } = req.body;
 
-  
+    if (!distributor_id) {
+        return res.status(400).json({ message: 'Distributor ID is required' });
+    }
+
+    const distributor = await Distributor.findByPk(distributor_id);
+    if (!distributor) {
+        return res.status(404).json({ message: 'Distributor not found' });
+    }
+
+    distributor.is_active = false;
+    await distributor.save();
+
+    res.json({ message: 'Distributor account deactivated successfully' });
+}));
 
 
 module.exports = router;

@@ -288,11 +288,24 @@ export class EditProfileComponent implements OnInit {
     }
 
     deleteAccount() {
-        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-            // Implement account deletion logic here
-            console.log('Account deletion requested');
-            // After successful deletion, you might want to log the user out and redirect
-            // this.router.navigate(['/login']);
+        if (confirm('Are you sure you want to deactivate your account? This action cannot be undone.')) {
+            const distributorId = this.authService.getDistributorId();
+            if (!distributorId) {
+                this.toastr.error('No distributor ID found');
+                return;
+            }
+
+            this.userService.deactivateDistributor(distributorId).subscribe(
+                () => {
+                    this.toastr.success('Account deactivated successfully');
+                    this.authService.logout();
+                    this.router.navigate(['/login']);
+                },
+                (error) => {
+                    this.toastr.error('Failed to deactivate account. Please try again.');
+                    console.error('Error deactivating account:', error);
+                }
+            );
         }
     }
 }

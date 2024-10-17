@@ -23,7 +23,6 @@ interface AddressInfo {
     phone?: string;
 }
 
-
 @Injectable({
     providedIn: 'root'
 })
@@ -50,4 +49,7 @@ export class UserService {
         return this.http.post(`${BASE_URL}/distributor/update-address`, { distributor_id: distributorId, ...addressInfo });
     }
 
+    deactivateDistributor(distributorId: string): Observable<any> {
+        return this.http.post(`${BASE_URL}/distributor/deactivate-distributor`, { distributor_id: distributorId });
+    }
 }
