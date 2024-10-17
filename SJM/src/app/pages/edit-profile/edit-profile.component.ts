@@ -86,10 +86,7 @@ export class EditProfileComponent implements OnInit {
                     this.toastr.error('Error loading address info: ' + error.message);
                     return of(null);
                 }),
-                tap(addressInfo => {
-                    console.log('Received address info:', addressInfo); // For debugging
-                }),
-                filter(addressInfo => !!addressInfo), // Only proceed if addressInfo is not null/undefined
+                filter(addressInfo => !!addressInfo),
             ).subscribe(
                 (addressInfo) => {
                     this.addr_details = addressInfo?.addr_details ?? '';
@@ -100,7 +97,11 @@ export class EditProfileComponent implements OnInit {
                     this.selectedZipcode = addressInfo?.zipcode ?? '';
 
                     if (this.selectedProvince) {
-                        this.loadProvinces();
+                        this.loadProvinces().then(() => {
+                            if (this.selectedCity) {
+                                this.onProvinceChange({ target: { value: this.selectedProvince } });
+                            }
+                        });
                     }
                 }
             );
@@ -109,26 +110,30 @@ export class EditProfileComponent implements OnInit {
         }
     }
 
-    loadProvinces() {
-        this.http.get(`${this.addrApi}/provinsi/get/`)
-            .subscribe((response: any) => {
-                this.provinces = response.result;
-            });
+    loadProvinces(): Promise<void> {
+        return new Promise((resolve) => {
+            this.http.get(`${this.addrApi}/provinsi/get/`)
+                .subscribe((response: any) => {
+                    this.provinces = response.result;
+                    resolve();
+                });
+        });
     }
-
     onProvinceChange(event: any) {
         const provinceId = event.target.value;
         this.selectedProvince = provinceId;
         this.http.get(`${this.addrApi}/kabkota/get/?d_provinsi_id=${provinceId}`)
             .subscribe((response: any) => {
                 this.cities = response.result;
-                this.districts = [];
-                this.subdistricts = [];
-                this.zipcodes = [];
-                this.selectedCity = '';
-                this.selectedDistrict = '';
-                this.selectedSubdistrict = '';
-                this.selectedZipcode = '';
+                this.resetSelections(['district', 'subdistrict', 'zipcode']);
+
+                if (this.selectedCity) {
+                    const cityObject = this.cities.find(city => city.text === this.selectedCity);
+                    if (cityObject) {
+                        this.selectedCity = cityObject.id;
+                        this.onCityChange({ target: { value: this.selectedCity } });
+                    }
+                }
             });
     }
 
@@ -138,11 +143,15 @@ export class EditProfileComponent implements OnInit {
         this.http.get(`${this.addrApi}/kecamatan/get/?d_kabkota_id=${cityId}`)
             .subscribe((response: any) => {
                 this.districts = response.result;
-                this.subdistricts = [];
-                this.zipcodes = [];
-                this.selectedDistrict = '';
-                this.selectedSubdistrict = '';
-                this.selectedZipcode = '';
+                this.resetSelections(['subdistrict', 'zipcode']);
+
+                if (this.selectedDistrict) {
+                    const districtObject = this.districts.find(district => district.text === this.selectedDistrict);
+                    if (districtObject) {
+                        this.selectedDistrict = districtObject.id;
+                        this.onDistrictChange({ target: { value: this.selectedDistrict } });
+                    }
+                }
             });
     }
 
@@ -152,9 +161,15 @@ export class EditProfileComponent implements OnInit {
         this.http.get(`${this.addrApi}/kelurahan/get/?d_kecamatan_id=${districtId}`)
             .subscribe((response: any) => {
                 this.subdistricts = response.result;
-                this.zipcodes = [];
-                this.selectedSubdistrict = '';
-                this.selectedZipcode = '';
+                this.resetSelections(['zipcode']);
+
+                if (this.selectedSubdistrict) {
+                    const subdistrictObject = this.subdistricts.find(subdistrict => subdistrict.text === this.selectedSubdistrict);
+                    if (subdistrictObject) {
+                        this.selectedSubdistrict = subdistrictObject.id;
+                        this.onSubdistrictChange({ target: { value: this.selectedSubdistrict } });
+                    }
+                }
             });
     }
 
