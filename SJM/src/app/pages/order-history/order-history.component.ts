@@ -23,7 +23,7 @@ interface Order {
   styleUrls: ['./order-history.component.css']
 })
 export class OrderHistoryComponent implements OnInit {
-  activeTab: 'upcoming' | 'history' = 'history';
+  activeTab: 'upcoming' | 'history' = 'upcoming';
   upcomingOrders: Order[] = [];
   historyOrders: Order[] = [];
 
@@ -53,6 +53,10 @@ export class OrderHistoryComponent implements OnInit {
 
   setActiveTab(tab: 'upcoming' | 'history') {
     this.activeTab = tab;
+  }
+
+  getFormattedCurrency(amount: number): string {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
   }
 
   viewOrderDetails(orderId: number) {

@@ -46,7 +46,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 30px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -61,14 +61,38 @@ h1 {
 }
 
 .shipment-info h3 {
-  font-size: 16px;
-  margin: 0 0 5px 0;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.shipment-info h3 .status {
+  color: #007bff;
+  margin-right: 5px;
+}
+
+.shipment-info h3 .date {
+  font-weight: normal;
+  color: #666666;
 }
 
 .shipment-info p {
   font-size: 14px;
-  color: #666;
+  color: #444444;
   margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shipment-info .items {
+  font-weight: 500;
+}
+
+.shipment-info .total {
+  font-weight: bold;
+  color: #28a745;
 }
 
 .chevron {
