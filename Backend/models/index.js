@@ -32,6 +32,7 @@ Product.belongsTo(ProductType, { foreignKey: 'prod_type_code', targetKey: 'prod_
 
 Order.hasMany(OrderItem, { foreignKey: 'order_id' });
 
+Order.hasOne(Invoice, { foreignKey: 'order_id' });
 Invoice.belongsTo(Order, { foreignKey: 'order_id' });
 
 ShipmentMethod.hasMany(Order, { foreignKey: 'shipment_code' });

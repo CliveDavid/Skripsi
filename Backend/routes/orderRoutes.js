@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { format } = require('date-fns');
-const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType, OrderStatusHistory } = require('../models');
+const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType, OrderStatusHistory, Invoice } = require('../models');
+const { STATUS, ERROR_MESSAGES } = require('../constants');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -72,6 +73,10 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
                 as: 'order_status_histories',
                 attributes: ['status', 'changed_at'],
                 order: [['changed_at', 'ASC']]  
+            },
+            {
+                model: Invoice, 
+                attributes: ['invoice_number', 'invoice_dt', 'due_dt', 'payment_status']
             }
         ]
     });
@@ -99,11 +104,18 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
         status_history: order.order_status_histories.map(status => ({
             status: status.status,
             changed_at: format(new Date(status.changed_at), 'yyyy-MM-dd HH:mm:ss')
-        }))
+        })),
+        invoice: order.invoice ? { // Include invoice only if it exists
+            invoice_number: order.invoice.invoice_number,
+            invoice_date: format(new Date(order.invoice.invoice_dt), 'd MMMM, yyyy'),
+            due_date: format(new Date(order.invoice.due_dt), 'd MMMM, yyyy'),
+            payment_status: order.invoice.payment_status
+        } : null
     };
 
     res.json(flattenedOrder);
 }));
+
 
 
 // Create new order
@@ -120,10 +132,10 @@ router.post('/create', asyncHandler(async (req, res) => {
     
     // Basic validation
     if (!distributor_id || !order_dt || !total_price || !shipment_code) {
-        return res.status(400).json({ message: "Missing required fields" });
+        return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
     }
 
-    const status = "Pending"
+    const status = STATUS.PENDING
 
     try {
         const result = await sequelize.transaction(async (t) => {
@@ -188,7 +200,7 @@ router.post('/update', asyncHandler(async (req, res) => {
     
     // Basic validation
     if (!order_id || !status || !shipment_code) {
-        return res.status(400).json({ message: "Missing required fields" });
+        return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
     }
 
     try {

@@ -4,6 +4,7 @@ const { sequelize, Distributor, DistributorAddress, OTP } = require('../models')
 const { Op, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { sendMail } = require('../utils/email'); 
+const { ERROR_MESSAGES } = require('../constants');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -17,13 +18,13 @@ router.post('/login', asyncHandler(async (req, res) => {
     const distributor = await Distributor.findOne({ where: { email, is_active: true } });
 
     if (!distributor) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({ message: ERROR_MESSAGES.INVALID_EMAIL_OR_PASSWORD });
     }
 
     const isPasswordValid = await bcrypt.compare(password, distributor.password);
 
     if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({ message: ERROR_MESSAGES.INVALID_EMAIL_OR_PASSWORD });
     }
 
     // Set session data
@@ -103,7 +104,7 @@ router.post('/resend-otp', asyncHandler(async (req, res) => {
     const distributor = await Distributor.findOne({ where: { email } });
 
     if (!distributor) {
-        return res.status(404).json({ message: 'Distributor not found' });
+        return res.status(404).json({ message: ERROR_MESSAGES.DISTRIBUTOR_NOT_FOUND });
     }
 
     // Check if the distributor is already verified
@@ -193,7 +194,7 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
     });
     if (!distributor) {
         return res.status(404).json({
-            message: 'Distributor not found'
+            message: ERROR_MESSAGES.DISTRIBUTOR_NOT_FOUND
         });
     }
     res.json(distributor);
@@ -308,7 +309,7 @@ router.post('/update', asyncHandler(async (req, res) => {
     const result = await sequelize.transaction(async (t) => {
         const distributor = await Distributor.findByPk(distributor_id, { transaction: t });
         if (!distributor) {
-            throw new Error('Distributor not found');
+            throw new Error(ERROR_MESSAGES.DISTRIBUTOR_NOT_FOUND);
         }
 
         const updates = { name, email, is_active };
@@ -340,7 +341,7 @@ router.post('/deactivate-distributor', asyncHandler(async (req, res) => {
 
     const distributor = await Distributor.findByPk(distributor_id);
     if (!distributor) {
-        return res.status(404).json({ message: 'Distributor not found' });
+        return res.status(404).json({ message: ERROR_MESSAGES.DISTRIBUTOR_NOT_FOUND });
     }
 
     distributor.is_active = false;
@@ -366,7 +367,7 @@ router.post('/get-address', async (req, res) => {
         res.json(address);
     } catch (error) {
         console.error('Error fetching address:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 });
 
@@ -393,7 +394,7 @@ router.post('/update-address', async (req, res) => {
         res.json({ message: 'Address updated successfully' });
     } catch (error) {
         console.error('Error updating address:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 });
 
@@ -406,7 +407,7 @@ router.post('/get-personal-info', async (req, res) => {
         });
 
         if (!distributor) {
-            return res.status(404).json({ message: 'Distributor not found' });
+            return res.status(404).json({ message: ERROR_MESSAGES.DISTRIBUTOR_NOT_FOUND });
         }
 
         const [firstName, ...lastNameParts] = distributor.name.split(' ');
@@ -419,7 +420,7 @@ router.post('/get-personal-info', async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching personal info:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 });
 
@@ -430,7 +431,7 @@ router.post('/update-personal-info', async (req, res) => {
         const distributor = await Distributor.findByPk(distributor_id);
 
         if (!distributor) {
-            return res.status(404).json({ message: 'Distributor not found' });
+            return res.status(404).json({ message: ERROR_MESSAGES.DISTRIBUTOR_NOT_FOUND });
         }
 
         // Verify current password
@@ -452,7 +453,7 @@ router.post('/update-personal-info', async (req, res) => {
         res.json({ message: 'Personal information updated successfully' });
     } catch (error) {
         console.error('Error updating personal info:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 });
 

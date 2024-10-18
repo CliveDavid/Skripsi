@@ -4,6 +4,7 @@ const { Invoice } = require('../models');
 const { generateInvoicePDF } = require('../utils/pdfGenerator');
 require('dotenv').config();
 const { sendMail } = require('../utils/email');
+const { ERROR_MESSAGES } = require('../constants');
 
 // Middleware to handle async errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -55,7 +56,7 @@ router.post('/create', asyncHandler(async (req, res) => {
 
     // Validate required fields
     if (!invoice_dt || !order_id || !subtotal) {
-        return res.status(400).json({ message: 'Missing required fields' });
+        return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
     }
 
     // Check if an invoice already exists for this order
