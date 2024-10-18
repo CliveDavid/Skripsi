@@ -1168,9 +1168,6 @@
                 "order_dt": {
                   "example": "any"
                 },
-                "status": {
-                  "example": "any"
-                },
                 "total_price": {
                   "example": "any"
                 },

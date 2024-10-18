@@ -186,7 +186,6 @@ export class CartComponent implements OnInit {
     const orderData = {
       distributor_id: this.authService.getDistributorId(),
       order_dt: new Date().toISOString(),
-      status: 'Pending',
       total_price: this.total,
       shipment_code: this.selectedShippingMethod,
       notes: '',

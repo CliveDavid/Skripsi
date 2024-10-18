@@ -44,19 +44,34 @@ router.post('/get-all', asyncHandler(async (req, res) => {
     res.json(flattenedOrders);
 }));
 
-// Get order by ID
+// Get complete order info by ID
 router.post('/get-by-id', asyncHandler(async (req, res) => {
     const { order_id } = req.body;
+
     const order = await Order.findByPk(order_id, {
         include: [
-            { model: Distributor, attributes: ['name'] },
-            { model: ShipmentMethod, attributes: ['shipment_name'] },
+            { model: Distributor, attributes: ['name'], as: 'distributor' },
+            { model: ShipmentMethod, attributes: ['shipment_name'], as: 'shipment_method' },
             { 
                 model: OrderItem,
+                as: 'order_items',
                 include: [
-                    { model: Product, attributes: ['prod_name'] },
-                    { model: BoxType, attributes: ['box_type_code', 'box_capacity'] }
+                    { model: Product, attributes: ['prod_name'], as: 'product' },
+                    { model: BoxType, attributes: ['box_type_code', 'box_capacity'], as: 'box_type' }
                 ]
+            },
+            {
+                model: OrderAddress,
+                as: 'addresses',
+                attributes: [
+                    'address', 'addr_details', 'city', 'province', 'zipcode', 'district', 'subdistrict'
+                ]
+            },
+            {
+                model: OrderStatusHistory,
+                as: 'order_status_histories',
+                attributes: ['status', 'changed_at'],
+                order: [['changed_at', 'ASC']]  
             }
         ]
     });
@@ -66,33 +81,36 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
     }
 
     const flattenedOrder = {
-        ...order.get({ plain: true }),
+        order_id: order.order_id,
         distributor_name: order.distributor.name,
         shipment_name: order.shipment_method.shipment_name,
-        order_dt: format(new Date(order.order_dt), 'yyyy-MM-dd'),
-        orderItems: order.order_items.map(item => ({
-            order_item_id: item.order_item_id,
-            product_id: item.product_id,
+        order_date: format(new Date(order.order_dt), 'd MMMM, yyyy'),
+        total_price: order.total_price,
+        items: order.order_items.map(item => ({
             product_name: item.product.prod_name,
-            box_type_code: item.box_type_code,
+            box_type_code: item.box_type.box_type_code,
             box_type_display: `${item.box_type.box_type_code} (Capacity: ${item.box_type.box_capacity})`,
             qty: item.qty,
             total_item_price: item.total_item_price
         })),
-        distributor: undefined,
-        shipment_method: undefined,
-        order_items: undefined
+        address: order.addresses.map(addr => 
+            `${addr.address}, ${addr.addr_details}`
+        ).join(', '),
+        status_history: order.order_status_histories.map(status => ({
+            status: status.status,
+            changed_at: format(new Date(status.changed_at), 'yyyy-MM-dd HH:mm:ss')
+        }))
     };
 
     res.json(flattenedOrder);
 }));
+
 
 // Create new order
 router.post('/create', asyncHandler(async (req, res) => {
     const { 
         distributor_id, 
         order_dt, 
-        status, 
         total_price, 
         shipment_code, 
         notes,
@@ -101,9 +119,11 @@ router.post('/create', asyncHandler(async (req, res) => {
     } = req.body;
     
     // Basic validation
-    if (!distributor_id || !order_dt || !status || !total_price || !shipment_code) {
+    if (!distributor_id || !order_dt || !total_price || !shipment_code) {
         return res.status(400).json({ message: "Missing required fields" });
     }
+
+    const status = "Pending"
 
     try {
         const result = await sequelize.transaction(async (t) => {

@@ -55,6 +55,12 @@ module.exports = (sequelize, DataTypes) => {
                     order.order_number = orderNumber;
                 }
             },
+            afterCreate: async (order, options) => {
+                await sequelize.models.order_status_history.create({
+                    order_id: order.order_id,
+                    status: order.status,
+                }, { transaction: options.transaction });
+            },
             afterUpdate: async (order, options) => {
                 if (order.changed('status')) {
                     await sequelize.models.order_status_history.create({
