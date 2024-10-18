@@ -13,7 +13,7 @@ export const routes: Routes = [
             { path: 'post-checkout/:order_number', loadComponent: () => import('./pages/post-checkout/post-checkout.component').then(m => m.PostCheckoutComponent), canActivate: [AuthGuard] },
             { path: 'edit-profile', loadComponent: () => import('./pages/edit-profile/edit-profile.component').then(m => m.EditProfileComponent), canActivate: [AuthGuard] },
             { path: 'order-history', loadComponent: () => import('./pages/order-history/order-history.component').then(m => m.OrderHistoryComponent), canActivate: [AuthGuard] },
-            { path: 'order-details/:order_number', loadComponent: () => import('./pages/order-details/order-details.component').then(m => m.OrderDetailsComponent), canActivate: [AuthGuard] },
+            { path: 'order-details/:id', loadComponent: () => import('./pages/order-details/order-details.component').then(m => m.OrderDetailsComponent), canActivate: [AuthGuard] },
             // { path: 'cart', loadComponent: () => import('./pages/cart/cart.component').then(m => m.CartComponent), canActivate: [AuthGuard] }
         ]
     },

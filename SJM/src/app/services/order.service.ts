@@ -30,6 +30,6 @@ export class OrderService {
     }
 
     getOrderDetails(orderId: string): Observable<any> {
-        return this.http.get(`${BASE_URL}/orders/${orderId}`);
+        return this.http.post(`${BASE_URL}/orders/get-by-id`, { order_id: orderId });
     }
 }

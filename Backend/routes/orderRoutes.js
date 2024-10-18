@@ -87,6 +87,7 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
 
     const flattenedOrder = {
         order_id: order.order_id,
+        order_number: order.order_number,
         distributor_name: order.distributor.name,
         shipment_name: order.shipment_method.shipment_name,
         order_date: format(new Date(order.order_dt), 'd MMMM, yyyy'),

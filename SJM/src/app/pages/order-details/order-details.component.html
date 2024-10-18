@@ -1,91 +1,86 @@
 <div class="container mt-4">
-  <h4 class="order-details-title mb-4">Order Number #{{ orderNumber }}</h4>
+  <h4 class="order-details-title mb-5">Order Number <span class="order-number">#{{ orderNumber }}</span></h4>
 
   <div class="row">
     <div class="col-md-8">
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="card-title">Customer Details</h5>
-          <p>Name: {{ customerName }}</p>
-          <p>Email: {{ customerEmail }}</p>
-          <p>Phone: {{ customerPhone }}</p>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Shipping Details</h5>
+              <div class="detail-row">
+                <span class="detail-label">Address</span>
+                <span class="detail-value">{{ shippingDetails.address }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Shipment Method</span>
+                <span class="detail-value">{{ shippingDetails.shipmentMethod }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Order History</h5>
+              <ul class="list-unstyled">
+                <li *ngFor="let status of orderStatusHistory" class="mb-2">
+                  <span class="text-primary">●</span> {{ status.status }}
+                  <small class="text-muted">{{ status.changed_at | date:'dd MMM yyyy' }}</small>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="card-title">Delivery Address</h5>
-          <p>{{ deliveryAddress.line1 }}</p>
-          <p>{{ deliveryAddress.line2 }}</p>
-          <p>{{ deliveryAddress.city }}, {{ deliveryAddress.postcode }}</p>
-        </div>
-      </div>
-
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="card-title">Order History</h5>
-          <ul class="list-unstyled">
-            <li *ngFor="let status of orderStatuses" class="mb-2">
-              <span class="text-primary">●</span> {{ status.status }}
-              <small class="text-muted">{{ status.date | date:'dd MMM yyyy' }}</small>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="card">
         <div class="card-body">
           <h5 class="card-title">Item Summary</h5>
-          <div *ngFor="let item of orderItems" class="row mb-3 align-items-center">
-            <div class="col-2">
-              <img [src]="item.imageUrl" alt="{{ item.name }}" class="img-fluid">
+          <div *ngFor="let item of orderItems; let last = last" class="item-row" [class.last-item]="last">
+            <div class="row align-items-center">
+              <div class="col-md-2">
+                <img [src]="item.imageUrl || placeholderImage" [alt]="item.product_name" class="img-fluid">
+              </div>
+              <div class="col-md-4">
+                <h6>{{ item.product_name }}</h6>
+                <p class="text-muted">{{ item.box_type_display }}</p>
+              </div>
+              <div class="col-md-3 text-center">
+                Quantity: {{ item.qty }}
+              </div>
+              <div class="col-md-3 text-right">
+                Price<br>
+                {{ item.total_item_price | currency:'Rp ':'symbol':'1.0-0' }}
+              </div>
             </div>
-            <div class="col-6">
-              <h5>{{ item.name }}</h5>
-              <p class="text-muted">{{ item.color }}</p>
-            </div>
-            <div class="col-2 text-center">{{ item.quantity }}</div>
-            <div class="col-2 text-right">{{ item.price | currency }}</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="col-md-4">
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title">Order Summary</h5>
           <div class="d-flex justify-content-between mb-2">
-            <span>Subtotal</span>
-            <span>{{ orderSummary.subtotal | currency }}</span>
+            <span class="total-label">Total</span>
+            <span class="total-value">{{ total_price | currency:'Rp ':'symbol':'1.0-0' }}</span>
           </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Discount</span>
-            <span>{{ orderSummary.discount | currency }}</span>
-          </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Delivery Fee</span>
-            <span>{{ orderSummary.deliveryFee | currency }}</span>
-          </div>
-          <hr>
-          <div class="d-flex justify-content-between mb-2">
-            <strong>Total</strong>
-            <strong>{{ orderSummary.total | currency }}</strong>
-          </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Platform Fee</span>
-            <span>{{ orderSummary.platformFee }}%</span>
-          </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Credit Card Charge</span>
-            <span>{{ orderSummary.creditCardCharge }}%</span>
-          </div>
-          <div class="d-flex justify-content-between">
-            <strong>Eligible</strong>
-            <strong>{{ orderSummary.eligible | currency }}</strong>
-          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4" *ngIf="invoice">
+        <div class="card-body">
+          <h5 class="card-title">Invoice Details</h5>
+          <p><strong>Invoice Number:</strong> {{ invoice.invoice_number }}</p>
+          <p><strong>Invoice Date:</strong> {{ invoice.invoice_date }}</p>
+          <p><strong>Due Date:</strong> {{ invoice.due_date }}</p>
+          <p><strong>Payment Status:</strong> {{ invoice.payment_status }}</p>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<app-toastr></app-toastr>
