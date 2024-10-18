@@ -8,7 +8,7 @@
     </div>
 
     <div class="shipments-list">
-      <div class="shipment-item" *ngFor="let order of displayedOrders" (click)="viewOrderDetails(order.id)">
+      <div class="shipment-item" *ngFor="let order of displayedOrders" (click)="viewOrderDetails(order.orderNumber)">
         <div class="shipment-info">
           <h3>{{ order.status }} on {{ order.date | date: 'd MMMM, y' }}</h3>
           <p>{{ order.items }} items • {{ getFormattedCurrency(order.total) }}</p>

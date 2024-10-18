@@ -29,7 +29,7 @@ export class OrderService {
         );
     }
 
-    getOrderDetails(orderId: string): Observable<any> {
-        return this.http.post(`${BASE_URL}/orders/get-by-id`, { order_id: orderId });
+    getOrderDetails(orderNumber: string): Observable<any> {
+        return this.http.post(`${BASE_URL}/orders/get-by-order-number`, { order_number: orderNumber });
     }
 }

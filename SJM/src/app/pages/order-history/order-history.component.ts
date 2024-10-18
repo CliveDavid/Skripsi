@@ -59,8 +59,8 @@ export class OrderHistoryComponent implements OnInit {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
   }
 
-  viewOrderDetails(orderId: number) {
-    this.router.navigate(['/order-details', orderId]);
+  viewOrderDetails(orderNumber: string) {
+    this.router.navigate(['/order-details', orderNumber]);
   }
 
   get displayedOrders(): Order[] {

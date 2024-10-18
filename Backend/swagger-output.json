@@ -1122,7 +1122,7 @@
         ]
       }
     },
-    "/orders/get-by-id": {
+    "/orders/get-by-order-number": {
       "post": {
         "description": "",
         "parameters": [
@@ -1132,7 +1132,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "order_id": {
+                "order_number": {
                   "example": "any"
                 }
               }
@@ -1142,6 +1142,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "404": {
             "description": "Not Found"

@@ -45,11 +45,16 @@ router.post('/get-all', asyncHandler(async (req, res) => {
     res.json(flattenedOrders);
 }));
 
-// Get complete order info by ID
-router.post('/get-by-id', asyncHandler(async (req, res) => {
-    const { order_id } = req.body;
+// Get complete order info by order number
+router.post('/get-by-order-number', asyncHandler(async (req, res) => {
+    const { order_number } = req.body;
 
-    const order = await Order.findByPk(order_id, {
+    if (!order_number) {
+        return res.status(400).json({ message: 'Order number is required' });
+    }
+
+    const order = await Order.findOne({
+        where: { order_number: order_number },
         include: [
             { model: Distributor, attributes: ['name'], as: 'distributor' },
             { model: ShipmentMethod, attributes: ['shipment_name'], as: 'shipment_method' },

@@ -58,13 +58,13 @@ export class OrderDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      const orderId = params['id'];
-      this.loadOrderDetails(orderId);
+      const orderNumber = params['orderNumber'];
+      this.loadOrderDetails(orderNumber);
     });
   }
 
-  loadOrderDetails(orderId: string): void {
-    this.orderService.getOrderDetails(orderId).subscribe({
+  loadOrderDetails(orderNumber: string): void {
+    this.orderService.getOrderDetails(orderNumber).subscribe({
       next: (orderDetails: any) => {
         this.orderNumber = orderDetails.order_number;
         this.shippingDetails = {
