@@ -28,4 +28,8 @@ export class OrderService {
             { distributor_id: distributorId }
         );
     }
+
+    getOrderDetails(orderId: string): Observable<any> {
+        return this.http.get(`${BASE_URL}/orders/${orderId}`);
+    }
 }

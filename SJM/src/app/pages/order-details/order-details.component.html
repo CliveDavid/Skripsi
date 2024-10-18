@@ -1,0 +1,91 @@
+<div class="container mt-4">
+  <h4 class="order-details-title mb-4">Order Number #{{ orderNumber }}</h4>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Customer Details</h5>
+          <p>Name: {{ customerName }}</p>
+          <p>Email: {{ customerEmail }}</p>
+          <p>Phone: {{ customerPhone }}</p>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Delivery Address</h5>
+          <p>{{ deliveryAddress.line1 }}</p>
+          <p>{{ deliveryAddress.line2 }}</p>
+          <p>{{ deliveryAddress.city }}, {{ deliveryAddress.postcode }}</p>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Order History</h5>
+          <ul class="list-unstyled">
+            <li *ngFor="let status of orderStatuses" class="mb-2">
+              <span class="text-primary">●</span> {{ status.status }}
+              <small class="text-muted">{{ status.date | date:'dd MMM yyyy' }}</small>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Item Summary</h5>
+          <div *ngFor="let item of orderItems" class="row mb-3 align-items-center">
+            <div class="col-2">
+              <img [src]="item.imageUrl" alt="{{ item.name }}" class="img-fluid">
+            </div>
+            <div class="col-6">
+              <h5>{{ item.name }}</h5>
+              <p class="text-muted">{{ item.color }}</p>
+            </div>
+            <div class="col-2 text-center">{{ item.quantity }}</div>
+            <div class="col-2 text-right">{{ item.price | currency }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Order Summary</h5>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span>
+            <span>{{ orderSummary.subtotal | currency }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Discount</span>
+            <span>{{ orderSummary.discount | currency }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Delivery Fee</span>
+            <span>{{ orderSummary.deliveryFee | currency }}</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between mb-2">
+            <strong>Total</strong>
+            <strong>{{ orderSummary.total | currency }}</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Platform Fee</span>
+            <span>{{ orderSummary.platformFee }}%</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Credit Card Charge</span>
+            <span>{{ orderSummary.creditCardCharge }}%</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <strong>Eligible</strong>
+            <strong>{{ orderSummary.eligible | currency }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,11 +6,13 @@ import { ProductTypeService } from '../../services/product-type.service';
 import { takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { ProductDetailComponent } from '../../components/product-detail/product-detail.component';
+import { ToastrService } from '../../services/toastr.service';
+import { ToastrComponent } from '../../shared/toastr/toastr.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent, ProductDetailComponent],
+  imports: [CommonModule, ProductCardComponent, ProductDetailComponent, ToastrComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -26,7 +28,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private productTypeService: ProductTypeService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -48,7 +51,6 @@ export class HomeComponent implements OnInit {
       .subscribe(([type, searchTerm]) => {
         this.filterProducts(type, searchTerm);
       });
-    console.log(this.productService.searchTerm$)
   }
 
   fetchProducts() {
@@ -59,7 +61,7 @@ export class HomeComponent implements OnInit {
         this.products.forEach(product => this.fetchProductImage(product));
       },
       error: (error) => {
-        console.error('Error fetching products:', error);
+        this.toastr.error('Error fetching products');
       }
     });
   }
@@ -84,7 +86,6 @@ export class HomeComponent implements OnInit {
         reader.readAsDataURL(blob);
       },
       error: (error) => {
-        console.error(`Error fetching image for product ${product.prod_id}:`, error);
         product.imageUrl = this.placeholderImage;
       }
     });

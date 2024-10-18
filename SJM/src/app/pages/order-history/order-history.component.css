@@ -1,10 +1,11 @@
 /* order-history.component.css */
 .order-history-container {
   font-family: Arial, sans-serif;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 20px;
   display: flex;
+  flex-direction: column;
 }
 
 .order-list {
@@ -21,6 +22,7 @@ h1 {
   display: flex;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 20px;
+  overflow-x: auto;
 }
 
 .tabs button {
@@ -30,6 +32,7 @@ h1 {
   font-size: 14px;
   cursor: pointer;
   color: #666;
+  white-space: nowrap;
 }
 
 .tabs button.active {
@@ -46,7 +49,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px;
+  padding: 20px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -60,21 +63,17 @@ h1 {
   background-color: #f0f0f0;
 }
 
+.shipment-info {
+  flex: 1;
+  min-width: 0;
+}
+
 .shipment-info h3 {
   font-size: 18px;
   font-weight: bold;
   margin: 0 0 8px 0;
   color: #333;
-}
-
-.shipment-info h3 .status {
-  color: #007bff;
-  margin-right: 5px;
-}
-
-.shipment-info h3 .date {
-  font-weight: normal;
-  color: #666666;
+  word-wrap: break-word;
 }
 
 .shipment-info p {
@@ -84,20 +83,13 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.shipment-info .items {
-  font-weight: 500;
-}
-
-.shipment-info .total {
-  font-weight: bold;
-  color: #28a745;
+  flex-wrap: wrap;
 }
 
 .chevron {
   font-size: 24px;
   color: #666;
+  margin-left: 10px;
 }
 
 .support-section {
@@ -159,4 +151,64 @@ h1 {
 
 .order-details li {
   margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+  .order-history-container {
+    padding: 10px;
+  }
+
+  .shipment-item {
+    padding: 15px;
+  }
+
+  .shipment-info h3 {
+    font-size: 16px;
+  }
+
+  .shipment-info p {
+    font-size: 12px;
+  }
+
+  .chevron {
+    font-size: 20px;
+  }
+
+  .support-section {
+    padding: 15px;
+  }
+
+  .support-section h2 {
+    font-size: 16px;
+  }
+
+  .support-button {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 20px;
+  }
+
+  .tabs button {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+
+  .shipment-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .shipment-info {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .chevron {
+    align-self: flex-end;
+  }
 }
