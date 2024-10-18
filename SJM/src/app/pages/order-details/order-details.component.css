@@ -9,10 +9,6 @@
   color: #666;
 }
 
-.container {
-  max-width: 1300px;
-}
-
 .card {
   border: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

@@ -3,6 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { CommonModule } from '@angular/common';
 import { ToastrComponent } from '../../shared/toastr/toastr.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ProductService } from '../../services/product.service';
+import { ToastrService } from '../../services/toastr.service';
 
 interface OrderStatus {
   status: string;
@@ -10,6 +13,7 @@ interface OrderStatus {
 }
 
 interface OrderItem {
+  prod_id: number;
   product_name: string;
   box_type_display: string;
   qty: number;
@@ -31,6 +35,7 @@ interface Invoice {
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css'
 })
+
 export class OrderDetailsComponent implements OnInit {
   orderNumber: string = '';
   shippingDetails: { address: string; shipmentMethod: string } = {
@@ -45,7 +50,10 @@ export class OrderDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private productService: ProductService,
+    private sanitizer: DomSanitizer,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -59,7 +67,6 @@ export class OrderDetailsComponent implements OnInit {
     this.orderService.getOrderDetails(orderId).subscribe({
       next: (orderDetails: any) => {
         this.orderNumber = orderDetails.order_number;
-
         this.shippingDetails = {
           address: orderDetails.address,
           shipmentMethod: orderDetails.shipment_name
@@ -68,10 +75,34 @@ export class OrderDetailsComponent implements OnInit {
         this.orderItems = orderDetails.items;
         this.total_price = orderDetails.total_price;
         this.invoice = orderDetails.invoice;
+
+        this.loadProductImages();
       },
       error: (error: any) => {
-        console.error('Error fetching order details:', error);
-        // Handle error (e.g., show error message to user)
+        this.toastr.error('Error fetching order details');
+      }
+    });
+  }
+
+  loadProductImages(): void {
+    this.orderItems.forEach(item => {
+      this.productService.getProductImage(item.prod_id).subscribe({
+        next: (blob: Blob) => {
+          const objectUrl = URL.createObjectURL(blob);
+          item.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl) as string;
+        },
+        error: (error: any) => {
+          this.toastr.error(`Error fetching image for product ${item.prod_id}:`);
+          item.imageUrl = this.placeholderImage;
+        }
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orderItems.forEach(item => {
+      if (item.imageUrl && item.imageUrl !== this.placeholderImage) {
+        URL.revokeObjectURL(item.imageUrl);
       }
     });
   }

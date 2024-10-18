@@ -57,7 +57,7 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
                 model: OrderItem,
                 as: 'order_items',
                 include: [
-                    { model: Product, attributes: ['prod_name'], as: 'product' },
+                    { model: Product, attributes: ['prod_id', 'prod_name'], as: 'product' },
                     { model: BoxType, attributes: ['box_type_code', 'box_capacity'], as: 'box_type' }
                 ]
             },
@@ -93,6 +93,7 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
         order_date: format(new Date(order.order_dt), 'd MMMM, yyyy'),
         total_price: order.total_price,
         items: order.order_items.map(item => ({
+            prod_id: item.product.prod_id,
             product_name: item.product.prod_name,
             box_type_code: item.box_type.box_type_code,
             box_type_display: `${item.box_type.box_type_code} (Capacity: ${item.box_type.box_capacity})`,
@@ -106,7 +107,7 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
             status: status.status,
             changed_at: format(new Date(status.changed_at), 'yyyy-MM-dd HH:mm:ss')
         })),
-        invoice: order.invoice ? { // Include invoice only if it exists
+        invoice: order.invoice ? {
             invoice_number: order.invoice.invoice_number,
             invoice_date: format(new Date(order.invoice.invoice_dt), 'd MMMM, yyyy'),
             due_date: format(new Date(order.invoice.due_dt), 'd MMMM, yyyy'),
