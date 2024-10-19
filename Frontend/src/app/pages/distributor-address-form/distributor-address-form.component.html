@@ -1,1 +1,74 @@
-<p>distributor-address-form works!</p>
+<div class="card">
+  <div class="card-header">
+    <h2>{{ formTitle }}</h2>
+  </div>
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()" #addressForm="ngForm">
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="address_details">Address Details</label>
+          <input type="text" class="form-control" id="address_details" name="address_details"
+            [(ngModel)]="formData.addr_details" required>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="province">Province</label>
+          <select class="form-control form-select" id="province" name="province" [(ngModel)]="formData.province"
+            (ngModelChange)="onProvinceChange()" required>
+            <option value="" disabled selected>Select Province</option>
+            <option *ngFor="let item of provinces" [value]="item.id">{{item.text}}</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="city">City</label>
+          <select class="form-control form-select" id="city" name="city" [(ngModel)]="formData.city"
+            (ngModelChange)="onCityChange()" required>
+            <option value="" disabled selected>Select City</option>
+            <option *ngFor="let item of cities" [value]="item.id">{{item.text}}</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="district">District</label>
+          <select class="form-control form-select" id="district" name="district" [(ngModel)]="formData.district"
+            (ngModelChange)="onDistrictChange()" required>
+            <option value="" disabled selected>Select District</option>
+            <option *ngFor="let item of districts" [value]="item.id">{{item.text}}</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="subdistrict">Subdistrict</label>
+          <select class="form-control form-select" id="subdistrict" name="subdistrict"
+            [(ngModel)]="formData.subdistrict" (ngModelChange)="onSubdistrictChange()" required>
+            <option value="" disabled selected>Select Subdistrict</option>
+            <option *ngFor="let item of subdistricts" [value]="item.id">{{item.text}}</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="zipcode">Zipcode</label>
+          <select class="form-control form-select" id="zipcode" name="zipcode" [(ngModel)]="formData.zipcode" required>
+            <option value="" disabled selected>Select Zipcode</option>
+            <option *ngFor="let item of zipcodes" [value]="item.id">{{item.text}}</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="phone">Phone</label>
+          <input type="text" class="form-control" id="phone" name="phone" [(ngModel)]="formData.phone" required>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!addressForm.form.valid">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<app-message></app-message>

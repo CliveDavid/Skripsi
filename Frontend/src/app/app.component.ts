@@ -60,6 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
       'dashboard': 'Dashboard',
       'admin': 'Admin',
       'product': 'Product',
+      'distributor-address': 'Distributor Address',
       'distributor': 'Distributor',
       'order': 'Order',
       'invoice': 'Invoice',
