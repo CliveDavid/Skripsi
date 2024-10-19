@@ -2,7 +2,8 @@
   <div class="post-checkout-message">
     <i class="fas fa-check-circle check-icon"></i>
     <h1>Thank you for ordering!</h1>
-    <p>Your order number is <strong>{{ orderNumber }}</strong>.</p>
+    <p>Your order number is <strong><a (click)="viewOrderDetails(orderNumber)"
+          class="order-number-link">{{ orderNumber }}</a></strong>.</p>
 
     <h2>What's next?</h2>
     <ul>
