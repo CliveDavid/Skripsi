@@ -20,7 +20,7 @@ export class DistributorAddressFormComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   formTitle = 'Distributor Address Form';
-  isEditMode = false;
+  isEditMode = true;
   id: string | null = null;
   isLoading = false;
 
@@ -202,18 +202,33 @@ export class DistributorAddressFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    const url = this.isEditMode ? 'update' : 'add';
-    this.http.post(`${BASE_URL}/distributor-address/${url}`, this.formData)
+    const selectedProvince = this.provinces.find(p => p.id === this.formData.province)?.text || '';
+    const selectedCity = this.cities.find(c => c.id === this.formData.city)?.text || '';
+    const selectedDistrict = this.districts.find(d => d.id === this.formData.district)?.text || '';
+    const selectedSubdistrict = this.subdistricts.find(s => s.id === this.formData.subdistrict)?.text || '';
+    const selectedZipcode = this.zipcodes.find(z => z.id === this.formData.zipcode)?.text || '';
+
+    const submitData = {
+      ...this.formData,
+      province: selectedProvince,
+      city: selectedCity,
+      district: selectedDistrict,
+      subdistrict: selectedSubdistrict,
+      zipcode: selectedZipcode,
+      address: `${selectedSubdistrict}, ${selectedDistrict}, ${selectedCity}, ${selectedProvince}, ${selectedZipcode}`
+    };
+
+    this.http.post(`${BASE_URL}/distributor/update-address`, submitData)
       .subscribe(
         () => {
-          this.toastr.success(`Successfully ${this.isEditMode ? 'updated' : 'added'} distributor address`);
-          this.router.navigate(['/distributor-address']);
+          this.toastr.success('Successfully updated distributor address');
+          this.router.navigate(['/distributor']);
         },
         error => this.toastr.error('Error saving data')
       );
   }
 
   onCancel() {
-    this.router.navigate(['/distributor-address']);
+    window.history.back();
   }
 }

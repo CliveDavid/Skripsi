@@ -51,7 +51,7 @@
                 <ng-container *ngSwitchCase="'link'">
                   <a [routerLink]="[column.path]" [queryParams]="{ id: row[column.field] }"
                     [ngClass]="column.alignment">
-                    <ng-container *ngIf="column.logo; else defaultLink">
+                    <ng-container *ngIf="column.logo && row[column.field]; else defaultLink">
                       <i class="fas {{ column.logo }}"></i>
                     </ng-container>
                     <ng-template #defaultLink>

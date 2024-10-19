@@ -12,7 +12,7 @@
       <div class="detail-value">
         <ng-container [ngSwitch]="column.type">
           <span *ngSwitchCase="'text'">{{ data?.[column.field] }}</span>
-          <span *ngSwitchCase="'date'">{{ data?.[column.field] | dateFormat }}</span>
+          <span *ngSwitchCase="'date'">{{ data?.[column.field] | date: 'dd MMMM yyyy' }}</span>
           <span *ngSwitchCase="'boolean'" [ngClass]="data?.[column.field] ? 'boolean-yes' : 'boolean-no'">
             {{ data?.[column.field] ? 'yes' : 'no' }}
           </span>

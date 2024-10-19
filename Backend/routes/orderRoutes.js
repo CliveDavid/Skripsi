@@ -12,34 +12,38 @@ const asyncHandler = (fn) => (req, res, next) =>
 router.post('/get-all', asyncHandler(async (req, res) => {
     const orders = await Order.findAll({
         include: [
-            { model: Distributor, attributes: ['name'] },
-            { model: ShipmentMethod, attributes: ['shipment_name'] },
             { 
-                model: OrderItem,
-                attributes: [[sequelize.fn('SUM', sequelize.col('qty')), 'total_items']]
+                model: ShipmentMethod, 
+                attributes: ['shipment_name'], 
+                as: 'shipment_method' 
             },
             {
-                model: OrderStatusHistory,
-                attributes: ['status', 'changed_at'],
-                order: [['changed_at', 'DESC']],
-                limit: 1
+                model: Invoice,
+                attributes: ['invoice_id'],
+                required: false
+            },
+            {
+                model: Distributor,
+                attributes: ['name'],
+                as: 'distributor'
             }
         ],
-        group: ['Order.order_id'],
-        order: [['updatedAt', 'DESC']],
-        raw: false,
-        nest: true
+        order: [['order_dt', 'DESC']]
     });
 
     const flattenedOrders = orders.map(order => ({
-        id: order.order_id,
-        orderNumber: order.order_number,
-        date: format(new Date(order.order_dt), 'yyyy-MM-dd'),
-        status: order.order_status_histories[0]?.status || order.status,
-        items: order.order_items[0]?.dataValues.total_items || 0,
-        total: order.total_price,
+        order_id: order.order_id,
+        order_number: order.order_number,
+        distributor_id: order.distributor_id,
         distributor_name: order.distributor.name,
-        shipment_method_name: order.shipment_method.shipment_name
+        order_dt: order.order_dt,
+        status: order.status,
+        total_price: order.total_price,
+        notes: order.notes,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        shipment_name: order.shipment_method.shipment_name,
+        invoice_id: order.invoice?.invoice_id || null
     }));
 
     res.json(flattenedOrders);
