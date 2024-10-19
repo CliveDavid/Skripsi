@@ -374,9 +374,16 @@ router.post('/deactivate-distributor', asyncHandler(async (req, res) => {
 // distributor get address
 router.post('/get-address', async (req, res) => {
     try {
-        const { distributor_id } = req.body;
+        const { id, distributor_id } = req.body;
+
+        if (!id && !distributor_id) {
+            return res.status(400).json({ message: 'Either id or distributor_id must be provided' });
+        }
+
+        const condition = id ? { distributor_id: id } : { distributor_id };
+
         const address = await DistributorAddress.findOne({
-            where: { distributor_id }
+            where: condition
         });
 
         if (!address) {
@@ -386,9 +393,10 @@ router.post('/get-address', async (req, res) => {
         res.json(address);
     } catch (error) {
         console.error('Error fetching address:', error);
-        res.status(500).json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
 
 // Update address information
 router.post('/update-address', async (req, res) => {

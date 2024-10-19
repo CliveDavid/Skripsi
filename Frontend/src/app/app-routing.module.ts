@@ -14,6 +14,7 @@ import { OrderFormComponent } from './pages/order-form/order-form.component';
 import { InvoiceDetailComponent } from './pages/invoice-detail/invoice-detail.component';
 import { InvoiceComponent } from './pages/invoice/invoice.component';
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
+import { DistributorAddressDetailComponent } from './pages/distributor-address-detail/distributor-address-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: 'order/form', component: OrderFormComponent },
   { path: 'invoice', component: InvoiceComponent },
   { path: 'invoice/detail', component: InvoiceDetailComponent },
+  { path: 'distributor-address/detail', component: DistributorAddressDetailComponent },
 
   { path: '**', component: NotFoundComponent }
 ];

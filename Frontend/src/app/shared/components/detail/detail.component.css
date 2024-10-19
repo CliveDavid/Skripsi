@@ -1,0 +1,75 @@
+.detail-card {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.detail-title-wrapper {
+  padding: 0 20px;
+  font-size: 22px;
+}
+
+.card-header {
+  padding: 20px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.detail-container {
+  padding: 20px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 16px;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.detail-label {
+  width: 200px;
+  color: #666;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.btn-add {
+  background-color: var(--primary-color);
+  color: white;
+  margin-right: 20px;
+}
+
+.btn-add:hover {
+  background-color: lightgray;
+  color: black;
+}
+
+.btn-add i {
+  margin-right: 5px;
+}
+
+/* Boolean styles remain the same */
+.boolean-yes,
+.boolean-no {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 13px;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  min-width: 30px;
+  font-weight: 700;
+}
+
+.boolean-yes {
+  background-color: rgba(0, 128, 0, 0.1);
+  color: green;
+}
+
+.boolean-no {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: red;
+}

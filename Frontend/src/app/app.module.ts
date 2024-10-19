@@ -28,6 +28,9 @@ import { RupiahPipe } from './shared/services/rupiah.pipe';
 import { InvoiceComponent } from './pages/invoice/invoice.component';
 import { InvoiceDetailComponent } from './pages/invoice-detail/invoice-detail.component';
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
+import { DistributorAddressDetailComponent } from './pages/distributor-address-detail/distributor-address-detail.component';
+import { DetailComponent } from './shared/components/detail/detail.component';
+import { DistributorAddressFormComponent } from './pages/distributor-address-form/distributor-address-form.component';
 
 
 @NgModule({
@@ -53,7 +56,10 @@ import { NotFoundComponent } from './shared/components/not-found/not-found.compo
     OrderComponent,
     OrderFormComponent,
     InvoiceComponent,
-    InvoiceDetailComponent
+    InvoiceDetailComponent,
+    DistributorAddressDetailComponent,
+    DetailComponent,
+    DistributorAddressFormComponent
   ],
   imports: [
     BrowserModule,

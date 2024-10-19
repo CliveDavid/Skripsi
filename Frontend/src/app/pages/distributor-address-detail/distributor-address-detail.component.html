@@ -1,0 +1,14 @@
+<app-detail [tableTitle]="'Distributor Address Details'" [columns]="[
+                { header: 'ID', field: 'distributor_id', type: 'text' },
+                { header: 'Address', field: 'address', type: 'text' },
+                { header: 'Address Details', field: 'addr_details', type: 'text' },
+                { header: 'City', field: 'city', type: 'text' },
+                { header: 'Province', field: 'province', type: 'text' },
+                { header: 'Zipcode', field: 'zipcode', type: 'text' },
+                { header: 'District', field: 'district', type: 'text' },
+                { header: 'Subdistrict', field: 'subdistrict', type: 'text' },
+                { header: 'Phone', field: 'phone', type: 'text' },
+                { header: 'Created At', field: 'createdAt', type: 'date' },
+                { header: 'Updated At', field: 'updatedAt', type: 'date' }
+              ]" [url]="'distributor/get-address'" [editButton]="true">
+</app-detail>
