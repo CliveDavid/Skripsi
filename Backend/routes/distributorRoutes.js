@@ -177,10 +177,29 @@ router.post('/get-all', asyncHandler(async (req, res) => {
     const distributors = await Distributor.findAll({
         attributes: {
             exclude: ['password']
-        }
+        },
+        include: [
+            {
+                model: DistributorAddress,
+                attributes: ['address_id'],
+                as: 'distributor_address'
+            }
+        ],
+        raw: true, 
+        nest: true
     });
-    res.json(distributors);
+
+    const flattenedDistributors = distributors.map(distributor => {
+        const { distributor_address, ...rest } = distributor;
+        return {
+            ...rest,
+            distributor_address_id: distributor_address?.address_id
+        };
+    });
+
+    res.json(flattenedDistributors);
 }));
+
 
 // Get distributor by ID
 router.post('/get-by-id', asyncHandler(async (req, res) => {

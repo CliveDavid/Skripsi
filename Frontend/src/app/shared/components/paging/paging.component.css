@@ -277,3 +277,20 @@ td.right {
 .status-text {
   font-size: 14px;
 }
+
+/* Link Styles */
+table td a {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+table td a:hover {
+  color: var(--secondary-color);
+}
+
+table td a i {
+  font-size: 16px;
+}

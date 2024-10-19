@@ -17,6 +17,7 @@ interface TableColumn {
   alignment: 'left' | 'center' | 'right';
   type: 'text' | 'currency' | 'link' | 'date' | 'boolean' | 'int' | 'image' | 'status';
   path?: string;
+  logo?: string;
 }
 
 interface FilterOption {

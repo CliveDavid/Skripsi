@@ -27,12 +27,14 @@ import { OrderFormComponent } from './pages/order-form/order-form.component';
 import { RupiahPipe } from './shared/services/rupiah.pipe';
 import { InvoiceComponent } from './pages/invoice/invoice.component';
 import { InvoiceDetailComponent } from './pages/invoice-detail/invoice-detail.component';
+import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     MessageComponent,
+    NotFoundComponent,
     LoginComponent,
     SignupComponent,
     DashboardComponent,

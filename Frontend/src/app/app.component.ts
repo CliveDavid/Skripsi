@@ -62,12 +62,12 @@ export class AppComponent implements OnInit, OnDestroy {
       'product': 'Product',
       'distributor': 'Distributor',
       'order': 'Order',
-      'invoice': 'Invoice'
+      'invoice': 'Invoice',
       // add more routes and titles here
     };
 
     const currentRoute = Object.keys(routeTitleMap).find(routeKey => this.router.url.includes(routeKey));
-    this.pageTitle = currentRoute ? routeTitleMap[currentRoute] : 'Default Title'; // Set default title if no match found
+    this.pageTitle = currentRoute ? routeTitleMap[currentRoute] : 'Not Found'; // Set default title if no match found
   }
 
   getCurrentDate(): string {
