@@ -10,7 +10,7 @@ interface FormColumn {
   type: 'text' | 'date' | 'boolean' | 'currency' | 'link' | 'dropdown' | 'image';
   fullWidth?: boolean;
   editDisabled?: boolean;
-  url?: string; // For dropdown options
+  url?: string; // dropdown
 }
 
 interface DropdownOption {
@@ -29,6 +29,8 @@ export class FormsComponent implements OnInit {
   @Input() submitUrl: string = '';
   @Input() submitButtonText: string = 'Submit';
   @Input() fetchUrl: string = '';
+  @Input() editPath: string = '';
+  @Input() addPath: string = '';
 
   formData: any = {};
   isEditMode: boolean = false;
@@ -199,7 +201,12 @@ export class FormsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const url = this.isEditMode ? `${this.submitUrl}/update` : `${this.submitUrl}/create`;
+    let url: string;
+    if (this.isEditMode) {
+      url = this.editPath || `${this.submitUrl}/update`;
+    } else {
+      url = this.addPath || `${this.submitUrl}/create`;
+    }
 
     const formDataToSubmit = { ...this.formData };
     this.columns.forEach(column => {

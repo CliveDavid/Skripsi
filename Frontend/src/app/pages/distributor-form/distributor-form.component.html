@@ -1,8 +1,7 @@
 <app-forms [formTitle]="'Distributor Form'" [columns]="[
     { header: 'Email', field: 'email', type: 'text', fullWidth: true, editDisabled: true },
     { header: 'Name', field: 'name', type: 'text', fullWidth: true },
-    { header: 'Password', field: 'password', type: 'text', editDisabled: true, fullWidth: true },
     { header: 'Active', field: 'is_active', type: 'boolean', fullWidth: true },
-  ]" [submitUrl]="BASE_URL + '/distributor'" [submitButtonText]="'Save'"
-  [fetchUrl]="BASE_URL + '/distributor/get-by-id'">
+  ]" [submitUrl]="BASE_URL + '/distributor'" [addPath]="BASE_URL + '/distributor/create-by-admin'"
+  [submitButtonText]="'Save'" [fetchUrl]="BASE_URL + '/distributor/get-by-id'">
 </app-forms>

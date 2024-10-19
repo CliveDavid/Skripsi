@@ -307,6 +307,49 @@ router.post('/create', asyncHandler(async (req, res) => {
     res.status(201).json(distributorWithoutPassword);
 }));
 
+// Create new distributor (by admin)
+router.post('/create-by-admin', asyncHandler(async (req, res) => {
+    const { email, name, is_active } = req.body;
+        
+    const existingDistributor = await Distributor.findOne({ where: { email } });
+    if (existingDistributor) {
+        return res.status(400).json({ message: 'Email already exists' });
+    }
+
+    const result = await sequelize.transaction(async (t) => {
+        const tempPassword = Math.random().toString(36).slice(2, 10);
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        const newDistributor = await Distributor.create({
+            name,
+            email,
+            password: hashedPassword,
+            is_active
+        }, { transaction: t });
+
+        await DistributorAddress.create({
+            distributor_id: newDistributor.distributor_id,
+            address: '',
+            addr_details: '',
+            city: '',
+            province: '',
+            zipcode: '',
+            district: '',
+            subdistrict: '',
+            phone: ''
+        }, { transaction: t });
+
+        return { distributor: newDistributor, tempPassword };
+    });
+
+    const { distributor, tempPassword } = result;
+    const { password: _, ...distributorData } = distributor.toJSON();
+    
+    res.status(201).json({
+        ...distributorData,
+        tempPassword
+    });
+}));
+
 // Update distributor
 router.post('/update', asyncHandler(async (req, res) => {
     const {
