@@ -127,6 +127,48 @@ router.post('/get-by-order-number', asyncHandler(async (req, res) => {
     res.json(flattenedOrder);
 }));
 
+// Get complete order info by order id
+router.post('/get-by-id', asyncHandler(async (req, res) => {
+    const { order_id } = req.body;
+
+    if (!order_id) {
+        return res.status(400).json({ message: 'Order ID is required' });
+    }
+
+    const order = await Order.findByPk(order_id, {
+        include: [
+            { 
+                model: OrderItem, 
+                as: 'order_items',
+                include: [
+                    { model: Product, as: 'product' }, 
+                    { model: BoxType, as: 'box_type' } 
+                ]
+            },
+            {
+                model: OrderAddress, 
+                as: 'addresses' 
+            },
+            {
+                model: OrderStatusHistory, 
+                as: 'order_status_histories',
+                order: [['changed_at', 'ASC']]  
+            },
+            {
+                model: Invoice, 
+                as: 'invoice'
+            }
+        ]
+    });
+
+    // If no order is found, return 404
+    if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Return the full order object with all associated data
+    res.json(order);
+}));
 
 
 // Create new order

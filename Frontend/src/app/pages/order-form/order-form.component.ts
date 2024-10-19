@@ -109,7 +109,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
     ).subscribe(distributorId => {
       if (distributorId) {
-        this.loadDistributorInfo(distributorId);
+        this.loadAddressInfo(distributorId);
       } else {
         this.distributorInfo = null;
       }
@@ -127,11 +127,11 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }, { emitEvent: false });
 
     this.filteredDistributors = [];
-    this.loadDistributorInfo(distributor.distributor_id);
+    this.loadAddressInfo(distributor.distributor_id);
   }
 
-  loadDistributorInfo(distributorId: string) {
-    this.http.post<any>(`${this.apiUrl}/distributor/get-by-id`, { id: distributorId }).subscribe(
+  loadAddressInfo(distributorId: string) {
+    this.http.post<any>(`${this.apiUrl}/distributor/get-address`, { id: distributorId }).subscribe(
       info => {
         this.distributorInfo = info;
       },
@@ -140,6 +140,10 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         this.distributorInfo = null;
       }
     );
+  }
+
+  editShippingAddress() {
+
   }
 
   get orderItems() {
@@ -260,7 +264,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         });
 
         this.calculateTotalPrice();
-        this.loadDistributorInfo(order.distributor_id);
+        this.loadAddressInfo(order.distributor_id);
       },
       error => {
         this.toastr.error('Error loading order data');

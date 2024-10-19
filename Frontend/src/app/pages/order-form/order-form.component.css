@@ -410,6 +410,55 @@ label {
   margin-left: 0.5rem !important;
 }
 
+.distributor-hover {
+  position: relative;
+  cursor: help;
+}
+
+.distributor-popup {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 250px;
+  margin-top: 5px;
+}
+
+.distributor-hover:hover .distributor-popup {
+  display: block;
+}
+
+.shipping-info {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.btn-edit {
+  padding: 2px 5px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+  color: #666;
+  background: transparent;
+  border: none;
+}
+
+.btn-edit:hover {
+  color: var(--primary-color);
+}
+
+.distributor-wrapper {
+  position: relative;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
   .order-item-row {

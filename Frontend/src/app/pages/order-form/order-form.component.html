@@ -11,7 +11,13 @@
           <!-- Distributor search -->
           <div class="form-group">
             <div class="d-flex align-items-center">
-              <label for="distributorSearch">Distributor</label>
+              <label for="distributorSearch" class="distributor-hover">
+                Distributor
+                <div class="distributor-popup" *ngIf="distributorInfo">
+                  <div><strong>Name:</strong> {{distributorInfo.name}}</div>
+                  <div><strong>Email:</strong> {{distributorInfo.email}}</div>
+                </div>
+              </label>
               <div class="p-2"></div>
               <small *ngIf="showNotFound" class="text-danger mb-2">Distributor not found</small>
             </div>
@@ -72,13 +78,15 @@
           </div>
 
 
-          <!-- Distributor Information -->
-          <label>Distributor Info</label>
-          <div class="distributor-info" *ngIf="distributorInfo">
-            <div data-label="Name">{{distributorInfo.name}}</div>
-            <div data-label="Email">{{distributorInfo.email}}</div>
-            <div data-label="Phone">{{distributorInfo.phone}}</div>
-            <div data-label="Address">{{distributorInfo.address}}</div>
+          <div class="form-group">
+            <label>Shipping Address <button class="btn btn-sm btn-edit" (click)="editShippingAddress()"><i
+                  class="fas fa-edit"></i></button></label>
+            <div class="shipping-info" *ngIf="distributorInfo">
+              <div>{{distributorInfo.district}}, {{distributorInfo.subdistrict}}</div>
+              <div>{{distributorInfo.city}}, {{distributorInfo.province}} {{distributorInfo.zipcode}}</div>
+              <div>{{distributorInfo.addr_details}}</div>
+              <div>{{distributorInfo.phone}}</div>
+            </div>
           </div>
         </div>
       </div>
