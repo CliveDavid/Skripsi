@@ -514,6 +514,7 @@ label {
   color: #4b5563;
   font-weight: normal;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .status-menu li:hover {
