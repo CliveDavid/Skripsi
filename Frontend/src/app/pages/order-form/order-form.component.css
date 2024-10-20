@@ -473,6 +473,57 @@ label {
   position: relative;
 }
 
+.header-with-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-menu {
+  background: none;
+  border: none;
+  color: #666;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.btn-menu:hover {
+  color: var(--primary-color);
+}
+
+.status-menu {
+  position: absolute;
+  right: 1rem;
+  top: 3rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1000;
+  min-width: 150px;
+}
+
+.status-menu li {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.status-menu li:hover {
+  background-color: #f8f9fa;
+}
+
+.status-menu .cancel-action {
+  color: #dc3545;
+  border-top: 1px solid #eee;
+}
+
+.status-menu .cancel-action:hover {
+  background-color: #ffebee;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
   .order-item-row {

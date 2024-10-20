@@ -1,6 +1,19 @@
 <div class="card">
   <div class="card-header">
-    <h2>{{isEditMode ? 'Edit' : 'Add New'}} Order</h2>
+    <div class="header-with-menu">
+      <h2>{{isEditMode ? 'Edit' : 'Add New'}} Order</h2>
+      <button *ngIf="isEditMode" type="button" class="btn-menu" (click)="toggleStatusMenu()">
+        <i class="fas fa-ellipsis-v"></i>
+      </button>
+      <ul class="status-menu" *ngIf="isEditMode && showStatusMenu">
+        <li *ngFor="let action of getAvailableStatusActions()" (click)="handleStatusChange(action)">
+          Mark as {{action}}
+        </li>
+        <li *ngIf="canCancel()" (click)="handleStatusChange('Cancelled')" class="cancel-action">
+          Cancel Order
+        </li>
+      </ul>
+    </div>
   </div>
   <div class="card-body">
     <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
@@ -40,15 +53,9 @@
           <!-- Status -->
           <div class="form-group">
             <label for="status">Status</label>
-            <div class="d-flex align-items-center">
-              <select id="status" formControlName="status" class="form-control form-select">
-                <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
-              </select>
-              <button *ngIf="isEditMode && canProgressStatus()" type="button" class="btn btn-progress ml-2"
-                (click)="progressStatus()">
-                Continue <i class="fas fa-chevron-right ml-1"></i>
-              </button>
-            </div>
+            <select id="status" formControlName="status" class="form-control form-select" [disabled]="isEditMode">
+              <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
+            </select>
           </div>
 
           <!-- Order Notes -->

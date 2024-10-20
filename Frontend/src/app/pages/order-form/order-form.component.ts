@@ -13,7 +13,6 @@ import { ToastrService } from 'src/app/shared/services/toastr.service';
 })
 export class OrderFormComponent implements OnInit, OnDestroy {
   private apiUrl = BASE_URL;
-
   orderForm: FormGroup;
   filteredDistributors: { distributor_id: string, name: string }[] = [];
   shipmentMethods: any[] = [];
@@ -25,6 +24,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   addressInfo: any = null;
   distributorInfo: any = null;
   showAddressChangePopup = false;
+  showStatusMenu = false;
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -357,6 +357,30 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         this.onSubmit();
       }
     }
+  }
+
+  toggleStatusMenu(): void {
+    this.showStatusMenu = !this.showStatusMenu;
+  }
+
+  getAvailableStatusActions(): string[] {
+    const currentStatus = this.orderForm.get('status')?.value;
+    const currentIndex = this.statuses.indexOf(currentStatus);
+    return this.statuses.slice(currentIndex + 1, -1);
+  }
+
+  canCancel(): boolean {
+    const currentStatus = this.orderForm.get('status')?.value;
+    return currentStatus !== 'Delivered' && currentStatus !== 'Cancelled';
+  }
+
+  handleStatusChange(newStatus: string): void {
+    const confirmMessage = `Are you sure you want to mark this order as ${newStatus}?`;
+    if (confirm(confirmMessage)) {
+      this.orderForm.patchValue({ status: newStatus });
+      this.onSubmit();
+    }
+    this.showStatusMenu = false;
   }
 
   updateInvoiceFields(status: string) {
