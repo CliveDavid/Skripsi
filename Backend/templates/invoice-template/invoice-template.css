@@ -52,6 +52,13 @@ body {
 .company-info {
     font-size: 13px;
     line-height: 1.4;
+    text-align: right;
+}
+
+.company-address {
+    max-width: 300px;
+    margin-left: auto;
+    word-wrap: break-word;
 }
 
 .company-name {
@@ -62,21 +69,20 @@ body {
 .info-section {
     display: flex;
     justify-content: space-between;
-    gap: 100px;
     margin-bottom: 40px;
     font-size: 14px;
 }
 
 .left-info {
-    flex: 0 0 auto;
+    flex: 0 0 60%;
     line-height: 1.8;
+    word-wrap: break-word;
 }
 
 .right-info {
-    flex: 1;
+    flex: 0 0 30%;
     line-height: 1.8;
-    word-wrap: break-word;
-    max-width: 400px;
+    text-align: right;
 }
 
 .info-header {

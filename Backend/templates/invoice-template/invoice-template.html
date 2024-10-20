@@ -19,7 +19,7 @@
                 <img src="images/SJM.png" alt="PT Sadang Jaya Logo">
                 <div class="company-info">
                     <div class="company-name">{{ company_name }}</div>
-                    <div>{{ company_address }}</div>
+                    <div class="company-address">{{ company_address }}</div>
                     <div>{{ company_phone }} | {{ company_email }}</div>
                 </div>
             </div>
@@ -27,15 +27,15 @@
 
         <div class="info-section">
             <div class="left-info">
-                <p>Nomor: {{ invoice_number }}</p>
-                <p>Tanggal: {{ invoice_dt }}</p>
-                <p>Jatuh Tempo: {{ due_dt }}</p>
-            </div>
-            <div class="right-info">
-                <p class="info-header">DITUJUKAN KEPADA:</p>
+                <p>DITUJUKAN KEPADA:</p>
                 <p>{{ distributor_name }}</p>
                 <p>{{ distributor_address }}</p>
                 <p><strong>Metode Pengiriman:</strong> {{ shipment_method }}</p>
+            </div>
+            <div class="right-info">
+                <p><strong>Nomor:</strong> {{ invoice_number }}</p>
+                <p>Tanggal: {{ invoice_dt }}</p>
+                <p><strong>Jatuh Tempo:</strong> {{ due_dt }}</p>
             </div>
         </div>
 
