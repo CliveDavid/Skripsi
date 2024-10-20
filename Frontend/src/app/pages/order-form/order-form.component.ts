@@ -137,7 +137,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.http.post<any>(`${this.apiUrl}/distributor/get-address`, { id: distributorId }).subscribe(
       info => {
         this.addressInfo = info;
-        console.log(info)
       },
       error => {
         this.toastr.error('Error loading distributor information');
@@ -237,8 +236,8 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.showAddressChangePopup = true;
   }
 
-  onAddressChanged(newAddress: any): void {
-    this.addressInfo = newAddress;
+  onAddressChanged(addressInfoString: string): void {
+    this.addressInfo = JSON.parse(addressInfoString);
     this.showAddressChangePopup = false;
   }
 
@@ -374,22 +373,30 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       const url = id ? `${this.apiUrl}/orders/update` : `${this.apiUrl}/orders/create`;
 
       const orderData: any = {
-        status: formValue.status,
+        distributor_id: formValue.distributor_id,
+        order_dt: formValue.order_dt,
         total_price: formValue.total_price,
         shipment_code: formValue.shipment_code,
-        order_notes: formValue.order_notes,
+        notes: formValue.order_notes,
         orderItems: formValue.orderItems.map((item: any) => ({
           product_id: item.product_id,
           box_type_code: item.box_type_code,
           qty: item.qty,
           total_item_price: item.total_item_price
-        }))
+        })),
+        addresses: [{
+          address: this.addressInfo.address,
+          addr_details: this.addressInfo.addr_details,
+          city: this.addressInfo.city,
+          province: this.addressInfo.province,
+          zipcode: this.addressInfo.zipcode,
+          district: this.addressInfo.district,
+          subdistrict: this.addressInfo.subdistrict,
+          phone: this.addressInfo.phone
+        }]
       };
 
-      if (!id) {
-        orderData.distributor_id = formValue.distributor_id;
-        orderData.order_dt = formValue.order_dt;
-      } else {
+      if (id) {
         orderData.order_id = id;
       }
 
@@ -397,7 +404,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         (response: any) => {
           this.toastr.success(`Order ${id ? 'updated' : 'created'} successfully`);
 
-          // If status is Invoiced or Delivered, create invoice
           if (formValue.status === 'Invoiced' || formValue.status === 'Delivered') {
             this.createInvoice(response.order_id || id, formValue);
           } else {
