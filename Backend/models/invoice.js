@@ -48,6 +48,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('Unpaid', 'Paid', 'Overdue'),
             allowNull: false,
             defaultValue: 'Unpaid'
+        },
+        is_sent: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     }, {
         tableName: 'invoice',

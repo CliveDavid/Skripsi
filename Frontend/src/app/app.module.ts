@@ -32,6 +32,8 @@ import { DistributorAddressDetailComponent } from './pages/distributor-address-d
 import { DetailComponent } from './shared/components/detail/detail.component';
 import { DistributorAddressFormComponent } from './pages/distributor-address-form/distributor-address-form.component';
 import { AddressChangeComponent } from './pages/address-change/address-change.component';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
+
 
 
 @NgModule({
@@ -61,7 +63,8 @@ import { AddressChangeComponent } from './pages/address-change/address-change.co
     DistributorAddressDetailComponent,
     DetailComponent,
     DistributorAddressFormComponent,
-    AddressChangeComponent
+    AddressChangeComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,

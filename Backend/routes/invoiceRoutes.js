@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Invoice } = require('../models');
+const { Invoice, Order, Distributor } = require('../models');
 const { generateInvoicePDF } = require('../utils/pdfGenerator');
 require('dotenv').config();
 const { sendMail } = require('../utils/email');
@@ -125,33 +125,62 @@ router.post('/generate-pdf', asyncHandler(async (req, res) => {
 // Send invoice PDF via email
 router.post('/send-invoice-email', asyncHandler(async (req, res) => {
     const { invoice_id } = req.body;
-    const testEmail = 'clivedavid.lie@gmail.com'; // For testing purposes
-
+    
+    if (!invoice_id) {
+        return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
+    }
+ 
     try {
-        const { pdfBuffer, invoice } = await generateInvoicePDF(invoice_id);
-
-        // Prepare email
+        const invoice = await Invoice.findByPk(invoice_id, {
+            include: [{
+                model: Order,
+                include: [{
+                    model: Distributor,
+                    attributes: ['name', 'email']
+                }]
+            }]
+        });
+ 
+        if (!invoice) {
+            return res.status(404).json({ message: 'Invoice not found' });
+        }
+ 
+        const { pdfBuffer } = await generateInvoicePDF(invoice_id);
+ 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: testEmail,
+            to: invoice.order.distributor.email,
             subject: `Invoice #${invoice.invoice_number}`,
             text: `Dear ${invoice.order.distributor.name},\n\nPlease find attached the invoice #${invoice.invoice_number} for your recent order.\n\nThank you for your business.\n\nBest regards,\nPT Sadang Jaya`,
-            attachments: [
-                {
-                    filename: `invoice-${invoice_id}.pdf`,
-                    content: pdfBuffer
-                }
-            ]
+            attachments: [{
+                filename: `invoice-${invoice_id}.pdf`,
+                content: pdfBuffer
+            }]
         };
-
-        // Send email
-        await sendMail(mailOptions);
-
-        res.status(200).json({ message: 'Invoice sent successfully via email' });
+ 
+        const emailResult = await sendMail(mailOptions);
+        
+        if (emailResult.accepted.length > 0) {
+            await invoice.update({ is_sent: true });
+            
+            res.status(200).json({ 
+                success: true,
+                message: 'Invoice sent successfully via email',
+                sent_to: invoice.order.distributor.email
+            });
+        } else {
+            await invoice.update({ is_sent: false });
+            throw new Error('Email not accepted by recipient server');
+        }
+ 
     } catch (error) {
         console.error('Error sending invoice email:', error);
-        res.status(500).json({ message: 'Error sending invoice email', error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: 'Error sending invoice email', 
+            error: error.message 
+        });
     }
-}));
+ }));
 
 module.exports = router;

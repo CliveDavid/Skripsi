@@ -53,7 +53,7 @@
           <!-- Status -->
           <div class="form-group">
             <label for="status">Status</label>
-            <select id="status" formControlName="status" class="form-control form-select" [disabled]="isEditMode">
+            <select id="status" formControlName="status" class="form-control form-select">
               <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
             </select>
           </div>
@@ -194,3 +194,7 @@
   </app-address-change>
 
   <app-message></app-message>
+
+  <app-confirm-dialog [visible]="showConfirmDialog" [title]="dialogTitle" [message]="dialogMessage"
+    (confirm)="onConfirmStatus()" (cancel)="onCancelStatus()">
+  </app-confirm-dialog>

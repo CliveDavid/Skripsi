@@ -176,6 +176,7 @@ router.post('/create', asyncHandler(async (req, res) => {
     const { 
         distributor_id, 
         order_dt, 
+        status,
         total_price, 
         shipment_code, 
         notes,
@@ -188,15 +189,13 @@ router.post('/create', asyncHandler(async (req, res) => {
         return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
     }
 
-    const status = STATUS.PENDING
-
     try {
         const result = await sequelize.transaction(async (t) => {
             // Create the order
             const newOrder = await Order.create({
                 distributor_id,
                 order_dt,
-                status,
+                status: status || STATUS.PENDING,
                 total_price,
                 shipment_code,
                 notes
@@ -249,58 +248,90 @@ router.post('/create', asyncHandler(async (req, res) => {
 
 // Update order
 router.post('/update', asyncHandler(async (req, res) => {
-    const { order_id, status, total_price, shipment_code, orderItems } = req.body;
-    
-    // Basic validation
-    if (!order_id || !status || !shipment_code) {
+    const { 
+        order_id,
+        distributor_id, 
+        order_dt,
+        status,
+        total_price,
+        shipment_code,
+        notes,
+        orderItems,
+        addresses
+    } = req.body;
+ 
+    if (!order_id || !distributor_id || !order_dt || !total_price || !shipment_code) {
         return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
     }
-
+ 
     try {
         const result = await sequelize.transaction(async (t) => {
-            // Find the order
             const order = await Order.findByPk(order_id, { transaction: t });
             if (!order) {
                 throw new Error('Order not found');
             }
-
-            // Update the order
+ 
             await order.update({
+                distributor_id,
+                order_dt,
                 status,
                 total_price,
-                shipment_code
+                shipment_code,
+                notes
             }, { transaction: t });
-
-            // Handle order items
-            if (orderItems && orderItems.length > 0) {
-                // Delete existing order items
-                await OrderItem.destroy({
-                    where: { order_id: order_id },
-                    transaction: t
-                });
-
-                // Create new order items
+ 
+            // Update order items
+            await OrderItem.destroy({ 
+                where: { order_id },
+                transaction: t 
+            });
+ 
+            if (orderItems?.length > 0) {
                 const orderItemsWithOrderId = orderItems.map(item => ({
-                    ...item,
-                    order_id: order_id
+                    order_id,
+                    product_id: item.product_id,
+                    box_type_code: item.box_type_code,
+                    qty: item.qty,
+                    total_item_price: item.total_item_price
                 }));
                 await OrderItem.bulkCreate(orderItemsWithOrderId, { transaction: t });
             }
-
-            // Fetch the updated order with items
+ 
+            // Update addresses
+            await OrderAddress.destroy({
+                where: { order_id },
+                transaction: t
+            });
+ 
+            if (addresses?.length > 0) {
+                const orderAddressesWithOrderId = addresses.map(address => ({
+                    order_id,
+                    address: address.address,
+                    addr_details: address.addr_details,
+                    city: address.city,
+                    province: address.province,
+                    zipcode: address.zipcode,
+                    district: address.district,
+                    subdistrict: address.subdistrict
+                }));
+                await OrderAddress.bulkCreate(orderAddressesWithOrderId, { transaction: t });
+            }
+ 
             return Order.findByPk(order_id, {
-                include: [OrderItem],
+                include: [
+                    { model: OrderItem },
+                    { model: OrderAddress, as: 'addresses' }
+                ],
                 transaction: t
             });
         });
-
-        console.log(`Order updated successfully: ${result.order_id}`);
+ 
         res.json(result);
     } catch (error) {
         console.error('Error updating order:', error);
         res.status(500).json({ message: "Error updating order", error: error.message });
     }
-}));
+ }));
 
 // Get orders by distributor ID
 router.post('/get-by-distributor', asyncHandler(async (req, res) => {

@@ -25,6 +25,11 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   distributorInfo: any = null;
   showAddressChangePopup = false;
   showStatusMenu = false;
+  showConfirmDialog = false;
+  dialogTitle = '';
+  dialogMessage = '';
+  pendingStatus: string = '';
+
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -57,6 +62,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     if (id) {
       this.isEditMode = true;
       this.loadOrderData(id);
+      this.orderForm.get('status')?.disable();
     } else {
       this.setupDistributorSearch();
     }
@@ -382,13 +388,32 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     return currentStatus !== 'Delivered' && currentStatus !== 'Cancelled';
   }
 
+  checkInvoiceInfo(): boolean {
+    const invoice_dt = this.orderForm.get('invoice_dt')?.value;
+    const payment_status = this.orderForm.get('payment_status')?.value;
+    return !!invoice_dt && !!payment_status;
+  }
+
   handleStatusChange(newStatus: string): void {
-    const confirmMessage = `Are you sure you want to mark this order as ${newStatus}?`;
-    if (confirm(confirmMessage)) {
-      this.orderForm.patchValue({ status: newStatus });
-      this.onSubmit();
+    if ((newStatus === 'Invoiced' || newStatus === 'Delivered') && !this.checkInvoiceInfo()) {
+      this.toastr.error('Please fill in invoice details first');
+      return;
     }
-    this.showStatusMenu = false;
+
+    this.dialogTitle = 'Confirm Status Change';
+    this.dialogMessage = `Are you sure you want to mark this order as ${newStatus}?`;
+    this.showConfirmDialog = true;
+    this.pendingStatus = newStatus;
+  }
+
+  onConfirmStatus(): void {
+    this.orderForm.patchValue({ status: this.pendingStatus });
+    this.showConfirmDialog = false;
+    this.onSubmit();
+  }
+
+  onCancelStatus(): void {
+    this.showConfirmDialog = false;
   }
 
   updateInvoiceFields(status: string) {
@@ -450,6 +475,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       const orderData: any = {
         distributor_id: formValue.distributor_id,
         order_dt: formValue.order_dt,
+        status: formValue.status,
         total_price: formValue.total_price,
         shipment_code: formValue.shipment_code,
         notes: formValue.order_notes,
