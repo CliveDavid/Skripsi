@@ -248,38 +248,38 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   loadOrderData(id: string) {
     this.http.post<any>(`${this.apiUrl}/orders/get-by-id`, { order_id: id }).subscribe(
       order => {
-        this.orderForm.patchValue({
-          distributor_id: order.distributor_id,
-          distributorSearch: order.distributor_name,
-          order_dt: order.order_dt,
-          status: order.status,
-          shipment_code: order.shipment_code,
-          total_price: order.total_price,
-          order_notes: order.order_notes
-        });
+        this.http.post<any>(`${this.apiUrl}/distributor/get-by-id`, { id: order.distributor_id }).subscribe(
+          distributor => {
+            this.orderForm.patchValue({
+              distributor_id: order.distributor_id,
+              distributorSearch: distributor.name,
+              order_dt: order.order_dt.split('T')[0],
+              status: order.status,
+              shipment_code: order.shipment_code,
+              total_price: parseFloat(order.total_price),
+              order_notes: order.notes
+            });
+          }
+        );
 
-        // Disable distributor and order date fields
         this.orderForm.get('distributorSearch')?.disable();
         this.orderForm.get('order_dt')?.disable();
 
-        // Clear existing order items
         while (this.orderItems.length !== 0) {
           this.orderItems.removeAt(0);
         }
 
-        // Add order items
-        order.orderItems.forEach((item: any) => {
+        order.order_items.forEach((item: any) => {
           const orderItem = this.fb.group({
             product_id: [item.product_id, Validators.required],
-            product_name: [item.product_name],
+            product_name: [item.product.prod_name],
             box_type_code: [item.box_type_code, Validators.required],
-            box_type_display: [item.box_type_display],
+            box_type_display: [item.box_type.box_capacity],
             qty: [item.qty, [Validators.required, Validators.min(1)]],
-            price: [item.total_item_price / item.qty, Validators.required],
-            total_item_price: [item.total_item_price, Validators.required]
+            price: [parseFloat(item.total_item_price) / item.qty, Validators.required],
+            total_item_price: [parseFloat(item.total_item_price), Validators.required]
           });
 
-          // Set up value change subscriptions
           orderItem.get('product_id')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
           orderItem.get('box_type_code')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
           orderItem.get('qty')?.valueChanges.subscribe(() => this.updateItemPrice(orderItem));
@@ -287,8 +287,20 @@ export class OrderFormComponent implements OnInit, OnDestroy {
           this.orderItems.push(orderItem);
         });
 
+        if (order.addresses && order.addresses.length > 0) {
+          this.addressInfo = {
+            address: order.addresses[0].address,
+            addr_details: order.addresses[0].addr_details,
+            city: order.addresses[0].city,
+            province: order.addresses[0].province,
+            zipcode: order.addresses[0].zipcode,
+            district: order.addresses[0].district,
+            subdistrict: order.addresses[0].subdistrict
+          };
+        }
+
+        this.loadDistributorInfo(order.distributor_id);
         this.calculateTotalPrice();
-        this.loadAddressInfo(order.distributor_id);
       },
       error => {
         this.toastr.error('Error loading order data');
