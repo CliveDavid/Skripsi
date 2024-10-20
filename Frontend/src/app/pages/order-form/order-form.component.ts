@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -245,6 +245,14 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.showAddressChangePopup = false;
   }
 
+  @HostListener('document:click', ['$event'])
+
+  clickOut(event: Event) {
+    if (!event.target || !(event.target as Element).closest('.btn-menu, .status-menu')) {
+      this.showStatusMenu = false;
+    }
+  }
+
   loadOrderData(id: string) {
     this.http.post<any>(`${this.apiUrl}/orders/get-by-id`, { order_id: id }).subscribe(
       order => {
@@ -402,6 +410,37 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.orderForm.get('payment_status')?.updateValueAndValidity();
   }
 
+  createInvoice(orderId: string, formValue: any) {
+    const invoiceData = {
+      invoice_dt: formValue.invoice_dt,
+      order_id: orderId,
+      subtotal: formValue.total_price,
+      discount: formValue.discount,
+      additional_fee: formValue.additional_fee,
+      payment_status: formValue.payment_status
+    };
+
+    this.http.post(`${this.apiUrl}/invoices/create`, invoiceData).subscribe(
+      (response: any) => {
+        this.toastr.success('Invoice created successfully');
+        this.router.navigate(['/order']);
+      },
+      error => {
+        console.error('Error creating invoice:', error);
+        this.toastr.error(`Error creating invoice: ${error.error?.message || 'Unknown error'}`);
+      }
+    );
+  }
+
+  calculateTotalPrice() {
+    const total = this.orderItems.controls.reduce((sum, item) => {
+      const itemPrice = parseFloat(item.get('total_item_price')?.value || '0'); // Ensure it's a number
+      return sum + itemPrice;
+    }, 0);
+
+    this.orderForm.patchValue({ total_price: total });
+  }
+
   onSubmit() {
     if (this.orderForm.valid) {
       const formValue = this.orderForm.getRawValue();
@@ -455,37 +494,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       this.toastr.error('Please fill all required fields correctly');
       console.log('Form validation errors:', this.orderForm.errors);
     }
-  }
-
-  createInvoice(orderId: string, formValue: any) {
-    const invoiceData = {
-      invoice_dt: formValue.invoice_dt,
-      order_id: orderId,
-      subtotal: formValue.total_price,
-      discount: formValue.discount,
-      additional_fee: formValue.additional_fee,
-      payment_status: formValue.payment_status
-    };
-
-    this.http.post(`${this.apiUrl}/invoices/create`, invoiceData).subscribe(
-      (response: any) => {
-        this.toastr.success('Invoice created successfully');
-        this.router.navigate(['/order']);
-      },
-      error => {
-        console.error('Error creating invoice:', error);
-        this.toastr.error(`Error creating invoice: ${error.error?.message || 'Unknown error'}`);
-      }
-    );
-  }
-
-  calculateTotalPrice() {
-    const total = this.orderItems.controls.reduce((sum, item) => {
-      const itemPrice = parseFloat(item.get('total_item_price')?.value || '0'); // Ensure it's a number
-      return sum + itemPrice;
-    }, 0);
-
-    this.orderForm.patchValue({ total_price: total });
   }
 
   onCancel() {
