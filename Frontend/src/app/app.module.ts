@@ -31,6 +31,7 @@ import { NotFoundComponent } from './shared/components/not-found/not-found.compo
 import { DistributorAddressDetailComponent } from './pages/distributor-address-detail/distributor-address-detail.component';
 import { DetailComponent } from './shared/components/detail/detail.component';
 import { DistributorAddressFormComponent } from './pages/distributor-address-form/distributor-address-form.component';
+import { AddressChangeComponent } from './pages/address-change/address-change.component';
 
 
 @NgModule({
@@ -59,7 +60,8 @@ import { DistributorAddressFormComponent } from './pages/distributor-address-for
     InvoiceDetailComponent,
     DistributorAddressDetailComponent,
     DetailComponent,
-    DistributorAddressFormComponent
+    DistributorAddressFormComponent,
+    AddressChangeComponent
   ],
   imports: [
     BrowserModule,

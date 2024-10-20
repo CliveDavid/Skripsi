@@ -22,7 +22,9 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   statuses: string[] = ['Pending', 'Processing', 'Invoiced', 'Delivered', 'Cancelled'];
   showNotFound = false;
   isEditMode: boolean = false;
+  addressInfo: any = null;
   distributorInfo: any = null;
+  showAddressChangePopup = false;
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -111,7 +113,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       if (distributorId) {
         this.loadAddressInfo(distributorId);
       } else {
-        this.distributorInfo = null;
+        this.addressInfo = null;
       }
     });
   }
@@ -128,10 +130,24 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
     this.filteredDistributors = [];
     this.loadAddressInfo(distributor.distributor_id);
+    this.loadDistributorInfo(distributor.distributor_id);
   }
 
   loadAddressInfo(distributorId: string) {
     this.http.post<any>(`${this.apiUrl}/distributor/get-address`, { id: distributorId }).subscribe(
+      info => {
+        this.addressInfo = info;
+        console.log(info)
+      },
+      error => {
+        this.toastr.error('Error loading distributor information');
+        this.addressInfo = null;
+      }
+    );
+  }
+
+  loadDistributorInfo(distributorId: string) {
+    this.http.post<any>(`${this.apiUrl}/distributor/get-by-id`, { id: distributorId }).subscribe(
       info => {
         this.distributorInfo = info;
       },
@@ -140,10 +156,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         this.distributorInfo = null;
       }
     );
-  }
-
-  editShippingAddress() {
-
   }
 
   get orderItems() {
@@ -219,6 +231,19 @@ export class OrderFormComponent implements OnInit, OnDestroy {
         box_type_name: item.label
       }));
     });
+  }
+
+  editShippingAddress(): void {
+    this.showAddressChangePopup = true;
+  }
+
+  onAddressChanged(newAddress: any): void {
+    this.addressInfo = newAddress;
+    this.showAddressChangePopup = false;
+  }
+
+  onAddressChangeCancelled(): void {
+    this.showAddressChangePopup = false;
   }
 
   loadOrderData(id: string) {
