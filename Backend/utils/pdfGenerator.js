@@ -1,24 +1,29 @@
-const { Invoice, Order, OrderItem, Distributor, Product, ShipmentMethod, Company } = require('../models');
+const { Invoice, Order, OrderItem, Distributor, Product, ShipmentMethod, Company, OrderAddress } = require('../models');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 
 async function generateInvoicePDF(invoice_id) {
     try {
-        // Fetch invoice data from database with associated order and related data
         const invoice = await Invoice.findByPk(invoice_id, {
             include: [{
                 model: Order,
                 include: [
-                    { model: Distributor },
+                    { 
+                        model: Distributor,
+                    },
                     { 
                         model: OrderItem,
                         include: [{ model: Product }]
                     },
-                    { model: ShipmentMethod }
+                    { model: ShipmentMethod },
+                    {
+                        model: OrderAddress,
+                        as: 'addresses'  
+                    }
                 ]
             }]
-        });
+         });
 
         if (!invoice) {
             throw new Error('Invoice not found');
@@ -69,7 +74,9 @@ async function generateInvoicePDF(invoice_id) {
             .replace('{{ invoice_dt }}', formatDate(invoice.invoice_dt))
             .replace('{{ due_dt }}', formatDate(invoice.due_dt))
             .replace('{{ distributor_name }}', invoice.order.distributor.name)
-            .replace('{{ distributor_address }}', invoice.order.distributor.address)
+            .replace('{{ distributor_address }}', 
+                `${invoice.order.addresses[0].address}, ${invoice.order.addresses[0].addr_details}`
+            )            
             .replace('{{ order_items }}', orderItemsHtml)
             .replace('{{ notes }}', invoice.order.notes || '-')
             .replace('{{ subtotal }}', formatNumber(invoice.subtotal))

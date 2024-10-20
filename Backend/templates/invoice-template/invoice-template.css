@@ -1,149 +1,144 @@
-/* styles.css */
-
-/* Define custom properties (CSS variables) */
 :root {
-    --primary-color: #3366cc;
-    --secondary-color: #e9ecef;
-    --highlight-color: #fff3cd;
-    --highlight-border-color: #ffeeba;
+    --primary-blue: #0A0F29;
+    --border-color: #e0e0e0;
     --text-color: #333;
-    --light-text-color: #6c757d;
-    --box-shadow-color: rgba(0, 0, 0, 0.1);
-    --font-family: 'Roboto', Arial, sans-serif;
 }
 
-/* Global styles */
-body {
-    font-family: var(--font-family);
+@page {
+    size: A4;
     margin: 0;
-    padding: 20px;
-    background-color: #f8f9fa;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
     color: var(--text-color);
+    background: white;
+    font-size: 14px;
 }
 
 .invoice-box {
-    max-width: 800px;
-    margin: auto;
-    padding: 30px;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 0 20px var(--box-shadow-color);
-    font-size: 14px;
-    line-height: 24px;
-    background-color: #ffffff;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 0 auto;
+    background: white;
 }
 
-/* Header section */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 30px;
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 10px;
+    margin-bottom: 40px;
 }
 
-.logo-container {
-    display: flex;
-    align-items: flex-start;
+.title h1 {
+    font-size: 28px;
+    color: var(--primary-blue);
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.2;
 }
 
-.logo-container img {
-    height: 60px;
-    margin-right: 10px;
+.company-section {
+    text-align: right;
+}
+
+.company-section img {
+    height: 40px;
+    margin-bottom: 10px;
 }
 
 .company-info {
-    text-align: right;
-    max-width: 300px;
-    word-wrap: break-word;
+    font-size: 13px;
+    line-height: 1.4;
 }
 
 .company-name {
-    font-size: 20px;
     font-weight: bold;
-    color: var(--primary-color);
     margin-bottom: 4px;
 }
 
-.company-info p {
-    font-size: 10px;
-    margin: 4px 0;
+.info-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 100px;
+    margin-bottom: 40px;
+    font-size: 14px;
 }
 
-/* Invoice details section */
-.invoice-details {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
+.left-info {
+    flex: 0 0 auto;
+    line-height: 1.8;
 }
 
-/* Table styles */
-table {
+.right-info {
+    flex: 1;
+    line-height: 1.8;
+    word-wrap: break-word;
+    max-width: 400px;
+}
+
+.info-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.items-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
-table th,
-table td {
+.items-table th,
+.items-table td {
     padding: 12px;
-    border-bottom: 1px solid #dee2e6;
     text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-table th {
-    background-color: var(--secondary-color);
+.items-table th {
     font-weight: bold;
-    text-transform: uppercase;
-    font-size: 12px;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
 }
 
-/* Total table styles */
-.total-table td {
-    border: none;
-    padding: 5px 12px;
+.totals {
+    width: 300px;
+    margin-left: auto;
 }
 
-.total-row td {
-    border-top: 2px solid var(--primary-color);
+.calculation-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.calculation-row.total {
     font-weight: bold;
-    color: var(--primary-color);
+    font-size: 16px;
+    border-top: 2px solid var(--border-color);
+    margin-top: 8px;
+    padding-top: 12px;
 }
 
-.text-right {
-    text-align: right;
-}
-
-/* Footer */
-.footer {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px solid var(--primary-color);
-    text-align: center;
-    color: var(--light-text-color);
-    font-size: 12px;
-}
-
-/* Customer details section */
-.customer-details {
-    background-color: var(--secondary-color);
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-/* Notes section */
 .notes {
-    background-color: var(--highlight-color);
-    border: 1px solid var(--highlight-border-color);
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
+    margin: 40px 0;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-.notes h3 {
-    margin-top: 0;
-    color: #856404;
+.footer {
+    position: fixed;
+    bottom: 20mm;
+    left: 20mm;
+    right: 20mm;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-color);
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+    background: white;
 }

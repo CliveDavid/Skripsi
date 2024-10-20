@@ -11,35 +11,38 @@
 <body>
     <div class="invoice-box">
         <div class="header">
-            <div class="logo-container">
-                <img src="http://localhost:3000/public/images/SJM.png" alt="PT Sadang Jaya Logo"> <!-- Logo image -->
+            <div class="title">
+                <h1>NOTA TITIPAN</h1>
+                <h1>BARANG</h1>
             </div>
-            <div class="company-info">
-                <div class="company-name">{{ company_name }}</div>
-                <p>{{ company_address }}</p>
-                <p>Phone: {{ company_phone }}</p>
-                <p>Email: {{ company_email }}</p>
+            <div class="company-section">
+                <img src="images/SJM.png" alt="PT Sadang Jaya Logo">
+                <div class="company-info">
+                    <div class="company-name">{{ company_name }}</div>
+                    <div>{{ company_address }}</div>
+                    <div>{{ company_phone }} | {{ company_email }}</div>
+                </div>
             </div>
         </div>
 
-        <div class="invoice-details">
-            <h2>Nota Titipan Barang</h2>
-            <p><strong>Nomor:</strong> {{ invoice_number }}</p>
-            <p><strong>Tanggal:</strong> {{ invoice_dt }}</p>
-            <p><strong>Tanggal Jatuh Tempo:</strong> {{ due_dt }}</p>
+        <div class="info-section">
+            <div class="left-info">
+                <p>Nomor: {{ invoice_number }}</p>
+                <p>Tanggal: {{ invoice_dt }}</p>
+                <p>Jatuh Tempo: {{ due_dt }}</p>
+            </div>
+            <div class="right-info">
+                <p class="info-header">DITUJUKAN KEPADA:</p>
+                <p>{{ distributor_name }}</p>
+                <p>{{ distributor_address }}</p>
+                <p><strong>Metode Pengiriman:</strong> {{ shipment_method }}</p>
+            </div>
         </div>
 
-        <div class="customer-details">
-            <h3>Kepada:</h3>
-            <p><strong>{{ distributor_name }}</strong></p>
-            <p>{{ distributor_address }}</p>
-            <p><strong>Metode Pengiriman:</strong> {{ shipment_method }}</p>
-        </div>
-
-        <table>
+        <table class="items-table">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th>Nomor</th>
                     <th>Nama Produk</th>
                     <th>Jumlah</th>
                     <th>Tipe Box</th>
@@ -52,33 +55,32 @@
             </tbody>
         </table>
 
-        <table class="total-table">
-            <tr>
-                <td>Subtotal</td>
-                <td class="text-right">Rp {{ subtotal }}</td>
-            </tr>
-            <tr>
-                <td>Biaya Tambahan</td>
-                <td class="text-right">Rp {{ additional_fee }}</td>
-            </tr>
-            <tr>
-                <td>Diskon</td>
-                <td class="text-right">Rp {{ discount }}</td>
-            </tr>
-            <tr class="total-row">
-                <td><strong>Total</strong></td>
-                <td class="text-right"><strong>Rp {{ total }}</strong></td>
-            </tr>
-        </table>
+        <div class="totals">
+            <div class="calculation-row">
+                <span>Subtotal</span>
+                <span>Rp {{ subtotal }}</span>
+            </div>
+            <div class="calculation-row">
+                <span>Biaya Tambahan</span>
+                <span>Rp {{ additional_fee }}</span>
+            </div>
+            <div class="calculation-row">
+                <span>Diskon</span>
+                <span>Rp {{ discount }}</span>
+            </div>
+            <div class="calculation-row total">
+                <span>Total</span>
+                <span>Rp {{ total }}</span>
+            </div>
+        </div>
 
         <div class="notes">
-            <h3>Catatan Pesanan:</h3>
+            <p><strong>Catatan:</strong></p>
             <p>{{ notes }}</p>
         </div>
 
         <div class="footer">
-            <p>Pembayaran total harus diselesaikan dalam waktu 7 hari.</p>
-            <p>Terima kasih atas kerja sama Anda.</p>
+            <p>Pembayaran harus diselesaikan dalam waktu 7 hari. Terima kasih atas kerja sama Anda.</p>
         </div>
     </div>
 </body>
