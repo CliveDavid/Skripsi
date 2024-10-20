@@ -54,47 +54,39 @@ router.post('/get-by-order-id', asyncHandler(async (req, res) => {
 router.post('/create', asyncHandler(async (req, res) => {
     const { invoice_dt, order_id, subtotal, discount, additional_fee, payment_status } = req.body;
 
-    // Validate required fields
     if (!invoice_dt || !order_id || !subtotal) {
         return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
     }
 
-    // Check if an invoice already exists for this order
-    let invoice = await Invoice.findOne({ where: { order_id } });
-
-    if (invoice) {
-        // Update existing invoice
-        invoice = await invoice.update({
-            invoice_dt: new Date(invoice_dt),
-            subtotal,
-            discount: discount || 0,
-            additional_fee: additional_fee || 0,
-            payment_status: payment_status || 'Unpaid'
-        });
-    } else {
-        // Create new invoice
-        invoice = await Invoice.create({
-            invoice_dt: new Date(invoice_dt),
-            order_id,
-            subtotal,
-            discount: discount || 0,
-            additional_fee: additional_fee || 0,
-            payment_status: payment_status || 'Unpaid'
-        });
+    try {
+        let invoice = await Invoice.findOne({ where: { order_id } });
+        
+        if (invoice) {
+            invoice = await invoice.update({
+                invoice_dt: new Date(invoice_dt),
+                subtotal,
+                discount: discount || 0,
+                additional_fee: additional_fee || 0,
+                payment_status: payment_status || 'Unpaid'
+            });
+        } else {
+            invoice = await Invoice.create({
+                invoice_dt: new Date(invoice_dt),
+                order_id,
+                subtotal,
+                discount: discount || 0,
+                additional_fee: additional_fee || 0,
+                payment_status: payment_status || 'Unpaid'
+            });
+        }
+ 
+        await sendInvoiceEmail(invoice);
+ 
+        res.status(invoice ? 200 : 201).json(invoice);
+    } catch (error) {
+        console.error('Error creating/updating invoice:', error);
+        res.status(500).json({ message: 'Error creating/updating invoice', error: error.message });
     }
-
-    res.status(invoice ? 200 : 201).json({
-        invoice_id: invoice.invoice_id,
-        invoice_number: invoice.invoice_number,
-        invoice_dt: invoice.invoice_dt,
-        due_dt: invoice.due_dt,
-        order_id: invoice.order_id,
-        subtotal: invoice.subtotal,
-        discount: invoice.discount,
-        additional_fee: invoice.additional_fee,
-        total: invoice.total,
-        payment_status: invoice.payment_status
-    });
 }));
 
 // Download PDF
@@ -131,56 +123,57 @@ router.post('/send-invoice-email', asyncHandler(async (req, res) => {
     }
  
     try {
-        const invoice = await Invoice.findByPk(invoice_id, {
-            include: [{
-                model: Order,
-                include: [{
-                    model: Distributor,
-                    attributes: ['name', 'email']
-                }]
-            }]
-        });
- 
+        const invoice = await Invoice.findByPk(invoice_id);
         if (!invoice) {
             return res.status(404).json({ message: 'Invoice not found' });
         }
  
-        const { pdfBuffer } = await generateInvoicePDF(invoice_id);
+        const result = await sendInvoiceEmail(invoice);
+        res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+ }));
+
+
+ const sendInvoiceEmail = async (invoice) => {
+
+    if (invoice.is_sent) {
+        return { success: false, message: 'Invoice already sent' };
+    }
+
+    try {
+        const { pdfBuffer } = await generateInvoicePDF(invoice.invoice_id);
+        
+        const invoiceWithDetails = await Invoice.findByPk(invoice.invoice_id, {
+            include: [{
+                model: Order,
+                include: [{
+                    model: Distributor,
+                    attributes: ['name', 'email'] 
+                }]
+            }]
+        });
  
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: invoice.order.distributor.email,
+            to: invoiceWithDetails.order.distributor.email,
             subject: `Invoice #${invoice.invoice_number}`,
-            text: `Dear ${invoice.order.distributor.name},\n\nPlease find attached the invoice #${invoice.invoice_number} for your recent order.\n\nThank you for your business.\n\nBest regards,\nPT Sadang Jaya`,
+            text: `Dear ${invoiceWithDetails.order.distributor.name},\n\nPlease find attached the invoice #${invoice.invoice_number} for your recent order.\n\nThank you for your business.\n\nBest regards,\nPT Sadang Jaya`,
             attachments: [{
-                filename: `invoice-${invoice_id}.pdf`,
+                filename: `invoice-${invoice.invoice_id}.pdf`,
                 content: pdfBuffer
             }]
         };
  
         const emailResult = await sendMail(mailOptions);
+        await invoice.update({ is_sent: emailResult.accepted.length > 0 });
         
-        if (emailResult.accepted.length > 0) {
-            await invoice.update({ is_sent: true });
-            
-            res.status(200).json({ 
-                success: true,
-                message: 'Invoice sent successfully via email',
-                sent_to: invoice.order.distributor.email
-            });
-        } else {
-            await invoice.update({ is_sent: false });
-            throw new Error('Email not accepted by recipient server');
-        }
- 
+        return emailResult.accepted.length > 0;
     } catch (error) {
         console.error('Error sending invoice email:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Error sending invoice email', 
-            error: error.message 
-        });
+        await invoice.update({ is_sent: false });
+        return false;
     }
- }));
-
+ };
 module.exports = router;
