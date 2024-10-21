@@ -323,23 +323,19 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(event: any, controlName: string) {
-    const value = event.target.value.replace(/[^\d]/g, '');
-    console.log("value: " + value)
-    const numericValue = parseFloat(value) || 0;
+    const cursorPosition = event.target.selectionStart;
+    let value = event.target.value.replace(/\D/g, '');
 
-    // Set the formatted value back to the form control
+    // Only use the raw input value without formatting
+    const numericValue = value ? Number(value) : 0;
+
     this.orderForm.get(controlName)?.setValue(numericValue);
+    event.target.value = value;
+    event.target.setSelectionRange(cursorPosition, cursorPosition);
+  }
 
-    // Format the numeric value as Indonesian Rupiah
-    const formattedValue = numericValue.toLocaleString('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    });
-
-    // Update the input field with the formatted value
-    event.target.value = formattedValue;
+  formatDisplay(value: number): string {
+    return value.toString();
   }
 
   loadInvoiceData() {
