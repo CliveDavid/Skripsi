@@ -41,6 +41,8 @@ export class PagingComponent implements OnInit {
   @Input() url: string = '';
   @Input() editButton: boolean = false;
   @Input() primaryKey: string = 'id';
+  @Input() shouldShowActionButtons: (row: any) => boolean = (row: any) => true;
+
   showImagePopup: boolean = false;
   popupImageUrl: SafeUrl | null = null;
 

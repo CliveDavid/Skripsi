@@ -72,12 +72,16 @@
                 </ng-container>
               </ng-container>
             </td>
+
             <td *ngIf="editButton">
-              <a [routerLink]="[currentRoute + '/form']" [queryParams]="{ id: row[primaryKey] }"
-                class="btn btn-edit btn-sm">
-                <i class="fas fa-edit"></i>
-              </a>
+              <ng-container *ngIf="shouldShowActionButtons && shouldShowActionButtons(row)">
+                <a [routerLink]="[currentRoute + '/form']" [queryParams]="{ id: row[primaryKey] }"
+                  class="btn btn-edit btn-sm">
+                  <i class="fas fa-edit"></i>
+                </a>
+              </ng-container>
             </td>
+
           </tr>
         </tbody>
       </table>

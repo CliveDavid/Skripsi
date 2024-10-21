@@ -62,12 +62,31 @@ router.post('/create', asyncHandler(async (req, res) => {
         let invoice = await Invoice.findOne({ where: { order_id } });
         
         if (invoice) {
+            // First check if there are any real differences in the data
+            const hasChanges = 
+                parseFloat(invoice.subtotal) !== parseFloat(subtotal) ||
+                parseFloat(invoice.discount || 0) !== parseFloat(discount || 0) ||
+                parseFloat(invoice.additional_fee || 0) !== parseFloat(additional_fee || 0) ||
+                invoice.payment_status !== (payment_status || 'Unpaid');
+
+            if (!hasChanges) {
+                return res.status(200).json(invoice);
+            }
+
+            // Only update dates and recalculate if there are actual changes
+            const currentDate = new Date();
+            const dueDate = new Date(currentDate);
+            dueDate.setDate(dueDate.getDate() + 7);
+
             invoice = await invoice.update({
-                invoice_dt: new Date(invoice_dt),
+                invoice_dt: currentDate,
+                due_dt: dueDate,
                 subtotal,
                 discount: discount || 0,
                 additional_fee: additional_fee || 0,
-                payment_status: payment_status || 'Unpaid'
+                payment_status: payment_status || 'Unpaid',
+                total: parseFloat(subtotal) - parseFloat(discount || 0) + parseFloat(additional_fee || 0),
+                is_sent: false
             });
         } else {
             invoice = await Invoice.create({
@@ -127,9 +146,13 @@ router.post('/send-invoice-email', asyncHandler(async (req, res) => {
         if (!invoice) {
             return res.status(404).json({ message: 'Invoice not found' });
         }
- 
+    
         const result = await sendInvoiceEmail(invoice);
-        res.status(result.success ? 200 : 400).json(result);
+        const response = typeof result === 'boolean' 
+            ? { success: result, message: result ? 'Email sent successfully' : 'Failed to send email' }
+            : result;
+        
+        res.status(response.success ? 200 : 400).json(response);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -137,7 +160,6 @@ router.post('/send-invoice-email', asyncHandler(async (req, res) => {
 
 
  const sendInvoiceEmail = async (invoice) => {
-
     if (invoice.is_sent) {
         return { success: false, message: 'Invoice already sent' };
     }
@@ -167,13 +189,20 @@ router.post('/send-invoice-email', asyncHandler(async (req, res) => {
         };
  
         const emailResult = await sendMail(mailOptions);
-        await invoice.update({ is_sent: emailResult.accepted.length > 0 });
         
-        return emailResult.accepted.length > 0;
+        // Email is successful if messageId exists and there are no rejected recipients
+        const isSuccess = Boolean(emailResult.messageId && emailResult.rejected.length === 0);
+        
+        await invoice.update({ is_sent: isSuccess });
+        
+        return { 
+            success: isSuccess, 
+            message: isSuccess ? 'Email sent successfully' : 'Failed to send email'
+        };
     } catch (error) {
         console.error('Error sending invoice email:', error);
         await invoice.update({ is_sent: false });
-        return false;
+        return { success: false, message: error.message };
     }
- };
+};
 module.exports = router;

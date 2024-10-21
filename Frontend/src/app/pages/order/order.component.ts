@@ -14,4 +14,8 @@ export class OrderComponent implements OnInit {
   ngOnInit() {
   }
 
+  shouldShowActionButtons = (row: any) => {
+    return !['Delivered', 'Cancelled'].includes(row.status);
+  };
+
 }
