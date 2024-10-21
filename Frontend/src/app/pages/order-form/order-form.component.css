@@ -530,6 +530,24 @@ label {
   background-color: #ffebee;
 }
 
+.input-group-text {
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+}
+
+.input-group input {
+  text-align: left;
+}
+
+.invoice-details .input-group input {
+  text-align: right;
+}
+
+.invoice-details .input-group-text {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
   .order-item-row {

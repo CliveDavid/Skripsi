@@ -154,11 +154,22 @@
           </div>
           <div class="form-group">
             <label for="discount">Discount</label>
-            <input type="number" id="discount" formControlName="discount" class="form-control">
+            <div class="input-group">
+              <span class="input-group-text">Rp</span>
+              <input type="text" id="discount" formControlName="discount" class="form-control"
+                [value]="orderForm.get('discount')?.value | number:'1.0-0'"
+                (input)="formatCurrency($event, 'discount')">
+            </div>
           </div>
+
           <div class="form-group">
             <label for="additional_fee">Additional Fee</label>
-            <input type="number" id="additional_fee" formControlName="additional_fee" class="form-control">
+            <div class="input-group">
+              <span class="input-group-text">Rp</span>
+              <input type="text" id="additional_fee" formControlName="additional_fee" class="form-control"
+                [value]="orderForm.get('additional_fee')?.value | number:'1.0-0'"
+                (input)="formatCurrency($event, 'additional_fee')">
+            </div>
           </div>
           <div class="form-group">
             <label for="payment_status">Payment Status</label>

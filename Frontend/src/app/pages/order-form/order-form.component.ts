@@ -322,6 +322,26 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     );
   }
 
+  formatCurrency(event: any, controlName: string) {
+    const value = event.target.value.replace(/[^\d]/g, '');
+    console.log("value: " + value)
+    const numericValue = parseFloat(value) || 0;
+
+    // Set the formatted value back to the form control
+    this.orderForm.get(controlName)?.setValue(numericValue);
+
+    // Format the numeric value as Indonesian Rupiah
+    const formattedValue = numericValue.toLocaleString('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+
+    // Update the input field with the formatted value
+    event.target.value = formattedValue;
+  }
+
   loadInvoiceData() {
     const orderId = this.route.snapshot.queryParamMap.get('id');
     if (orderId) {
