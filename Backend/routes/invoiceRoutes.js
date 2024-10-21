@@ -66,10 +66,12 @@ router.post('/create', asyncHandler(async (req, res) => {
             const hasChanges = 
                 parseFloat(invoice.subtotal) !== parseFloat(subtotal) ||
                 parseFloat(invoice.discount || 0) !== parseFloat(discount || 0) ||
-                parseFloat(invoice.additional_fee || 0) !== parseFloat(additional_fee || 0) ||
-                invoice.payment_status !== (payment_status || 'Unpaid');
+                parseFloat(invoice.additional_fee || 0) !== parseFloat(additional_fee || 0);
 
             if (!hasChanges) {
+                invoice = await invoice.update({
+                    payment_status: payment_status || 'Unpaid'
+                });
                 return res.status(200).json(invoice);
             }
 
