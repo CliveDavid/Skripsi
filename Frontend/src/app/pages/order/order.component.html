@@ -5,18 +5,10 @@
     { header: 'Status', field: 'status', alignment: 'left', type: 'status' },
     { header: 'Total Price', field: 'total_price', alignment: 'left', type: 'currency' },
     { header: 'Shipment', field: 'shipment_name', alignment: 'left', type: 'text' },
-    { header: 'Invoice', field: 'invoice_id', alignment: 'left', type: 'link', path: '/invoice/detail', logo: 'fa-map-marker-alt' },
+    { header: 'Invoice', field: 'invoice_id', alignment: 'left', type: 'link', path: '/invoice/detail', logo: 'fa-file-invoice' },
 
   ]" [url]="'orders/get-all'" [editButton]="true" [primaryKey]="'order_id'"
-  [shouldShowActionButtons]="shouldShowActionButtons" [filterField]="'status'" [filterOptions]="[
-  { label: 'Active', value: ['Pending', 'Processing', 'Invoiced'], default: true },
-  { label: 'Pending', value: 'Pending' },
-    { label: 'Processing', value: 'Processing' },
-    { label: 'Invoiced', value: 'Invoiced' },
-    { label: 'Delivered', value: 'Delivered' },
-    { label: 'Cancelled', value: 'Cancelled' }
-  ]">
+  [shouldShowActionButtons]="shouldShowActionButtons" [filterField]="'status'" [filterOptions]="filterOptions">
 </app-paging>
-
-<!-- { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
-{ header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' } -->
+<!-- { header: 'Created At' , field: 'createdAt' , alignment: 'left' , type: 'date' }, {
+  header: 'Updated At' , field: 'updatedAt' , alignment: 'left' , type: 'date' } -->

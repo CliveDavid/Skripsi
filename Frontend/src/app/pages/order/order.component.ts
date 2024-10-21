@@ -14,6 +14,15 @@ export class OrderComponent implements OnInit {
   ngOnInit() {
   }
 
+  filterOptions = [
+    { label: 'Active', value: ['Pending', 'Processing', 'Invoiced'], default: true },
+    { label: 'Pending', value: 'Pending' },
+    { label: 'Processing', value: 'Processing' },
+    { label: 'Invoiced', value: 'Invoiced' },
+    { label: 'Delivered', value: 'Delivered' },
+    { label: 'Cancelled', value: 'Cancelled' }
+  ];
+
   shouldShowActionButtons = (row: any) => {
     return !['Delivered', 'Cancelled'].includes(row.status);
   };
