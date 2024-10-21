@@ -411,21 +411,28 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   handleStatusChange(newStatus: string): void {
-    if ((newStatus === 'Invoiced' || newStatus === 'Delivered') && !this.checkInvoiceInfo()) {
-      this.toastr.error('Please fill in invoice details first');
-      return;
+    if ((newStatus === 'Invoiced' || newStatus === 'Delivered')) {
+      this.dialogTitle = 'Invoice Details';
+      this.dialogMessage = 'Would you like to modify the invoice details before proceeding?';
+      this.pendingStatus = newStatus;
+      this.showConfirmDialog = true;
+    } else {
+      this.dialogTitle = 'Confirm Status Change';
+      this.dialogMessage = `Are you sure you want to mark this order as ${newStatus}?`;
+      this.showConfirmDialog = true;
+      this.pendingStatus = newStatus;
     }
-
-    this.dialogTitle = 'Confirm Status Change';
-    this.dialogMessage = `Are you sure you want to mark this order as ${newStatus}?`;
-    this.showConfirmDialog = true;
-    this.pendingStatus = newStatus;
   }
 
   onConfirmStatus(): void {
-    this.orderForm.patchValue({ status: this.pendingStatus });
-    this.showConfirmDialog = false;
-    this.onSubmit();
+    if (this.pendingStatus === 'Invoiced' || this.pendingStatus === 'Delivered') {
+      this.orderForm.patchValue({ status: this.pendingStatus });
+      this.showConfirmDialog = false;
+    } else {
+      this.orderForm.patchValue({ status: this.pendingStatus });
+      this.showConfirmDialog = false;
+      this.onSubmit();
+    }
   }
 
   onCancelStatus(): void {
