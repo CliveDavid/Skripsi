@@ -1,0 +1,159 @@
+<div class="card">
+  <div class="card-header">
+    <h2>Settings</h2>
+  </div>
+
+  <div class="card-body">
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button [class.active]="activeTab === 'company'" (click)="setActiveTab('company')" class="tab-button">
+        Company Info
+      </button>
+      <button [class.active]="activeTab === 'product'" (click)="setActiveTab('product')" class="tab-button">
+        Product Settings
+      </button>
+      <button [class.active]="activeTab === 'shipment'" (click)="setActiveTab('shipment')" class="tab-button">
+        Shipment Methods
+      </button>
+    </div>
+
+    <!-- Company Info Tab -->
+    <div *ngIf="activeTab === 'company'" class="tab-content">
+      <form (ngSubmit)="onSubmit()" #companyForm="ngForm" class="narrow-form">
+        <div class="form-columns">
+          <!-- Left Column -->
+          <div class="form-column">
+            <div class="form-group">
+              <label for="company_name">Company Name</label>
+              <input type="text" class="form-control" id="company_name" required name="company_name">
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" id="email" required name="email">
+            </div>
+            <div class="form-group">
+              <label for="address">Address</label>
+              <textarea class="form-control" id="address" name="address" rows="4"></textarea>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="form-column">
+            <div class="form-group">
+              <label for="phn1">Primary Phone</label>
+              <input type="text" class="form-control" id="phn1" required name="phn1">
+            </div>
+            <div class="form-group">
+              <label for="phn2">Secondary Phone</label>
+              <input type="text" class="form-control" id="phn2" name="phn2">
+            </div>
+            <div class="form-group">
+              <label for="phn3">Alternative Phone</label>
+              <input type="text" class="form-control" id="phn3" name="phn3">
+            </div>
+          </div>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Product Settings Tab -->
+    <div *ngIf="activeTab === 'product'" class="tab-content">
+      <!-- Product Types Section -->
+      <div class="settings-section">
+        <div class="section-header" (click)="toggleSection('productTypes')">
+          <h3>Product Types</h3>
+          <i class="fas" [class.fa-chevron-down]="expandedSection !== 'productTypes'"
+            [class.fa-chevron-up]="expandedSection === 'productTypes'"></i>
+        </div>
+        <div class="section-content" [class.expanded]="expandedSection === 'productTypes'">
+          <form (ngSubmit)="onSubmit()" #productTypeForm="ngForm">
+            <div class="form-row">
+              <ng-container *ngFor="let field of productTypeFields">
+                <div class="form-group col-md-6">
+                  <label [for]="field.field">{{ field.header }}</label>
+                  <input [type]="field.type" class="form-control" [id]="field.field" [required]="field.required"
+                    [name]="field.field">
+                </div>
+              </ng-container>
+            </div>
+            <div class="form-buttons">
+              <button type="submit" class="btn btn-primary">Add Product Type</button>
+            </div>
+          </form>
+          <!-- Product Types Table -->
+          <table class="table mt-3">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Product types list -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Box Types Section -->
+      <div class="settings-section">
+        <div class="section-header" (click)="toggleSection('boxTypes')">
+          <h3>Box Types</h3>
+          <i class="fas" [class.fa-chevron-down]="expandedSection !== 'boxTypes'"
+            [class.fa-chevron-up]="expandedSection === 'boxTypes'"></i>
+        </div>
+        <div class="section-content" [class.expanded]="expandedSection === 'boxTypes'">
+          <!-- Similar form structure as Product Types -->
+        </div>
+      </div>
+
+      <!-- Pricing Section -->
+      <div class="settings-section">
+        <div class="section-header" (click)="toggleSection('pricing')">
+          <h3>Pricing</h3>
+          <i class="fas" [class.fa-chevron-down]="expandedSection !== 'pricing'"
+            [class.fa-chevron-up]="expandedSection === 'pricing'"></i>
+        </div>
+        <div class="section-content" [class.expanded]="expandedSection === 'pricing'">
+          <!-- Similar form structure for pricing -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipment Methods Tab -->
+    <div *ngIf="activeTab === 'shipment'" class="tab-content">
+      <form (ngSubmit)="onSubmit()" #shipmentForm="ngForm">
+        <div class="form-row">
+          <ng-container *ngFor="let field of shipmentFields">
+            <div class="form-group col-md-6">
+              <label [for]="field.field">{{ field.header }}</label>
+              <input [type]="field.type" class="form-control" [id]="field.field" [required]="field.required"
+                [name]="field.field">
+            </div>
+          </ng-container>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary">Add Shipment Method</button>
+        </div>
+      </form>
+      <!-- Shipment Methods Table -->
+      <table class="table mt-3">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Shipment methods list -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

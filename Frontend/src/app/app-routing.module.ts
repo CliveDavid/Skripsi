@@ -16,6 +16,7 @@ import { InvoiceComponent } from './pages/invoice/invoice.component';
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 import { DistributorAddressDetailComponent } from './pages/distributor-address-detail/distributor-address-detail.component';
 import { DistributorAddressFormComponent } from './pages/distributor-address-form/distributor-address-form.component';
+import { AdditionalSettingsComponent } from './pages/additional-settings/additional-settings.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -34,6 +35,7 @@ const routes: Routes = [
   { path: 'invoice/detail', component: InvoiceDetailComponent },
   { path: 'distributor-address/detail', component: DistributorAddressDetailComponent },
   { path: 'distributor-address/form', component: DistributorAddressFormComponent },
+  { path: 'additional-settings', component: AdditionalSettingsComponent },
 
   { path: '**', component: NotFoundComponent }
 ];

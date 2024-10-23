@@ -1,0 +1,153 @@
+.tab-navigation {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #6c757d;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.tab-content {
+  padding: 1rem 0;
+}
+
+.settings-section {
+  margin-bottom: 1.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.section-content {
+  padding: 1rem;
+  display: none;
+}
+
+.section-content.expanded {
+  display: block;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table th {
+  background-color: #00000005;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Inherit existing styles from your form component */
+.card {
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+  max-width: 1000px;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  border-radius: 0.25rem;
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn:disabled {
+  opacity: 0.65;
+}
+
+/* These will use the styles from your existing CSS */

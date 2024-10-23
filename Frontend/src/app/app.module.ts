@@ -33,6 +33,7 @@ import { DetailComponent } from './shared/components/detail/detail.component';
 import { DistributorAddressFormComponent } from './pages/distributor-address-form/distributor-address-form.component';
 import { AddressChangeComponent } from './pages/address-change/address-change.component';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
+import { AdditionalSettingsComponent } from './pages/additional-settings/additional-settings.component';
 
 
 
@@ -64,7 +65,8 @@ import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confi
     DetailComponent,
     DistributorAddressFormComponent,
     AddressChangeComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    AdditionalSettingsComponent
   ],
   imports: [
     BrowserModule,

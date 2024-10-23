@@ -64,6 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
       'distributor': 'Distributor',
       'order': 'Order',
       'invoice': 'Invoice',
+      'additional-settings': 'Additional Settings',
       // add more routes and titles here
     };
 

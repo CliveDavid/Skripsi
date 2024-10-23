@@ -18,6 +18,11 @@
 
 .detail-container {
   padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Creates two equal columns */
+  gap: 30px;
+  /* Space between columns */
 }
 
 .detail-row {
@@ -28,7 +33,7 @@
 }
 
 .detail-label {
-  width: 200px;
+  width: 150px;
   color: #666;
 }
 
@@ -51,7 +56,6 @@
   margin-right: 5px;
 }
 
-/* Boolean styles remain the same */
 .boolean-yes,
 .boolean-no {
   display: inline-block;

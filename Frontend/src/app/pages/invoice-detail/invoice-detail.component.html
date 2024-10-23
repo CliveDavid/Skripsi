@@ -1,65 +1,58 @@
-<div class="card">
-  <div class="card-header">
-    <h2>Invoice Details</h2>
-    <div class="header-buttons">
-      <button class="btn-icon" (click)="downloadPDF()" title="Download PDF">
-        <i class="fas fa-download"></i>
-      </button>
-    </div>
+<div class="detail-card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="detail-title-wrapper">Invoice Details</div>
+    <button class="btn btn-add btn-sm" (click)="downloadPDF()">
+      <i class="fas fa-download"></i> Download
+    </button>
   </div>
-  <div class="card-body">
+
+  <div class="detail-container">
     <div *ngIf="isLoading" class="loading-spinner">
       Loading...
     </div>
+
     <div *ngIf="!isLoading && invoice">
-      <div class="invoice-info">
-        <div class="row">
-          <div class="label">Invoice ID:</div>
-          <div class="content">{{ invoice.invoice_id }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Invoice Number:</div>
-          <div class="content">{{ invoice.invoice_number }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Invoice Date:</div>
-          <div class="content">{{ invoice.invoice_dt | date }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Due Date:</div>
-          <div class="content">{{ invoice.due_dt | date }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Order ID:</div>
-          <div class="content">{{ invoice.order_id }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Payment Status:</div>
-          <div class="content">{{ invoice.payment_status }}</div>
-        </div>
+      <div class="detail-row">
+        <div class="detail-label">Invoice ID:</div>
+        <div class="detail-value">{{ invoice.invoice_id }}</div>
       </div>
-      <div class="invoice-summary">
-        <div class="row">
-          <div class="label">Subtotal:</div>
-          <div class="content">{{ invoice.subtotal | currency:'Rp ':'symbol':'1.2-2' }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Discount:</div>
-          <div class="content">{{ invoice.discount | currency:'Rp ':'symbol':'1.2-2' }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Additional Fee:</div>
-          <div class="content">{{ invoice.additional_fee | currency:'Rp ':'symbol':'1.2-2' }}</div>
-        </div>
-        <div class="row">
-          <div class="label">Total:</div>
-          <div class="content"><strong>{{ invoice.total | currency:'Rp ':'symbol':'1.2-2' }}</strong></div>
-        </div>
+      <div class="detail-row">
+        <div class="detail-label">Invoice Number:</div>
+        <div class="detail-value">{{ invoice.invoice_number }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Invoice Date:</div>
+        <div class="detail-value">{{ invoice.invoice_dt | date }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Due Date:</div>
+        <div class="detail-value">{{ invoice.due_dt | date }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Order ID:</div>
+        <div class="detail-value">{{ invoice.order_id }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Payment Status:</div>
+        <div class="detail-value">{{ invoice.payment_status }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Subtotal:</div>
+        <div class="detail-value">{{ invoice.subtotal | currency:'Rp ':'symbol':'1.2-2' }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Discount:</div>
+        <div class="detail-value">{{ invoice.discount | currency:'Rp ':'symbol':'1.2-2' }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Additional Fee:</div>
+        <div class="detail-value">{{ invoice.additional_fee | currency:'Rp ':'symbol':'1.2-2' }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Total:</div>
+        <div class="detail-value"><strong>{{ invoice.total | currency:'Rp ':'symbol':'1.2-2' }}</strong></div>
       </div>
     </div>
-  </div>
-  <div class="card-footer">
-    <button class="btn btn-secondary" (click)="goBack()">Return</button>
   </div>
 </div>
 

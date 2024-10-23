@@ -7,18 +7,39 @@
   </div>
 
   <div class="detail-container">
-    <div class="detail-row" *ngFor="let column of columns">
-      <div class="detail-label">{{ column.header }}</div>
-      <div class="detail-value">
-        <ng-container [ngSwitch]="column.type">
-          <span *ngSwitchCase="'text'">{{ data?.[column.field] }}</span>
-          <span *ngSwitchCase="'date'">{{ data?.[column.field] | date: 'dd MMMM yyyy' }}</span>
-          <span *ngSwitchCase="'boolean'" [ngClass]="data?.[column.field] ? 'boolean-yes' : 'boolean-no'">
-            {{ data?.[column.field] ? 'yes' : 'no' }}
-          </span>
-          <span *ngSwitchCase="'currency'">{{ data?.[column.field] | currency:'Rp' }}</span>
-          <span *ngSwitchCase="'int'">{{ data?.[column.field] | number:'1.0-0' }}</span>
-        </ng-container>
+    <!-- Left Column -->
+    <div class="column-left">
+      <div class="detail-row" *ngFor="let column of columns | slice:0:columns.length/2">
+        <div class="detail-label">{{ column.header }}</div>
+        <div class="detail-value">
+          <ng-container [ngSwitch]="column.type">
+            <span *ngSwitchCase="'text'">{{ data?.[column.field] }}</span>
+            <span *ngSwitchCase="'date'">{{ data?.[column.field] | date: 'dd MMMM yyyy' }}</span>
+            <span *ngSwitchCase="'boolean'" [ngClass]="data?.[column.field] ? 'boolean-yes' : 'boolean-no'">
+              {{ data?.[column.field] ? 'yes' : 'no' }}
+            </span>
+            <span *ngSwitchCase="'currency'">{{ data?.[column.field] | currency:'Rp' }}</span>
+            <span *ngSwitchCase="'int'">{{ data?.[column.field] | number:'1.0-0' }}</span>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="column-right">
+      <div class="detail-row" *ngFor="let column of columns | slice:columns.length/2">
+        <div class="detail-label">{{ column.header }}</div>
+        <div class="detail-value">
+          <ng-container [ngSwitch]="column.type">
+            <span *ngSwitchCase="'text'">{{ data?.[column.field] }}</span>
+            <span *ngSwitchCase="'date'">{{ data?.[column.field] | date: 'dd MMMM yyyy' }}</span>
+            <span *ngSwitchCase="'boolean'" [ngClass]="data?.[column.field] ? 'boolean-yes' : 'boolean-no'">
+              {{ data?.[column.field] ? 'yes' : 'no' }}
+            </span>
+            <span *ngSwitchCase="'currency'">{{ data?.[column.field] | currency:'Rp' }}</span>
+            <span *ngSwitchCase="'int'">{{ data?.[column.field] | number:'1.0-0' }}</span>
+          </ng-container>
+        </div>
       </div>
     </div>
   </div>
