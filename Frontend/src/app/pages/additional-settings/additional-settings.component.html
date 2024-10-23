@@ -25,15 +25,17 @@
           <div class="form-column">
             <div class="form-group">
               <label for="company_name">Company Name</label>
-              <input type="text" class="form-control" id="company_name" required name="company_name">
+              <input type="text" class="form-control" id="company_name" required [(ngModel)]="companyData.company_name"
+                name="company_name">
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" class="form-control" id="email" required name="email">
+              <input type="email" class="form-control" id="email" required [(ngModel)]="companyData.email" name="email">
             </div>
             <div class="form-group">
               <label for="address">Address</label>
-              <textarea class="form-control" id="address" name="address" rows="4"></textarea>
+              <textarea class="form-control" id="address" rows="4" [(ngModel)]="companyData.address"
+                name="address"></textarea>
             </div>
           </div>
 
@@ -41,20 +43,20 @@
           <div class="form-column">
             <div class="form-group">
               <label for="phn1">Primary Phone</label>
-              <input type="text" class="form-control" id="phn1" required name="phn1">
+              <input type="text" class="form-control" id="phn1" required [(ngModel)]="companyData.phn1" name="phn1">
             </div>
             <div class="form-group">
               <label for="phn2">Secondary Phone</label>
-              <input type="text" class="form-control" id="phn2" name="phn2">
+              <input type="text" class="form-control" id="phn2" [(ngModel)]="companyData.phn2" name="phn2">
             </div>
             <div class="form-group">
               <label for="phn3">Alternative Phone</label>
-              <input type="text" class="form-control" id="phn3" name="phn3">
+              <input type="text" class="form-control" id="phn3" [(ngModel)]="companyData.phn3" name="phn3">
             </div>
           </div>
         </div>
         <div class="form-buttons">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!companyForm.form.valid">Save Changes</button>
         </div>
       </form>
     </div>
@@ -71,18 +73,23 @@
         <div class="section-content" [class.expanded]="expandedSection === 'productTypes'">
           <form (ngSubmit)="onSubmit()" #productTypeForm="ngForm">
             <div class="form-row">
-              <ng-container *ngFor="let field of productTypeFields">
-                <div class="form-group col-md-6">
-                  <label [for]="field.field">{{ field.header }}</label>
-                  <input [type]="field.type" class="form-control" [id]="field.field" [required]="field.required"
-                    [name]="field.field">
-                </div>
-              </ng-container>
+              <div class="form-group col-md-6">
+                <label for="prod_type_code">Product Type Code</label>
+                <input type="text" class="form-control" id="prod_type_code" required
+                  [(ngModel)]="newProductType.prod_type_code" name="prod_type_code">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="descr">Description</label>
+                <input type="text" class="form-control" id="descr" [(ngModel)]="newProductType.descr" name="descr">
+              </div>
             </div>
             <div class="form-buttons">
-              <button type="submit" class="btn btn-primary">Add Product Type</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!productTypeForm.form.valid">
+                Add Product Type
+              </button>
             </div>
           </form>
+
           <!-- Product Types Table -->
           <table class="table mt-3">
             <thead>
@@ -93,7 +100,14 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Product types list -->
+              <tr *ngFor="let pt of productTypes">
+                <td>{{pt.prod_type_code}}</td>
+                <td>{{pt.descr}}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning mr-2" (click)="updateProductType(pt)">Edit</button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteProductType(pt.prod_type_id)">Delete</button>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -107,7 +121,46 @@
             [class.fa-chevron-up]="expandedSection === 'boxTypes'"></i>
         </div>
         <div class="section-content" [class.expanded]="expandedSection === 'boxTypes'">
-          <!-- Similar form structure as Product Types -->
+          <form (ngSubmit)="onSubmit()" #boxTypeForm="ngForm">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="box_type_code">Box Type Code</label>
+                <input type="text" class="form-control" id="box_type_code" required
+                  [(ngModel)]="newBoxType.box_type_code" name="box_type_code">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="box_capacity">Box Capacity</label>
+                <input type="number" class="form-control" id="box_capacity" required
+                  [(ngModel)]="newBoxType.box_capacity" name="box_capacity">
+              </div>
+            </div>
+            <div class="form-buttons">
+              <button type="submit" class="btn btn-primary" [disabled]="!boxTypeForm.form.valid">
+                Add Box Type
+              </button>
+            </div>
+          </form>
+
+          <!-- Box Types Table -->
+          <table class="table mt-3">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Capacity</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let bt of boxTypes">
+                <td>{{bt.box_type_code}}</td>
+                <td>{{bt.box_capacity}}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning mr-2" (click)="updateBoxType(bt)">Edit</button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteBoxType(bt.box_type_id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -119,7 +172,61 @@
             [class.fa-chevron-up]="expandedSection === 'pricing'"></i>
         </div>
         <div class="section-content" [class.expanded]="expandedSection === 'pricing'">
-          <!-- Similar form structure for pricing -->
+          <form (ngSubmit)="onSubmit()" #priceForm="ngForm">
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="box_type_code">Box Type</label>
+                <select class="form-control" id="box_type_code" required [(ngModel)]="newPrice.box_type_code"
+                  name="box_type_code">
+                  <option *ngFor="let bt of boxTypes" [value]="bt.box_type_code">
+                    {{bt.box_type_code}} (Capacity: {{bt.box_capacity}})
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="prod_type_code">Product Type</label>
+                <select class="form-control" id="prod_type_code" required [(ngModel)]="newPrice.prod_type_code"
+                  name="prod_type_code">
+                  <option *ngFor="let pt of productTypes" [value]="pt.prod_type_code">
+                    {{pt.prod_type_code}} - {{pt.descr}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="price">Price</label>
+                <input type="number" class="form-control" id="price" required [(ngModel)]="newPrice.price" name="price"
+                  step="0.01">
+              </div>
+            </div>
+            <div class="form-buttons">
+              <button type="submit" class="btn btn-primary" [disabled]="!priceForm.form.valid">
+                Add Price
+              </button>
+            </div>
+          </form>
+
+          <!-- Prices Table -->
+          <table class="table mt-3">
+            <thead>
+              <tr>
+                <th>Box Type</th>
+                <th>Product Type</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let price of prices">
+                <td>{{price.box_type_code}}</td>
+                <td>{{price.prod_type_code}}</td>
+                <td>{{price.price | currency}}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning mr-2" (click)="updatePrice(price)">Edit</button>
+                  <button class="btn btn-sm btn-danger" (click)="deletePrice(price.price_id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -128,18 +235,29 @@
     <div *ngIf="activeTab === 'shipment'" class="tab-content">
       <form (ngSubmit)="onSubmit()" #shipmentForm="ngForm">
         <div class="form-row">
-          <ng-container *ngFor="let field of shipmentFields">
-            <div class="form-group col-md-6">
-              <label [for]="field.field">{{ field.header }}</label>
-              <input [type]="field.type" class="form-control" [id]="field.field" [required]="field.required"
-                [name]="field.field">
-            </div>
-          </ng-container>
+          <div class="form-group col-md-4">
+            <label for="shipment_code">Shipment Code</label>
+            <input type="text" class="form-control" id="shipment_code" required
+              [(ngModel)]="newShipmentMethod.shipment_code" name="shipment_code">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="shipment_name">Shipment Name</label>
+            <input type="text" class="form-control" id="shipment_name" required
+              [(ngModel)]="newShipmentMethod.shipment_name" name="shipment_name">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="capacity">Capacity</label>
+            <input type="number" class="form-control" id="capacity" required [(ngModel)]="newShipmentMethod.capacity"
+              name="capacity">
+          </div>
         </div>
         <div class="form-buttons">
-          <button type="submit" class="btn btn-primary">Add Shipment Method</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!shipmentForm.form.valid">
+            Add Shipment Method
+          </button>
         </div>
       </form>
+
       <!-- Shipment Methods Table -->
       <table class="table mt-3">
         <thead>
@@ -151,9 +269,19 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Shipment methods list -->
+          <tr *ngFor="let sm of shipmentMethods">
+            <td>{{sm.shipment_code}}</td>
+            <td>{{sm.shipment_name}}</td>
+            <td>{{sm.capacity}}</td>
+            <td>
+              <button class="btn btn-sm btn-warning mr-2" (click)="updateShipmentMethod(sm)">Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteShipmentMethod(sm.shipment_id)">Delete</button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+<app-message></app-message>

@@ -67,7 +67,7 @@ export class HeaderComponent implements OnInit {
   }
 
   fetchProductTypes() {
-    this.http.post<ProductType[]>(`${this.baseUrl}/productType/get-product-type-kvp`, {}
+    this.http.post<ProductType[]>(`${this.baseUrl}/productType/get-kvp`, {}
     ).subscribe(
       (data) => {
         this.productTypes = data;

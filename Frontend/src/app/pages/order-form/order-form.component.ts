@@ -189,7 +189,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     const qty = orderItem.get('qty')?.value;
 
     if (productId && boxTypeCode) {
-      this.http.post<any>(`${this.apiUrl}/price/get-price`, { productId, boxTypeCode }).subscribe(
+      this.http.post<any>(`${this.apiUrl}/price/get`, { productId, boxTypeCode }).subscribe(
         response => {
           const price = response.price;
           orderItem.patchValue({
@@ -216,21 +216,21 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   loadDropdownData() {
-    this.http.post<any[]>(`${this.apiUrl}/shipmentMethods/get-shipment-method-kvp`, {}).subscribe(data => {
+    this.http.post<any[]>(`${this.apiUrl}/shipmentMethods/get-kvp`, {}).subscribe(data => {
       this.shipmentMethods = data.map(item => ({
         shipment_code: item.value,
         shipment_name: item.label
       }));
     });
 
-    this.http.post<any[]>(`${this.apiUrl}/product/get-product-kvp`, {}).subscribe(data => {
+    this.http.post<any[]>(`${this.apiUrl}/product/get-kvp`, {}).subscribe(data => {
       this.products = data.map(item => ({
         prod_id: item.value,
         prod_name: item.label
       }));
     });
 
-    this.http.post<any[]>(`${this.apiUrl}/boxType/get-box-type-kvp`, {}).subscribe(data => {
+    this.http.post<any[]>(`${this.apiUrl}/boxType/get-kvp`, {}).subscribe(data => {
       this.boxTypes = data.map(item => ({
         box_type_code: item.value,
         box_type_name: item.label

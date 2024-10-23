@@ -186,7 +186,7 @@ router.get('/product-image/:id', asyncHandler(async (req, res) => {
     res.send(product.image);
 }));
 
-router.post('/get-product-kvp', asyncHandler(async (req, res) => {
+router.post('/get-kvp', asyncHandler(async (req, res) => {
     const products = await Product.findAll({
         attributes: ['prod_id', 'prod_name'],
         where: { is_active: true }

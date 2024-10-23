@@ -1121,7 +1121,7 @@
         ]
       }
     },
-    "/product/get-product-kvp": {
+    "/product/get-kvp": {
       "post": {
         "description": "",
         "responses": {
@@ -1134,7 +1134,7 @@
         ]
       }
     },
-    "/productType/get-product-type-kvp": {
+    "/productType/get-all": {
       "post": {
         "description": "",
         "responses": {
@@ -1147,12 +1147,242 @@
         ]
       }
     },
-    "/boxType/get-box-type-kvp": {
+    "/productType/get-kvp": {
       "post": {
         "description": "",
         "responses": {
           "200": {
             "description": "OK"
+          }
+        },
+        "tags": [
+          "ProductType"
+        ]
+      }
+    },
+    "/productType/create": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prod_type_code": {
+                  "example": "any"
+                },
+                "descr": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "ProductType"
+        ]
+      }
+    },
+    "/productType/update": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prod_type_id": {
+                  "example": "any"
+                },
+                "prod_type_code": {
+                  "example": "any"
+                },
+                "descr": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "ProductType"
+        ]
+      }
+    },
+    "/productType/delete": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prod_type_id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "ProductType"
+        ]
+      }
+    },
+    "/boxType/get-all": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "BoxType"
+        ]
+      }
+    },
+    "/boxType/get-kvp": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "BoxType"
+        ]
+      }
+    },
+    "/boxType/create": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "box_type_code": {
+                  "example": "any"
+                },
+                "box_capacity": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "BoxType"
+        ]
+      }
+    },
+    "/boxType/update": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "box_type_id": {
+                  "example": "any"
+                },
+                "box_type_code": {
+                  "example": "any"
+                },
+                "box_capacity": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "BoxType"
+        ]
+      }
+    },
+    "/boxType/delete": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "box_type_id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "tags": [
@@ -1437,19 +1667,6 @@
         ]
       }
     },
-    "/shipmentMethods/get-shipment-method-kvp": {
-      "post": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "tags": [
-          "ShipmentMethods"
-        ]
-      }
-    },
     "/shipmentMethods/get-all": {
       "post": {
         "description": "",
@@ -1463,7 +1680,128 @@
         ]
       }
     },
-    "/price/get-price": {
+    "/shipmentMethods/get-kvp": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "ShipmentMethods"
+        ]
+      }
+    },
+    "/shipmentMethods/create": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "shipment_code": {
+                  "example": "any"
+                },
+                "shipment_name": {
+                  "example": "any"
+                },
+                "capacity": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "ShipmentMethods"
+        ]
+      }
+    },
+    "/shipmentMethods/update": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "shipment_id": {
+                  "example": "any"
+                },
+                "shipment_code": {
+                  "example": "any"
+                },
+                "shipment_name": {
+                  "example": "any"
+                },
+                "capacity": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "ShipmentMethods"
+        ]
+      }
+    },
+    "/shipmentMethods/delete": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "shipment_id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "ShipmentMethods"
+        ]
+      }
+    },
+    "/price/get": {
       "post": {
         "description": "",
         "parameters": [
@@ -1486,6 +1824,168 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "Price"
+        ]
+      }
+    },
+    "/price/get-all": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productId": {
+                  "example": "any"
+                },
+                "boxTypeCode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "Price"
+        ]
+      }
+    },
+    "/price/create": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "box_type_code": {
+                  "example": "any"
+                },
+                "prod_type_code": {
+                  "example": "any"
+                },
+                "price": {
+                  "example": "any"
+                },
+                "productId": {
+                  "example": "any"
+                },
+                "boxTypeCode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "Price"
+        ]
+      }
+    },
+    "/price/update": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "price_id": {
+                  "example": "any"
+                },
+                "box_type_code": {
+                  "example": "any"
+                },
+                "prod_type_code": {
+                  "example": "any"
+                },
+                "price": {
+                  "example": "any"
+                },
+                "productId": {
+                  "example": "any"
+                },
+                "boxTypeCode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "Price"
+        ]
+      }
+    },
+    "/price/delete": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "price_id": {
+                  "example": "any"
+                },
+                "productId": {
+                  "example": "any"
+                },
+                "boxTypeCode": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
           },
           "404": {
             "description": "Not Found"
@@ -1777,7 +2277,7 @@
       }
     },
     "/company/get": {
-      "get": {
+      "post": {
         "description": "",
         "responses": {
           "200": {
@@ -1785,9 +2285,51 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        },
+        "tags": [
+          "Company"
+        ]
+      }
+    },
+    "/company/update": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "company_name": {
+                  "example": "any"
+                },
+                "phn1": {
+                  "example": "any"
+                },
+                "phn2": {
+                  "example": "any"
+                },
+                "phn3": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "address": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
-          "500": {
-            "description": "Internal Server Error"
+          "404": {
+            "description": "Not Found"
           }
         },
         "tags": [
