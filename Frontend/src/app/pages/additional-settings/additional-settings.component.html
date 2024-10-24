@@ -96,17 +96,39 @@
               <tr>
                 <th>Code</th>
                 <th>Description</th>
-                <th>Actions</th>
+                <th class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let pt of productTypes">
-                <td>{{pt.prod_type_code}}</td>
-                <td>{{pt.descr}}</td>
-                <td>
-                  <button class="btn btn-sm btn-warning mr-2" (click)="updateProductType(pt)">Edit</button>
-                  <button class="btn btn-sm btn-danger" (click)="deleteProductType(pt.prod_type_id)">Delete</button>
-                </td>
+                <ng-container *ngIf="!pt.isEditing">
+                  <td>{{pt.prod_type_code}}</td>
+                  <td>{{pt.descr}}</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-warning" (click)="startEditing(pt)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="deleteProductType(pt.prod_type_id)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </ng-container>
+                <ng-container *ngIf="pt.isEditing">
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="pt.prod_type_code" required>
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="pt.descr">
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-success" (click)="updateProductType(pt)">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-secondary" (click)="cancelEditing(pt)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </td>
+                </ng-container>
               </tr>
             </tbody>
           </table>
@@ -147,17 +169,39 @@
               <tr>
                 <th>Code</th>
                 <th>Capacity</th>
-                <th>Actions</th>
+                <th class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let bt of boxTypes">
-                <td>{{bt.box_type_code}}</td>
-                <td>{{bt.box_capacity}}</td>
-                <td>
-                  <button class="btn btn-sm btn-warning mr-2" (click)="updateBoxType(bt)">Edit</button>
-                  <button class="btn btn-sm btn-danger" (click)="deleteBoxType(bt.box_type_id)">Delete</button>
-                </td>
+                <ng-container *ngIf="!bt.isEditing">
+                  <td>{{bt.box_type_code}}</td>
+                  <td>{{bt.box_capacity}}</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-warning" (click)="startEditing(bt)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="deleteBoxType(bt.box_type_id)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </ng-container>
+                <ng-container *ngIf="bt.isEditing">
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="bt.box_type_code" required>
+                  </td>
+                  <td>
+                    <input type="number" class="form-control form-control-sm" [(ngModel)]="bt.box_capacity" required>
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-success" (click)="updateBoxType(bt)">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-secondary" (click)="cancelEditing(bt)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </td>
+                </ng-container>
               </tr>
             </tbody>
           </table>
@@ -177,8 +221,9 @@
               <div class="form-group col-md-4">
                 <label for="box_type_code">Box Type</label>
                 <select class="form-control" id="box_type_code" required [(ngModel)]="newPrice.box_type_code"
-                  name="box_type_code">
-                  <option *ngFor="let bt of boxTypes" [value]="bt.box_type_code">
+                  (ngModelChange)="onPriceBoxTypeChange()" name="box_type_code">
+                  <option value="">Select Box Type</option>
+                  <option *ngFor="let bt of getAvailableBoxTypes()" [value]="bt.box_type_code">
                     {{bt.box_type_code}} (Capacity: {{bt.box_capacity}})
                   </option>
                 </select>
@@ -186,8 +231,9 @@
               <div class="form-group col-md-4">
                 <label for="prod_type_code">Product Type</label>
                 <select class="form-control" id="prod_type_code" required [(ngModel)]="newPrice.prod_type_code"
-                  name="prod_type_code">
-                  <option *ngFor="let pt of productTypes" [value]="pt.prod_type_code">
+                  (ngModelChange)="onPriceProductTypeChange()" name="prod_type_code">
+                  <option value="">Select Product Type</option>
+                  <option *ngFor="let pt of getAvailableProductTypes()" [value]="pt.prod_type_code">
                     {{pt.prod_type_code}} - {{pt.descr}}
                   </option>
                 </select>
@@ -212,18 +258,43 @@
                 <th>Box Type</th>
                 <th>Product Type</th>
                 <th>Price</th>
-                <th>Actions</th>
+                <th class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let price of prices">
-                <td>{{price.box_type_code}}</td>
-                <td>{{price.prod_type_code}}</td>
-                <td>{{price.price | currency}}</td>
-                <td>
-                  <button class="btn btn-sm btn-warning mr-2" (click)="updatePrice(price)">Edit</button>
-                  <button class="btn btn-sm btn-danger" (click)="deletePrice(price.price_id)">Delete</button>
-                </td>
+                <ng-container *ngIf="!price.isEditing">
+                  <td>{{price.box_type_code}}</td>
+                  <td>{{price.prod_type_code}}</td>
+                  <td>{{ price.price | currency:'Rp ':'symbol':'1.2-2':'id' }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-warning" (click)="startEditing(price)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="deletePrice(price.price_id)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </ng-container>
+                <ng-container *ngIf="price.isEditing">
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="price.box_type_code" readonly>
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="price.prod_type_code" readonly>
+                  </td>
+                  <td>
+                    <input type="number" class="form-control form-control-sm" [(ngModel)]="price.price" step="0.01">
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-success" (click)="updatePrice(price)">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-secondary" (click)="cancelEditing(price)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </td>
+                </ng-container>
               </tr>
             </tbody>
           </table>
@@ -265,18 +336,43 @@
             <th>Code</th>
             <th>Name</th>
             <th>Capacity</th>
-            <th>Actions</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let sm of shipmentMethods">
-            <td>{{sm.shipment_code}}</td>
-            <td>{{sm.shipment_name}}</td>
-            <td>{{sm.capacity}}</td>
-            <td>
-              <button class="btn btn-sm btn-warning mr-2" (click)="updateShipmentMethod(sm)">Edit</button>
-              <button class="btn btn-sm btn-danger" (click)="deleteShipmentMethod(sm.shipment_id)">Delete</button>
-            </td>
+            <ng-container *ngIf="!sm.isEditing">
+              <td>{{sm.shipment_code}}</td>
+              <td>{{sm.shipment_name}}</td>
+              <td>{{sm.capacity}}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-warning" (click)="startEditing(sm)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="deleteShipmentMethod(sm.shipment_id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </ng-container>
+            <ng-container *ngIf="sm.isEditing">
+              <td>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="sm.shipment_code" required>
+              </td>
+              <td>
+                <input type="text" class="form-control form-control-sm" [(ngModel)]="sm.shipment_name" required>
+              </td>
+              <td>
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="sm.capacity" required>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-success" (click)="updateShipmentMethod(sm)">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-secondary" (click)="cancelEditing(sm)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </td>
+            </ng-container>
           </tr>
         </tbody>
       </table>

@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../../constants';
 import { ToastrService } from 'src/app/shared/services/toastr.service';
 
+interface EditableEntity {
+    isEditing?: boolean;
+    tempData?: any;
+}
+
 interface Company {
     company_name: string;
     phn1: string;
@@ -12,26 +17,26 @@ interface Company {
     address?: string;
 }
 
-interface ProductType {
+interface ProductType extends EditableEntity {
     prod_type_id: number;
     prod_type_code: string;
     descr: string;
 }
 
-interface BoxType {
+interface BoxType extends EditableEntity {
     box_type_id: number;
     box_type_code: string;
     box_capacity: number;
 }
 
-interface Price {
+interface Price extends EditableEntity {
     price_id: number;
     box_type_code: string;
     prod_type_code: string;
     price: number;
 }
 
-interface ShipmentMethod {
+interface ShipmentMethod extends EditableEntity {
     shipment_id: number;
     shipment_code: string;
     shipment_name: string;
@@ -109,6 +114,29 @@ export class AdditionalSettingsComponent implements OnInit {
         this.getShipmentMethods();
     }
 
+    startEditing(item: EditableEntity, tempData: any = null) {
+        this.resetAllEditing();
+        item.isEditing = true;
+        item.tempData = tempData || { ...item };
+    }
+
+    cancelEditing(item: EditableEntity) {
+        if (item.tempData) {
+            Object.assign(item, item.tempData);
+        }
+        item.isEditing = false;
+        item.tempData = undefined;
+    }
+
+    private resetAllEditing() {
+        [...this.productTypes, ...this.boxTypes, ...this.prices, ...this.shipmentMethods]
+            .forEach(item => {
+                if (item.isEditing) {
+                    this.cancelEditing(item);
+                }
+            });
+    }
+
     // Company Methods
     getCompanyData() {
         this.http.post<Company>(`${this.apiUrl}/company/get`, {}).subscribe({
@@ -139,7 +167,7 @@ export class AdditionalSettingsComponent implements OnInit {
     getProductTypes() {
         this.http.post<ProductType[]>(`${this.apiUrl}/productType/get-all`, {}).subscribe({
             next: (response) => {
-                this.productTypes = response;
+                this.productTypes = response.map(pt => ({ ...pt, isEditing: false }));
             },
             error: (error) => {
                 this.toastr.error('Error loading product types');
@@ -279,16 +307,18 @@ export class AdditionalSettingsComponent implements OnInit {
             next: (response) => {
                 const index = this.prices.findIndex(p => p.price_id === response.price_id);
                 if (index !== -1) {
-                    this.prices[index] = response;
+                    this.prices[index] = { ...response, isEditing: false };
                 }
                 this.toastr.success('Price updated successfully');
             },
             error: (error) => {
+                this.cancelEditing(price);
                 this.toastr.error('Error updating price');
                 console.error('Error:', error);
             }
         });
     }
+
 
     deletePrice(id: number) {
         this.http.post(`${this.apiUrl}/price/delete`, { price_id: id }).subscribe({
@@ -301,6 +331,59 @@ export class AdditionalSettingsComponent implements OnInit {
                 console.error('Error:', error);
             }
         });
+    }
+
+    getAvailableBoxTypes(): BoxType[] {
+        if (!this.newPrice.prod_type_code) {
+            return this.boxTypes.filter(bt => {
+                return !this.prices.every(p =>
+                    this.productTypes.every(pt =>
+                        this.prices.some(price =>
+                            price.box_type_code === bt.box_type_code &&
+                            price.prod_type_code === pt.prod_type_code
+                        )
+                    )
+                );
+            });
+        }
+
+        return this.boxTypes.filter(bt =>
+            !this.prices.some(p =>
+                p.box_type_code === bt.box_type_code &&
+                p.prod_type_code === this.newPrice.prod_type_code
+            )
+        );
+    }
+
+    getAvailableProductTypes(): ProductType[] {
+        if (!this.newPrice.box_type_code) {
+            return this.productTypes.filter(pt => {
+                return !this.prices.every(p =>
+                    this.boxTypes.every(bt =>
+                        this.prices.some(price =>
+                            price.prod_type_code === pt.prod_type_code &&
+                            price.box_type_code === bt.box_type_code
+                        )
+                    )
+                );
+            });
+        }
+
+        return this.productTypes.filter(pt =>
+            !this.prices.some(p =>
+                p.prod_type_code === pt.prod_type_code &&
+                p.box_type_code === this.newPrice.box_type_code
+            )
+        );
+    }
+
+    onPriceBoxTypeChange() {
+        this.newPrice.prod_type_code = '';  // Reset product type when box type changes
+    }
+
+    // Update existing onPriceProductTypeChange
+    onPriceProductTypeChange() {
+        this.newPrice.box_type_code = '';  // Reset box type when product type changes
     }
 
     // Shipment Method Methods
@@ -331,15 +414,16 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     updateShipmentMethod(shipmentMethod: ShipmentMethod) {
-        this.http.post<ShipmentMethod>(`${this.apiUrl}/shipmentMethods/update`, shipmentMethod).subscribe({
+        this.http.post<ShipmentMethod>(`${this.apiUrl}/shipmentMethod/update`, shipmentMethod).subscribe({
             next: (response) => {
                 const index = this.shipmentMethods.findIndex(sm => sm.shipment_id === response.shipment_id);
                 if (index !== -1) {
-                    this.shipmentMethods[index] = response;
+                    this.shipmentMethods[index] = { ...response, isEditing: false };
                 }
                 this.toastr.success('Shipment method updated successfully');
             },
             error: (error) => {
+                this.cancelEditing(shipmentMethod);
                 this.toastr.error('Error updating shipment method');
                 console.error('Error:', error);
             }

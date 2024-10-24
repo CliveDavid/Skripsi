@@ -1,3 +1,4 @@
+/* Base Styles */
 .tab-navigation {
   display: flex;
   gap: 1rem;
@@ -54,6 +55,7 @@
   display: block;
 }
 
+/* Form and Table Styles */
 .table {
   width: 100%;
   margin-bottom: 1rem;
@@ -76,7 +78,7 @@
   border-bottom: 2px solid #dee2e6;
 }
 
-/* Inherit existing styles from your form component */
+/* Card Styles */
 .card {
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -150,4 +152,43 @@
   opacity: 0.65;
 }
 
-/* These will use the styles from your existing CSS */
+
+/* Table Action Buttons */
+.table .btn-sm {
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+}
+
+.table .btn-sm:hover {
+  opacity: 0.8;
+}
+
+.table .btn-sm i {
+  font-size: 14px;
+}
+
+.table .btn-warning {
+  color: var(--primary-color);
+  background: none;
+}
+
+.table .btn-danger {
+  color: #dc3545;
+  background: none;
+}
+
+.table .btn-success {
+  color: #28a745;
+  background: none;
+}
+
+.table .btn-secondary {
+  color: #6c757d;
+  background: none;
+}
