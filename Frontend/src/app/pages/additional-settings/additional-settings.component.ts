@@ -149,7 +149,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     addProductType() {
-        this.http.post<ProductType>(`${this.apiUrl}/product-type/create`, this.newProductType).subscribe({
+        this.http.post<ProductType>(`${this.apiUrl}/productType/create`, this.newProductType).subscribe({
             next: (response) => {
                 this.productTypes.push(response);
                 this.newProductType = {} as ProductType;
@@ -163,7 +163,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     updateProductType(productType: ProductType) {
-        this.http.post<ProductType>(`${this.apiUrl}/product-type/update`, productType).subscribe({
+        this.http.post<ProductType>(`${this.apiUrl}/productType/update`, productType).subscribe({
             next: (response) => {
                 const index = this.productTypes.findIndex(pt => pt.prod_type_id === response.prod_type_id);
                 if (index !== -1) {
@@ -179,7 +179,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     deleteProductType(id: number) {
-        this.http.post(`${this.apiUrl}/product-type/delete`, { prod_type_id: id }).subscribe({
+        this.http.post(`${this.apiUrl}/productType/delete`, { prod_type_id: id }).subscribe({
             next: () => {
                 this.productTypes = this.productTypes.filter(pt => pt.prod_type_id !== id);
                 this.toastr.success('Product type deleted successfully');
@@ -205,7 +205,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     addBoxType() {
-        this.http.post<BoxType>(`${this.apiUrl}/box-type/create`, this.newBoxType).subscribe({
+        this.http.post<BoxType>(`${this.apiUrl}/boxType/create`, this.newBoxType).subscribe({
             next: (response) => {
                 this.boxTypes.push(response);
                 this.newBoxType = {} as BoxType;
@@ -219,7 +219,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     updateBoxType(boxType: BoxType) {
-        this.http.post<BoxType>(`${this.apiUrl}/box-type/update`, boxType).subscribe({
+        this.http.post<BoxType>(`${this.apiUrl}/boxType/update`, boxType).subscribe({
             next: (response) => {
                 const index = this.boxTypes.findIndex(bt => bt.box_type_id === response.box_type_id);
                 if (index !== -1) {
@@ -235,7 +235,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     deleteBoxType(id: number) {
-        this.http.post(`${this.apiUrl}/box-type/delete`, { box_type_id: id }).subscribe({
+        this.http.post(`${this.apiUrl}/boxType/delete`, { box_type_id: id }).subscribe({
             next: () => {
                 this.boxTypes = this.boxTypes.filter(bt => bt.box_type_id !== id);
                 this.toastr.success('Box type deleted successfully');
@@ -317,7 +317,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     addShipmentMethod() {
-        this.http.post<ShipmentMethod>(`${this.apiUrl}/shipment-method/create`, this.newShipmentMethod).subscribe({
+        this.http.post<ShipmentMethod>(`${this.apiUrl}/shipmentMethods/create`, this.newShipmentMethod).subscribe({
             next: (response) => {
                 this.shipmentMethods.push(response);
                 this.newShipmentMethod = {} as ShipmentMethod;
@@ -331,7 +331,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     updateShipmentMethod(shipmentMethod: ShipmentMethod) {
-        this.http.post<ShipmentMethod>(`${this.apiUrl}/shipment-method/update`, shipmentMethod).subscribe({
+        this.http.post<ShipmentMethod>(`${this.apiUrl}/shipmentMethods/update`, shipmentMethod).subscribe({
             next: (response) => {
                 const index = this.shipmentMethods.findIndex(sm => sm.shipment_id === response.shipment_id);
                 if (index !== -1) {
@@ -347,7 +347,7 @@ export class AdditionalSettingsComponent implements OnInit {
     }
 
     deleteShipmentMethod(id: number) {
-        this.http.post(`${this.apiUrl}/shipment-method/delete`, { shipment_id: id }).subscribe({
+        this.http.post(`${this.apiUrl}/shipmentMethods/delete`, { shipment_id: id }).subscribe({
             next: () => {
                 this.shipmentMethods = this.shipmentMethods.filter(sm => sm.shipment_id !== id);
                 this.toastr.success('Shipment method deleted successfully');
