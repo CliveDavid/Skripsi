@@ -266,7 +266,7 @@
                 <ng-container *ngIf="!price.isEditing">
                   <td>{{price.box_type_code}}</td>
                   <td>{{price.prod_type_code}}</td>
-                  <td>{{ price.price | currency:'Rp ':'symbol':'1.2-2':'id' }}</td>
+                  <td>{{ price.price | currency:'Rp ':'symbol':'1.2-2' }}</td>
                   <td class="text-center">
                     <button class="btn btn-sm btn-warning" (click)="startEditing(price)">
                       <i class="fas fa-edit"></i>
