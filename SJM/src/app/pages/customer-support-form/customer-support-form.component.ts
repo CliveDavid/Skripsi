@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from '../../services/toastr.service';
 import { Router } from '@angular/router';
+import { SupportService } from '../../services/support.service';
 
 interface SupportMessage {
   email: string;
@@ -160,15 +161,34 @@ export class CustomerSupportFormComponent {
     subject: '',
     message: ''
   };
+  isSubmitting = false;
 
   constructor(
+    private supportService: SupportService,
     private toastr: ToastrService,
     private router: Router
   ) { }
 
   onSubmit() {
-    console.log('Message Data:', this.messageData);
-    this.toastr.success('Message sent successfully');
-    this.router.navigate(['/']);
+    if (this.isSubmitting) return;
+
+    this.isSubmitting = true;
+
+    this.supportService.sendSupportMessage(this.messageData).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.toastr.success('Message sent successfully');
+          this.router.navigate(['/']);
+        } else {
+          this.toastr.error(response.message || 'Failed to send message');
+          this.isSubmitting = false;
+        }
+      },
+      error: (error) => {
+        console.error('Error sending message:', error);
+        this.toastr.error(error.error?.message || 'Failed to send message. Please try again.');
+        this.isSubmitting = false;
+      }
+    });
   }
 }
