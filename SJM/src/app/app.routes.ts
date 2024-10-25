@@ -14,6 +14,7 @@ export const routes: Routes = [
             { path: 'edit-profile', loadComponent: () => import('./pages/edit-profile/edit-profile.component').then(m => m.EditProfileComponent), canActivate: [AuthGuard] },
             { path: 'order-history', loadComponent: () => import('./pages/order-history/order-history.component').then(m => m.OrderHistoryComponent), canActivate: [AuthGuard] },
             { path: 'order-details/:orderNumber', loadComponent: () => import('./pages/order-details/order-details.component').then(m => m.OrderDetailsComponent), canActivate: [AuthGuard] },
+            { path: 'support-form', loadComponent: () => import('./pages/customer-support-form/customer-support-form.component').then(m => m.CustomerSupportFormComponent) },
             // { path: 'cart', loadComponent: () => import('./pages/cart/cart.component').then(m => m.CartComponent), canActivate: [AuthGuard] }
         ]
     },
