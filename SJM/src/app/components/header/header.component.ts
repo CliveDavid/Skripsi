@@ -97,7 +97,7 @@ export class HeaderComponent implements OnInit {
         this.toastr.success('Logged out successfully');
         setTimeout(() => {
           this.router.navigate(['/']);
-        }, 2000);
+        }, 3000);
       },
       error: (error) => {
         this.toastr.error('Logout failed: ' + error);
