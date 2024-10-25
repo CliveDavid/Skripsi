@@ -5,6 +5,8 @@ const { Op, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { sendMail } = require('../utils/email'); 
 const { ERROR_MESSAGES } = require('../constants');
+const path = require('path');
+const fs = require('fs').promises;
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -50,6 +52,18 @@ router.post('/logout', (req, res) => {
     });
 });
 
+async function compileEmailTemplate(templateName, data) {
+    const templatePath = path.join(__dirname, '../templates', templateName);
+    let template = await fs.readFile(templatePath, 'utf-8');
+    
+    Object.keys(data).forEach(key => {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        template = template.replace(regex, data[key]);
+    });
+    
+    return template;
+}
+
 // Register
 router.post('/register', asyncHandler(async (req, res) => {
     const {
@@ -84,12 +98,18 @@ router.post('/register', asyncHandler(async (req, res) => {
         return newDistributor;
     });
 
-    // Send OTP via email
+    // Send OTP via Email
+    const htmlContent = await compileEmailTemplate('otp-email.html', {
+        name,
+        otp
+    });
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
         subject: 'Verify Your Email - OTP Code',
-        text: `Dear ${name},\n\nPlease verify your email by entering this OTP: ${otp}\n\nThe OTP will expire in 15 minutes.\n\nBest regards,\nPT Sadang Jaya`
+        html: htmlContent,
+        text: `Your OTP is: ${otp}`
     };
 
     await sendMail(mailOptions);
@@ -112,11 +132,10 @@ router.post('/resend-otp', asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Account is already verified' });
     }
 
-    // Generate new OTP and set new expiration time
+    // Generate OTP
     const newOtp = generateOTP();
-    const newOtpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // New OTP expires in 15 minutes
+    const newOtpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
-    // Update or create OTP record
     await OTP.upsert({
         distributor_id: distributor.distributor_id,
         otp: newOtp,
@@ -124,11 +143,17 @@ router.post('/resend-otp', asyncHandler(async (req, res) => {
     });
 
     // Send new OTP via email
+    const htmlContent = await compileEmailTemplate('otp-email.html', {
+        name: distributor.name,
+        otp: newOtp
+    });
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
         subject: 'New OTP Code for Email Verification',
-        text: `Dear ${distributor.name},\n\nYou have requested a new OTP. Please verify your email by entering this new OTP: ${newOtp}\n\nThe OTP will expire in 15 minutes.\n\nBest regards,\nPT Sadang Jaya`
+        html: htmlContent,
+        text: `Your OTP is: ${newOtp}`
     };
 
     await sendMail(mailOptions);
