@@ -66,4 +66,8 @@ export class OrderHistoryComponent implements OnInit {
   get displayedOrders(): Order[] {
     return this.activeTab === 'upcoming' ? this.upcomingOrders : this.historyOrders;
   }
+
+  goToSupportForm() {
+    this.router.navigate(['/support-form']);
+  }
 }

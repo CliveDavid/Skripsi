@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../shared/services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from '../shared/services/toastr.service';
@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private toastr: ToastrService
   ) {
     this.loginForm = this.fb.group({
@@ -36,20 +37,23 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      this.authService.login(username, password).subscribe(
-        response => {
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+
+      this.authService.login(username, password).subscribe({
+        next: (response) => {
           if (response.success) {
-            this.toastr.success();
-            setTimeout(() => this.router.navigateByUrl('/dashboard', { replaceUrl: true }), 1500);
+            this.toastr.success('Login successful');
+            setTimeout(() => this.router.navigateByUrl(returnUrl), 1500);
+            console.log(returnUrl);
           } else {
             this.toastr.error('Invalid username or password');
           }
         },
-        error => {
+        error: (error) => {
           console.error('Login error:', error);
           this.toastr.error('Login failed. Please try again.');
         }
-      );
+      });
     } else {
       this.toastr.error('Please fill in all required fields.');
     }
