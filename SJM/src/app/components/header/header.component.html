@@ -30,9 +30,13 @@
           <a routerLink="/register" class="btn btn-sm btn-primary me-3 no-border rounded-0">Register</a>
         </ng-container>
         <ng-template #loggedInButtons>
-          <a href="#" class="position-relative d-flex align-items-center ms-3 my-icon" (click)="showNotifications()">
+          <a href="#" class="position-relative d-flex align-items-center ms-3 my-icon"
+            (click)="onNotificationClick($event)">
             <i class="fas fa-bell my-icon-fa"></i>
-            <span class="position-absolute translate-middle badge rounded-pill bg-danger icon-badge">3</span>
+            <span class="position-absolute translate-middle badge rounded-pill bg-danger icon-badge"
+              *ngIf="unreadNotificationCount > 0">
+              {{ unreadNotificationCount }}
+            </span>
           </a>
           <div class="dropdown" ngbDropdown>
             <a class="position-relative d-flex align-items-center ms-4 my-icon" ngbDropdownToggle id="profileDropdown"

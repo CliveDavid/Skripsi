@@ -1,6 +1,6 @@
 <div class="main-layout">
   <header>
-    <app-header></app-header>
+    <app-header (showNotifications)="showNotificationPanel = true"></app-header>
   </header>
 
   <main class="content">
@@ -10,4 +10,7 @@
   <footer>
     <app-footer></app-footer>
   </footer>
+
+  <app-notification-panel [isVisible]="showNotificationPanel" (visibleChange)="showNotificationPanel = $event">
+  </app-notification-panel>
 </div>

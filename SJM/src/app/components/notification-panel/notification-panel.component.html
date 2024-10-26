@@ -1,0 +1,35 @@
+<div class="notification-panel" [class.show]="isVisible">
+  <div class="notification-header">
+    <h5>Notifications</h5>
+    <div class="notification-actions">
+      <button class="btn btn-link" (click)="markAllAsRead()" *ngIf="hasUnread">
+        Mark all as read
+      </button>
+      <button class="btn btn-link text-danger" (click)="close()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="notification-content">
+    <ng-container *ngIf="notifications.length > 0; else noNotifications">
+      <div class="notification-item" *ngFor="let notification of notifications"
+        [class.unread]="notification.status === 'unread'" (click)="markAsRead([notification.notif_id])">
+        <div class="notification-title">
+          {{ notification.header }}
+          <small class="notification-time">
+            {{ notification.createdAt | date:'medium' }}
+          </small>
+        </div>
+        <div class="notification-message">{{ notification.message }}</div>
+      </div>
+    </ng-container>
+    <ng-template #noNotifications>
+      <div class="no-notifications">
+        No notifications to display
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div class="notification-overlay" [class.show]="isVisible" (click)="close()"></div>

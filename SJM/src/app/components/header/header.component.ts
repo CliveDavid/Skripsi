@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductTypeService } from '../../services/product-type.service';
@@ -12,6 +12,7 @@ import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { ToastrComponent } from '../../shared/toastr/toastr.component';
 import { ToastrService } from '../../services/toastr.service';
+import { NotificationService } from '../../services/notification.service';
 
 interface ProductType {
   value: string;
@@ -26,10 +27,12 @@ interface ProductType {
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  @Output() showNotifications = new EventEmitter<void>();
   productTypes: ProductType[] = [];
   selectedType: string = 'All Products';
   searchTerm: string = '';
   cartItemCount: number = 0;
+  unreadNotificationCount: number = 0;
   private cartSubscription!: Subscription;
 
   isLoggedIn$!: Observable<boolean>;
@@ -42,7 +45,8 @@ export class HeaderComponent implements OnInit {
     private productTypeService: ProductTypeService,
     private productService: ProductService,
     private cartService: CartService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -53,6 +57,10 @@ export class HeaderComponent implements OnInit {
     this.cartSubscription = this.cartService.cartItemCount$.subscribe(
       count => this.cartItemCount = count
     );
+
+    this.notificationService.unreadCount$.subscribe(
+      count => this.unreadNotificationCount = count
+    );
   }
 
   ngOnDestroy() {
@@ -61,9 +69,9 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  showNotifications() {
-    // Implement notification display logic
-    console.log('Show notifications');
+  onNotificationClick(event: Event) {
+    event.preventDefault();
+    this.showNotifications.emit();
   }
 
   fetchProductTypes() {
