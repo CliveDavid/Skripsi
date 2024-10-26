@@ -1,93 +1,98 @@
-<!-- Stats Card -->
-<div class="stats-card">
-  <div class="icon-wrapper">
-    <i class="fas fa-box icon"></i>
-  </div>
-  <div class="card-title mb-2">Total Shipments</div>
-  <div class="value">6,521</div>
-  <div class="stats-footer">
-    <span class="time-period">vs Last Week</span>
-    <span class="percentage positive">+1.3%</span>
-  </div>
-</div>
-<div class="stats-card">
-  <div class="icon-wrapper">
-    <i class="fas fa-shopping-cart icon"></i>
-  </div>
-  <div class="card-title mb-2">Total Orders</div>
-  <div class="value">10,105</div>
-  <div class="stats-footer">
-    <span class="time-period">vs Last Week</span>
-    <span class="percentage negative">-2.1%</span>
-  </div>
-</div>
-<div class="stats-card">
-  <div class="icon-wrapper">
-    <i class="fas fa-dollar-sign icon"></i>
-  </div>
-  <div class="card-title mb-2">Revenue</div>
-  <div class="value">$12,167</div>
-  <div class="stats-footer">
-    <span class="time-period">vs Last Week</span>
-    <span class="percentage positive">+1.3%</span>
-  </div>
-</div>
-<div class="stats-card">
-  <div class="icon-wrapper">
-    <i class="fas fa-check-circle icon"></i>
-  </div>
-  <div class="card-title mb-2">Delivered</div>
-  <div class="value">1,840</div>
-  <div class="stats-footer">
-    <span class="time-period">vs Last Week</span>
-    <span class="percentage negative">-3.1%</span>
-  </div>
-</div>
-
-<!-- Content Section -->
-<div class="content-container">
-  <!-- Ongoing Orders -->
-  <div class="content-card">
-    <div class="content-header">
-      <div class="title">
-        <i class="fas fa-truck title-icon"></i>
-        Ongoing Orders
+<div class="dashboard-container">
+  <div class="stats-row">
+    <!-- Stats Card -->
+    <div class="stats-card">
+      <div class="icon-wrapper">
+        <i class="fas fa-box icon"></i>
       </div>
-      <div class="actions">
-        <button class="btn-action">
-          <i class="fas fa-filter"></i> Filter
-        </button>
+      <div class="card-title mb-2">Total Shipments</div>
+      <div class="value">6,521</div>
+      <div class="stats-footer">
+        <span class="time-period">vs Last Week</span>
+        <span class="percentage positive">+1.3%</span>
       </div>
     </div>
-    <div class="content-body">
-      <!-- Order items here -->
+    <div class="stats-card">
+      <div class="icon-wrapper">
+        <i class="fas fa-shopping-cart icon"></i>
+      </div>
+      <div class="card-title mb-2">Total Orders</div>
+      <div class="value">10,105</div>
+      <div class="stats-footer">
+        <span class="time-period">vs Last Week</span>
+        <span class="percentage negative">-2.1%</span>
+      </div>
+    </div>
+    <div class="stats-card">
+      <div class="icon-wrapper">
+        <i class="fas fa-dollar-sign icon"></i>
+      </div>
+      <div class="card-title mb-2">Revenue</div>
+      <div class="value">$12,167</div>
+      <div class="stats-footer">
+        <span class="time-period">vs Last Week</span>
+        <span class="percentage positive">+1.3%</span>
+      </div>
+    </div>
+    <div class="stats-card">
+      <div class="icon-wrapper">
+        <i class="fas fa-check-circle icon"></i>
+      </div>
+      <div class="card-title mb-2">Delivered</div>
+      <div class="value">1,840</div>
+      <div class="stats-footer">
+        <span class="time-period">vs Last Week</span>
+        <span class="percentage negative">-3.1%</span>
+      </div>
     </div>
   </div>
-
-  <!-- Notifications -->
-  <div class="content-card">
-    <div class="content-header">
-      <div class="title">
-        <i class="fas fa-bell title-icon"></i>
-        Notifications
-      </div>
-      <div class="actions">
-        <button class="btn-action">Mark all as read</button>
-        <button class="btn-action">Clear all</button>
-      </div>
-    </div>
-    <div class="notification-list">
-      <div class="notification-item unread">
-        <div class="notification-content">
-          New order #001234ABCD has been placed
+  <div class="content-container">
+    <!-- Content Section -->
+    <div class="content-container">
+      <!-- Ongoing Orders -->
+      <div class="content-card">
+        <div class="content-header">
+          <div class="title">
+            <i class="fas fa-truck title-icon"></i>
+            Ongoing Orders
+          </div>
+          <div class="actions">
+            <button class="btn-action">
+              <i class="fas fa-filter"></i> Filter
+            </button>
+          </div>
         </div>
-        <div class="notification-time">2 minutes ago</div>
-        <div class="notification-actions">
-          <button class="btn-action">Mark as read</button>
-          <button class="btn-action danger">Delete</button>
+        <div class="content-body">
+          <!-- Order items here -->
         </div>
       </div>
-      <!-- More notification items -->
+
+      <!-- Notifications -->
+      <div class="content-card">
+        <div class="content-header">
+          <div class="title">
+            <i class="fas fa-bell title-icon"></i>
+            Notifications
+          </div>
+          <div class="actions">
+            <button class="btn-action">Mark all as read</button>
+            <button class="btn-action">Clear all</button>
+          </div>
+        </div>
+        <div class="notification-list">
+          <div class="notification-item unread">
+            <div class="notification-content">
+              New order #001234ABCD has been placed
+            </div>
+            <div class="notification-time">2 minutes ago</div>
+            <div class="notification-actions">
+              <button class="btn-action">Mark as read</button>
+              <button class="btn-action danger">Delete</button>
+            </div>
+          </div>
+          <!-- More notification items -->
+        </div>
+      </div>
     </div>
   </div>
 </div>

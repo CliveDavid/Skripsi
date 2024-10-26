@@ -175,3 +175,60 @@
   background: #fee2e2 !important;
   color: #ef4444 !important;
 }
+
+/* Container wrapper */
+.dashboard-container {
+  padding: 20px 0px;
+  margin: 0 auto;
+  max-width: 100%;
+
+}
+
+.stats-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 24px !important;
+  width: 100% !important;
+}
+
+.stats-card {
+  flex: 1 1 calc(25% - 18px) !important;
+  margin: 0 !important;
+  float: none !important;
+  min-width: 200px !important;
+}
+
+.stats-card:last-child {
+  margin-right: 0 !important;
+}
+
+.content-container {
+  clear: both !important;
+  display: flex !important;
+  gap: 24px !important;
+  margin-top: 24px !important;
+  width: 100% !important;
+  /* Ensure full width */
+}
+
+.content-card {
+  background: white !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  width: 50% !important;
+  /* Make each card exactly half width */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .stats-card {
+    flex: 1 1 calc(50% - 12px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-card {
+    flex: 1 1 100% !important;
+  }
+}
