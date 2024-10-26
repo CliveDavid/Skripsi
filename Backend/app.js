@@ -91,6 +91,7 @@ const companyRoutes = require('./routes/companyRoutes');
 const supportRoutes = require('./routes/supportRoutes');
 const distributorNotifRoutes = require('./routes/distributorNotifRoutes');
 const adminNotifRoutes = require('./routes/adminNotifRoutes');
+const dashboardRotues = require('./routes/dashboardRoutes')
 
 
 // Routes
@@ -108,6 +109,7 @@ app.use('/company', companyRoutes);
 app.use('/support', supportRoutes);
 app.use('/admin-notifications', adminNotifRoutes);
 app.use('/distributor-notifications', distributorNotifRoutes);
+app.use('/dashboard', dashboardRotues);
 
 
 // 404 Handler
