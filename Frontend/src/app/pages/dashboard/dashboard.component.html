@@ -1,1 +1,35 @@
-dashboard page works!
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Dashboard</h1>
+    <div class="flex items-center gap-4">
+      <app-notifications></app-notifications>
+      <select class="border rounded p-2">
+        <option value="week">Week</option>
+        <option value="month">Month</option>
+        <option value="year">Year</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <app-stats-card title="Total Orders" [value]="stats?.currentWeek?.totalOrders || 0" subtitle="vs Last Week"
+      [percentageChange]="stats?.percentageChanges?.orders">
+    </app-stats-card>
+
+    <app-stats-card title="Revenue" [value]="stats?.currentWeek?.totalRevenue || 0" subtitle="vs Last Week"
+      [percentageChange]="stats?.percentageChanges?.revenue" [isCurrency]="true">
+    </app-stats-card>
+
+    <app-stats-card title="Delivered" [value]="stats?.currentWeek?.deliveredOrders || 0" subtitle="vs Last Week"
+      [percentageChange]="stats?.percentageChanges?.delivered">
+    </app-stats-card>
+
+    <app-stats-card title="Total Distributors" [value]="stats?.totalDistributors || 0" subtitle="Active distributors">
+    </app-stats-card>
+  </div>
+
+  <app-top-products></app-top-products>
+  <app-recent-orders></app-recent-orders>
+</div>
