@@ -3,7 +3,6 @@ const router = express.Router();
 const { format } = require('date-fns');
 const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType, OrderStatusHistory, Invoice } = require('../models');
 const { STATUS, ERROR_MESSAGES } = require('../constants');
-const emailService = require('../services/emailService');
 const notificationService = require('../services/notificationService')
 
 // Middleware to handle errors

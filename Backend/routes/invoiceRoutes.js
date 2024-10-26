@@ -4,6 +4,7 @@ const { Invoice } = require('../models');
 const { generateInvoicePDF } = require('../utils/pdfGenerator');
 require('dotenv').config();
 const { ERROR_MESSAGES } = require('../constants');
+const emailService = require('../services/emailService');
 
 // Middleware to handle async errors
 const asyncHandler = (fn) => (req, res, next) =>
