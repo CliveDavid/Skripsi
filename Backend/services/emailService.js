@@ -82,18 +82,17 @@ class EmailService {
         try {
             const htmlContent = await this.compileTemplate('order-processing.html', {
                 name: distributor.name,
-                order_id: order.order_id,
+                order_number: order.order_number,
                 order_date: new Date(order.order_dt).toLocaleDateString('id-ID'),
                 total_price: this.formatCurrency(order.total_price),
-                shipment_code: order.shipment_code
             });
 
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: distributor.email,
-                subject: `Order #${order.order_id} Is Being Processed`,
+                subject: `Order #${order.order_number} Is Being Processed`,
                 html: htmlContent,
-                text: `Your order #${order.order_id} is now being processed. Total amount: Rp ${this.formatCurrency(order.total_price)}. Shipping code: ${order.shipment_code}`
+                text: `Your order #${order.order_number} is now being processed. Total amount: Rp ${this.formatCurrency(order.total_price)}.`
             };
 
             return this.transporter.sendMail(mailOptions);
@@ -105,7 +104,8 @@ class EmailService {
 
     async sendInvoiceEmail(invoice, pdfBuffer) {
         try {
-            const invoiceWithDetails = await Invoice.findByPk(invoice.invoice_id, {
+            const invoiceWithDetails = await Invoice.findOne({
+                where: { invoice_number: invoice.invoice_number },
                 include: [{
                     model: Order,
                     include: [{
@@ -121,7 +121,7 @@ class EmailService {
                 subject: `Invoice #${invoice.invoice_number}`,
                 text: `Dear ${invoiceWithDetails.order.distributor.name},\n\nPlease find attached the invoice #${invoice.invoice_number} for your recent order.\n\nThank you for your business.\n\nBest regards,\nPT Sadang Jaya`,
                 attachments: [{
-                    filename: `invoice-${invoice.invoice_id}.pdf`,
+                    filename: `invoice-${invoice.invoice_number}.pdf`,
                     content: pdfBuffer
                 }]
             };

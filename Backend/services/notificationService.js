@@ -1,4 +1,6 @@
 const { Admin, AdminNotif, DistributorNotif, Order } = require('../models');
+const { STATUS } = require('../constants');
+
 
 class NotificationService {
     async notifyAdmins(notification, transaction) {
@@ -50,25 +52,27 @@ class NotificationService {
         }, transaction);
     }
 
-    async notifyOrderStatusChange(order_id, distributor_id, oldStatus, newStatus, transaction) {
-        const order = await Order.findByPk(order_id, {
-            attributes: ['order_number'],
+    async notifyOrderStatusChange(orderNumber, distributor_id, oldStatus, newStatus, transaction) {
+        const order = await Order.findOne({ 
+            where: { order_number: orderNumber },
             transaction
         });
 
+        if (!order) throw new Error('Order not found');
+
         const statusMessages = {
-            processing: "Your order has been accepted and is now being processed",
-            invoiced: "Your invoice is ready for review. Please check your email",
-            invoiced: "Great news! Your order is on its way",
-            delivered: "Your order has been successfully delivered",
-            cancelled: "Your order has been cancelled. Please contact support if you have any questions"
+            [STATUS.PROCESSING]: "Your order has been accepted and is now being processed",
+            [STATUS.INVOICED]: "Your invoice is ready for review. Please check your email",
+            [STATUS.DELIVERED]: "Great news! Your order is on its way",
+            [STATUS.DELIVERED]: "Your order has been successfully delivered",
+            [STATUS.CANCELLED]: "Your order has been cancelled. Please contact support if you have any questions"
         };
 
         const message = statusMessages[newStatus] || `Order status updated from ${oldStatus} to ${newStatus}`;
 
         return this.notifyDistributor(distributor_id, {
             header: "Order Update",
-            message: `${order.order_number}: ${message}`
+            message: `${orderNumber}: ${message}`
         }, transaction);
     }
 }

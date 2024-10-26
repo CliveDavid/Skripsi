@@ -1,8 +1,8 @@
 :root {
-  --primary-color: #0f62fe;
+  --primary-color: #1749ae;
   --secondary-color: #0f62fe;
   --button-border-color: #0d437d;
-  --dark-blue: #0d437d;
+  --light-blue: #0080ff;
   --gray-color: #dcdcdc;
   --input-bg: #f0f0f0;
   --text-color-dark: #000000;
@@ -31,13 +31,13 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--button-border-color);
+  background-color: var(--primary-color) !important;
+  border-color: var(--button-border-color) !important;
 }
 
 .btn-outline-secondary {
-  color: var(--text-color-dark);
-  border-color: var(--button-border-color);
+  color: var(--text-color-dark) !important;
+  border-color: var(--button-border-color) !important;
 }
 
 .form-control:focus {

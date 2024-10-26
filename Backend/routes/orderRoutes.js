@@ -225,8 +225,8 @@ router.post('/get-for-history', asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "distributor_id is required" });
     }
 
-    const upcomingStatuses = ['Pending', 'Processing', 'Invoiced'];
-    const historyStatuses = ['Delivered', 'Cancelled'];
+    const upcomingStatuses = [STATUS.PENDING, STATUS.PROCESSING, STATUS.INVOICED];
+    const historyStatuses = [STATUS.DELIVERED, STATUS.CANCELLED];
 
     const orders = await Order.findAll({
         where: { distributor_id },
@@ -392,7 +392,15 @@ router.post('/update', asyncHandler(async (req, res) => {
 
     try {
         const result = await sequelize.transaction(async (transaction) => {
-            const order = await Order.findByPk(order_id, { transaction });
+            const order = await Order.findByPk(order_id, { 
+                include: [{ 
+                    model: Distributor,
+                    attributes: ['distributor_id', 'name', 'email'],
+                    as: 'distributor'
+                }],
+                transaction 
+            });
+
             if (!order) throw new Error('Order not found');
 
             const previousStatus = order.status;
@@ -403,7 +411,7 @@ router.post('/update', asyncHandler(async (req, res) => {
 
             if (previousStatus !== status) {
                 await notificationService.notifyOrderStatusChange(
-                    order_id,
+                    order.order_number,
                     distributor_id, 
                     previousStatus, 
                     status, 
@@ -411,18 +419,22 @@ router.post('/update', asyncHandler(async (req, res) => {
                 );
 
                 // Send email if status changed to processing
-                if (status === 'processing') {
-                    const distributor = await Distributor.findByPk(distributor_id, { transaction });
-                    if (distributor) {
-                        emailService.sendOrderProcessingEmail({
-                            order_id,
-                            order_dt,
-                            total_price,
-                            shipment_code
-                        }, distributor).catch(error => {
+                if (status === STATUS.PROCESSING) {
+                    const updatedOrder = {
+                        order_number: order.order_number,
+                        order_dt,
+                        total_price
+                    };
+
+                    const distributorData = {
+                        name: order.distributor.name,
+                        email: order.distributor.email
+                    };
+                    
+                    emailService.sendOrderProcessingEmail(updatedOrder, distributorData)
+                        .catch(error => {
                             console.error('Failed to send order processing email:', error);
                         });
-                    }
                 }
             }
 

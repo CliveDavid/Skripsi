@@ -40,7 +40,7 @@
 }
 
 .post-checkout-message a {
-  color: #3498db;
+  color: var(--primary-color);
   text-decoration: none;
 }
 
@@ -68,5 +68,5 @@
 }
 
 .order-number-link:hover {
-  color: #014287 !important;
+  color: var(--light-blue) !important;
 }
