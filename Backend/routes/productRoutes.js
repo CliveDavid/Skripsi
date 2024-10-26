@@ -52,6 +52,7 @@ router.post('/get-all-active', asyncHandler(async (req, res) => {
             attributes: ['descr']
         }],
         attributes: { exclude: ['image'] }, 
+        order: [[ProductType, 'prod_type_code']],
         raw: true, 
         nest: true
     });
