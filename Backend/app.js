@@ -89,6 +89,8 @@ const invoiceRoutes = require('./routes/invoiceRoutes');
 const orderAddressRoutes = require('./routes/orderAddressRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const supportRoutes = require('./routes/supportRoutes');
+const distributorNotifRoutes = require('./routes/distributorNotifRoutes');
+const adminNotifRoutes = require('./routes/adminNotifRoutes');
 
 
 // Routes
@@ -104,6 +106,8 @@ app.use('/invoices', invoiceRoutes);
 app.use('/orderAddress', orderAddressRoutes);
 app.use('/company', companyRoutes);
 app.use('/support', supportRoutes);
+app.use('/admin-notifications', adminNotifRoutes);
+app.use('/distributor-notifications', distributorNotifRoutes);
 
 
 // 404 Handler

@@ -11,6 +11,7 @@ const {
     Company,
     Admin,
     AdminNotif,
+    DistributorNotif,
     Price,
     OrderAddress,
     DistributorAddress,
@@ -27,6 +28,7 @@ async function syncModels() {
         await Admin.sync({ alter: true, transaction });
         await AdminNotif.sync({ alter: true, transaction });
         await Distributor.sync({ alter: true, transaction });
+        await DistributorNotif.sync({ alter: true, transaction });
         await Company.sync({ alter: true, transaction });
         await BoxType.sync({ alter: true, transaction });
         await ProductType.sync({ alter: true, transaction });

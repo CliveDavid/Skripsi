@@ -4,6 +4,7 @@ const { format } = require('date-fns');
 const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType, OrderStatusHistory, Invoice } = require('../models');
 const { STATUS, ERROR_MESSAGES } = require('../constants');
 const emailService = require('../services/emailService');
+const notificationService = require('../services/notificationService')
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -266,17 +267,6 @@ router.post('/get-for-history', asyncHandler(async (req, res) => {
 }));
 
 //#region Create New Order
-const notifyAdminsNewOrder = async (order_id, transaction) => {
-    const admins = await Admin.findAll({ attributes: ['admin_id'] });
-    const notifications = admins.map(admin => ({
-        admin_id: admin.admin_id,
-        header: "New Order Notification",
-        message: `A new order with ID #${order_id} has been created. Please review it as soon as possible.`,
-        status: 'unread'
-    }));
-    await AdminNotif.bulkCreate(notifications, { transaction });
-};
-
 router.post('/create', asyncHandler(async (req, res) => {
     const { 
         distributor_id, 
@@ -289,14 +279,13 @@ router.post('/create', asyncHandler(async (req, res) => {
         addresses
     } = req.body;
     
-    // Basic validation
     if (!distributor_id || !order_dt || !total_price || !shipment_code) {
         return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
     }
 
     try {
         const result = await sequelize.transaction(async (t) => {
-            // Create the order
+            // Create order
             const newOrder = await Order.create({
                 distributor_id,
                 order_dt,
@@ -306,7 +295,7 @@ router.post('/create', asyncHandler(async (req, res) => {
                 notes
             }, { transaction: t });
 
-            // Create the order items
+            // Create order items
             if (orderItems && orderItems.length > 0) {
                 const orderItemsWithOrderId = orderItems.map(item => ({
                     order_id: newOrder.order_id,
@@ -319,21 +308,15 @@ router.post('/create', asyncHandler(async (req, res) => {
             }
 
             // Create the order addresses
-            if (addresses && addresses.length > 0) {
+            if (addresses?.length > 0) {
                 const orderAddressesWithOrderId = addresses.map(address => ({
                     order_id: newOrder.order_id,
-                    address: address.address,
-                    addr_details: address.addr_details,
-                    city: address.city,
-                    province: address.province,
-                    zipcode: address.zipcode,
-                    district: address.district,
-                    subdistrict: address.subdistrict
+                    ...address
                 }));
                 await OrderAddress.bulkCreate(orderAddressesWithOrderId, { transaction: t });
             }
 
-            await notifyAdminsNewOrder(newOrder.order_id, t);
+            await notificationService.notifyNewOrder(newOrder.order_id, t);
 
             return Order.findByPk(newOrder.order_id, {
                 include: [
@@ -418,17 +401,28 @@ router.post('/update', asyncHandler(async (req, res) => {
             await updateOrderItems(order_id, orderItems, transaction);
             await updateOrderAddresses(order_id, addresses, transaction);
 
-            if (previousStatus !== 'processing' && status === 'processing') {
-                const distributor = await Distributor.findByPk(distributor_id, { transaction });
-                if (distributor) {
-                    emailService.sendOrderProcessingEmail({
-                        order_id,
-                        order_dt,
-                        total_price,
-                        shipment_code
-                    }, distributor).catch(error => {
-                        console.error('Failed to send order processing email:', error);
-                    });
+            if (previousStatus !== status) {
+                await notificationService.notifyOrderStatusChange(
+                    order_id,
+                    distributor_id, 
+                    previousStatus, 
+                    status, 
+                    transaction
+                );
+
+                // Send email if status changed to processing
+                if (status === 'processing') {
+                    const distributor = await Distributor.findByPk(distributor_id, { transaction });
+                    if (distributor) {
+                        emailService.sendOrderProcessingEmail({
+                            order_id,
+                            order_dt,
+                            total_price,
+                            shipment_code
+                        }, distributor).catch(error => {
+                            console.error('Failed to send order processing email:', error);
+                        });
+                    }
                 }
             }
 

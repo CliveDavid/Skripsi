@@ -5,6 +5,7 @@ const sequelize = require('../config/database');
 const Admin = require('./admin')(sequelize, Sequelize.DataTypes);
 const Distributor = require('./distributor')(sequelize, Sequelize.DataTypes);
 const AdminNotif = require('./admin_notif')(sequelize, Sequelize.DataTypes);
+const DistributorNotif = require('./distributor_notif')(sequelize, Sequelize.DataTypes);
 const Company = require('./company')(sequelize, Sequelize.DataTypes);
 const Product = require('./product')(sequelize, Sequelize.DataTypes);
 const ProductType = require('./product_type')(sequelize, Sequelize.DataTypes);
@@ -40,6 +41,7 @@ ShipmentMethod.hasMany(Order, { foreignKey: 'shipment_code' });
 Order.belongsTo(ShipmentMethod, { foreignKey: 'shipment_code', targetKey: 'shipment_code' });
 
 AdminNotif.belongsTo(Admin, { foreignKey: 'admin_id' });
+DistributorNotif.belongsTo(Distributor, { foreignKey: 'distributor_id' });
 
 Price.belongsTo(ProductType, { foreignKey: 'prod_type_code' });
 Price.belongsTo(BoxType, { foreignKey: 'box_type_code' });
@@ -70,6 +72,7 @@ module.exports = {
     Company,
     Admin,
     AdminNotif,
+    DistributorNotif,
     Price,
     OrderAddress,
     DistributorAddress,
