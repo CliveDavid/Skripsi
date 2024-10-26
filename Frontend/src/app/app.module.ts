@@ -34,10 +34,6 @@ import { DistributorAddressFormComponent } from './pages/distributor-address-for
 import { AddressChangeComponent } from './pages/address-change/address-change.component';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 import { AdditionalSettingsComponent } from './pages/additional-settings/additional-settings.component';
-import { NotificationsComponent } from './pages/dashboard-components/notifications.component';
-import { RecentOrdersComponent } from './pages/dashboard-components/recent-orders.component';
-import { StatsCardComponent } from './pages/dashboard-components/stat-card.component';
-import { TopProductsComponent } from './pages/dashboard-components/top-products.component';
 
 
 
@@ -70,11 +66,7 @@ import { TopProductsComponent } from './pages/dashboard-components/top-products.
     DistributorAddressFormComponent,
     AddressChangeComponent,
     ConfirmDialogComponent,
-    AdditionalSettingsComponent,
-    StatsCardComponent,
-    TopProductsComponent,
-    RecentOrdersComponent,
-    NotificationsComponent
+    AdditionalSettingsComponent
   ],
   imports: [
     BrowserModule,

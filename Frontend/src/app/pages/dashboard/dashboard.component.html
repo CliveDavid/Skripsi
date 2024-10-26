@@ -1,35 +1,93 @@
-<div class="p-6">
-  <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Dashboard</h1>
-    <div class="flex items-center gap-4">
-      <app-notifications></app-notifications>
-      <select class="border rounded p-2">
-        <option value="week">Week</option>
-        <option value="month">Month</option>
-        <option value="year">Year</option>
-      </select>
+<!-- Stats Card -->
+<div class="stats-card">
+  <div class="icon-wrapper">
+    <i class="fas fa-box icon"></i>
+  </div>
+  <div class="card-title mb-2">Total Shipments</div>
+  <div class="value">6,521</div>
+  <div class="stats-footer">
+    <span class="time-period">vs Last Week</span>
+    <span class="percentage positive">+1.3%</span>
+  </div>
+</div>
+<div class="stats-card">
+  <div class="icon-wrapper">
+    <i class="fas fa-shopping-cart icon"></i>
+  </div>
+  <div class="card-title mb-2">Total Orders</div>
+  <div class="value">10,105</div>
+  <div class="stats-footer">
+    <span class="time-period">vs Last Week</span>
+    <span class="percentage negative">-2.1%</span>
+  </div>
+</div>
+<div class="stats-card">
+  <div class="icon-wrapper">
+    <i class="fas fa-dollar-sign icon"></i>
+  </div>
+  <div class="card-title mb-2">Revenue</div>
+  <div class="value">$12,167</div>
+  <div class="stats-footer">
+    <span class="time-period">vs Last Week</span>
+    <span class="percentage positive">+1.3%</span>
+  </div>
+</div>
+<div class="stats-card">
+  <div class="icon-wrapper">
+    <i class="fas fa-check-circle icon"></i>
+  </div>
+  <div class="card-title mb-2">Delivered</div>
+  <div class="value">1,840</div>
+  <div class="stats-footer">
+    <span class="time-period">vs Last Week</span>
+    <span class="percentage negative">-3.1%</span>
+  </div>
+</div>
+
+<!-- Content Section -->
+<div class="content-container">
+  <!-- Ongoing Orders -->
+  <div class="content-card">
+    <div class="content-header">
+      <div class="title">
+        <i class="fas fa-truck title-icon"></i>
+        Ongoing Orders
+      </div>
+      <div class="actions">
+        <button class="btn-action">
+          <i class="fas fa-filter"></i> Filter
+        </button>
+      </div>
+    </div>
+    <div class="content-body">
+      <!-- Order items here -->
     </div>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <app-stats-card title="Total Orders" [value]="stats?.currentWeek?.totalOrders || 0" subtitle="vs Last Week"
-      [percentageChange]="stats?.percentageChanges?.orders">
-    </app-stats-card>
-
-    <app-stats-card title="Revenue" [value]="stats?.currentWeek?.totalRevenue || 0" subtitle="vs Last Week"
-      [percentageChange]="stats?.percentageChanges?.revenue" [isCurrency]="true">
-    </app-stats-card>
-
-    <app-stats-card title="Delivered" [value]="stats?.currentWeek?.deliveredOrders || 0" subtitle="vs Last Week"
-      [percentageChange]="stats?.percentageChanges?.delivered">
-    </app-stats-card>
-
-    <app-stats-card title="Total Distributors" [value]="stats?.totalDistributors || 0" subtitle="Active distributors">
-    </app-stats-card>
+  <!-- Notifications -->
+  <div class="content-card">
+    <div class="content-header">
+      <div class="title">
+        <i class="fas fa-bell title-icon"></i>
+        Notifications
+      </div>
+      <div class="actions">
+        <button class="btn-action">Mark all as read</button>
+        <button class="btn-action">Clear all</button>
+      </div>
+    </div>
+    <div class="notification-list">
+      <div class="notification-item unread">
+        <div class="notification-content">
+          New order #001234ABCD has been placed
+        </div>
+        <div class="notification-time">2 minutes ago</div>
+        <div class="notification-actions">
+          <button class="btn-action">Mark as read</button>
+          <button class="btn-action danger">Delete</button>
+        </div>
+      </div>
+      <!-- More notification items -->
+    </div>
   </div>
-
-  <app-top-products></app-top-products>
-  <app-recent-orders></app-recent-orders>
 </div>
