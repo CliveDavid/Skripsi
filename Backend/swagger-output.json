@@ -2752,6 +2752,19 @@
         ]
       }
     },
+    "/dashboard/top-products": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
     "/dashboard/recent-orders": {
       "post": {
         "description": "",

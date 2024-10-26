@@ -78,6 +78,41 @@ router.post('/stats', asyncHandler(async (req, res) => {
     res.json(stats);
 }));
 
+router.post('/top-products', asyncHandler(async (req, res) => {
+    const topProducts = await OrderItem.findAll({
+        attributes: [
+            'product_id',
+            [sequelize.fn('COUNT', sequelize.col('order_item.order_item_id')), 'orderCount']
+        ],
+        include: [{
+            model: Product,
+            attributes: ['prod_name', 'prod_id'],
+            required: true
+        }],
+        where: {
+            '$product.is_active$': true 
+        },
+        group: [
+            'order_item.order_item_id', 
+            'order_item.product_id', 
+            'product.prod_id', 
+            'product.prod_name'
+        ],
+        order: [[sequelize.literal('COUNT(order_item.order_item_id)'), 'DESC']],
+        limit: 5,
+        raw: true,
+        nest: true,
+        subQuery: false
+    });
+    
+    const formattedProducts = topProducts.map(item => ({
+        product_id: item.product_id,
+        product_name: item.product.prod_name,
+        order_count: parseInt(item.orderCount)
+    }));
+
+    res.json(formattedProducts);
+}));
 
 router.post('/recent-orders', asyncHandler(async (req, res) => {
     const recentOrders = await Order.findAll({
