@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Invoice, Order, Distributor } = require('../models');
+const { Invoice } = require('../models');
 const { generateInvoicePDF } = require('../utils/pdfGenerator');
 require('dotenv').config();
-const { sendMail } = require('../utils/email');
 const { ERROR_MESSAGES } = require('../constants');
 
 // Middleware to handle async errors
@@ -150,16 +149,11 @@ router.post('/send-invoice-email', asyncHandler(async (req, res) => {
         }
     
         const result = await sendInvoiceEmail(invoice);
-        const response = typeof result === 'boolean' 
-            ? { success: result, message: result ? 'Email sent successfully' : 'Failed to send email' }
-            : result;
-        
-        res.status(response.success ? 200 : 400).json(response);
+        res.status(result.success ? 200 : 400).json(result);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
  }));
-
 
  const sendInvoiceEmail = async (invoice) => {
     if (invoice.is_sent) {
@@ -169,37 +163,13 @@ router.post('/send-invoice-email', asyncHandler(async (req, res) => {
     try {
         const { pdfBuffer } = await generateInvoicePDF(invoice.invoice_id);
         
-        const invoiceWithDetails = await Invoice.findByPk(invoice.invoice_id, {
-            include: [{
-                model: Order,
-                include: [{
-                    model: Distributor,
-                    attributes: ['name', 'email'] 
-                }]
-            }]
-        });
- 
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: invoiceWithDetails.order.distributor.email,
-            subject: `Invoice #${invoice.invoice_number}`,
-            text: `Dear ${invoiceWithDetails.order.distributor.name},\n\nPlease find attached the invoice #${invoice.invoice_number} for your recent order.\n\nThank you for your business.\n\nBest regards,\nPT Sadang Jaya`,
-            attachments: [{
-                filename: `invoice-${invoice.invoice_id}.pdf`,
-                content: pdfBuffer
-            }]
-        };
- 
-        const emailResult = await sendMail(mailOptions);
+        const emailResult = await emailService.sendInvoiceEmail(invoice, pdfBuffer);
         
-        // Email is successful if messageId exists and there are no rejected recipients
-        const isSuccess = Boolean(emailResult.messageId && emailResult.rejected.length === 0);
-        
-        await invoice.update({ is_sent: isSuccess });
+        await invoice.update({ is_sent: emailResult.success });
         
         return { 
-            success: isSuccess, 
-            message: isSuccess ? 'Email sent successfully' : 'Failed to send email'
+            success: emailResult.success, 
+            message: emailResult.success ? 'Email sent successfully' : 'Failed to send email'
         };
     } catch (error) {
         console.error('Error sending invoice email:', error);

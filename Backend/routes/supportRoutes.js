@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sendMail } = require('../utils/email');
+const emailService = require('../services/emailService');
 const { ERROR_MESSAGES } = require('../constants');
 require('dotenv').config();
 
@@ -20,46 +20,15 @@ router.post('/send-email', asyncHandler(async (req, res) => {
     }
 
     try {
-        const result = await sendSupportEmail({ email, subject, message });
-        const response = typeof result === 'boolean'
-            ? { success: result, message: result ? 'Message sent successfully' : 'Failed to send message' }
-            : result;
-        
-        res.status(response.success ? 200 : 400).json(response);
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-}));
-
-const sendSupportEmail = async ({ email, subject, message }) => {
-    try {
-        const mailOptions = {
-            from: email,
-            to: process.env.SUPPORT_EMAIL,
-            subject: `Support Request: ${subject}`,
-            text: `From: ${email}\n\nMessage:\n${message}`,
-            html: `
-                <h3>Support Request</h3>
-                <p><strong>From:</strong> ${email}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
-                <p><strong>Message:</strong></p>
-                <p style="white-space: pre-line;">${message}</p>
-            `
-        };
-
-        const emailResult = await sendMail(mailOptions);
-        
-        // Email is successful if messageId exists and there are no rejected recipients
-        const isSuccess = Boolean(emailResult.messageId && emailResult.rejected.length === 0);
-        
-        return {
-            success: isSuccess,
-            message: isSuccess ? 'Message sent successfully' : 'Failed to send message'
-        };
+        const result = await emailService.sendSupportEmail({ email, subject, message });
+        res.status(result.success ? 200 : 400).json(result);
     } catch (error) {
         console.error('Error sending support email:', error);
-        return { success: false, message: error.message };
+        res.status(500).json({ 
+            success: false, 
+            message: error.message || 'Failed to send support email' 
+        });
     }
-};
+}));
 
 module.exports = router;

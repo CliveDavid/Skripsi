@@ -3,10 +3,8 @@ const router = express.Router();
 const { sequelize, Distributor, DistributorAddress, OTP } = require('../models');
 const { Op, Sequelize } = require('sequelize');
 const bcrypt = require('bcrypt');
-const { sendMail } = require('../utils/email'); 
 const { ERROR_MESSAGES } = require('../constants');
-const path = require('path');
-const fs = require('fs').promises;
+const emailService = require('../services/emailService');
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
@@ -52,18 +50,6 @@ router.post('/logout', (req, res) => {
     });
 });
 
-async function compileEmailTemplate(templateName, data) {
-    const templatePath = path.join(__dirname, '../templates', templateName);
-    let template = await fs.readFile(templatePath, 'utf-8');
-    
-    Object.keys(data).forEach(key => {
-        const regex = new RegExp(`{{${key}}}`, 'g');
-        template = template.replace(regex, data[key]);
-    });
-    
-    return template;
-}
-
 // Register
 router.post('/register', asyncHandler(async (req, res) => {
     const {
@@ -98,21 +84,7 @@ router.post('/register', asyncHandler(async (req, res) => {
         return newDistributor;
     });
 
-    // Send OTP via Email
-    const htmlContent = await compileEmailTemplate('otp-email.html', {
-        name,
-        otp
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Verify Your Email - OTP Code',
-        html: htmlContent,
-        text: `Your OTP is: ${otp}`
-    };
-
-    await sendMail(mailOptions);
+    await emailService.sendOTPEmail(email, name, otp, false);
 
     res.status(201).json({ message: 'Registration successful. Please check your email for the OTP.' });    
 }));
@@ -142,21 +114,7 @@ router.post('/resend-otp', asyncHandler(async (req, res) => {
         otp_expires_at: newOtpExpiresAt
     });
 
-    // Send new OTP via email
-    const htmlContent = await compileEmailTemplate('otp-email.html', {
-        name: distributor.name,
-        otp: newOtp
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'New OTP Code for Email Verification',
-        html: htmlContent,
-        text: `Your OTP is: ${newOtp}`
-    };
-
-    await sendMail(mailOptions);
+    await emailService.sendOTPEmail(email, distributor.name, newOtp, true);
 
     res.status(200).json({ message: 'New OTP sent successfully. Please check your email.' });
 }));
@@ -283,54 +241,54 @@ router.post('/search', asyncHandler(async (req, res) => {
 }));
 
 // Create new distributor
-router.post('/create', asyncHandler(async (req, res) => {
-    const {
-        name,
-        email,
-        password,
-        phone,
-        address,
-        addr_details,
-        city,
-        province,
-        zipcode,
-        district,
-        subdistrict,
-        is_active
-    } = req.body;
+// router.post('/create', asyncHandler(async (req, res) => {
+//     const {
+//         name,
+//         email,
+//         password,
+//         phone,
+//         address,
+//         addr_details,
+//         city,
+//         province,
+//         zipcode,
+//         district,
+//         subdistrict,
+//         is_active
+//     } = req.body;
         
-    const existingDistributor = await Distributor.findOne({ where: { email } });
-    if (existingDistributor) {
-        return res.status(400).json({ message: 'Email already exists' });
-    }
+//     const existingDistributor = await Distributor.findOne({ where: { email } });
+//     if (existingDistributor) {
+//         return res.status(400).json({ message: 'Email already exists' });
+//     }
 
-    const result = await sequelize.transaction(async (t) => {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newDistributor = await Distributor.create({
-            name,
-            email,
-            password: hashedPassword,
-            is_active
-        }, { transaction: t });
+//     const result = await sequelize.transaction(async (t) => {
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const newDistributor = await Distributor.create({
+//             name,
+//             email,
+//             password: hashedPassword,
+//             is_active
+//         }, { transaction: t });
 
-        await DistributorAddress.create({
-            distributor_id: newDistributor.distributor_id,
-            address,
-            addr_details,
-            city,
-            province,
-            zipcode,
-            district,
-            subdistrict,
-            phone
-        }, { transaction: t });
+//         await DistributorAddress.create({
+//             distributor_id: newDistributor.distributor_id,
+//             address,
+//             addr_details,
+//             city,
+//             province,
+//             zipcode,
+//             district,
+//             subdistrict,
+//             phone
+//         }, { transaction: t });
 
-        return newDistributor;
-    });
+//         return newDistributor;
+//     });
 
-    const { password: _, ...distributorWithoutPassword } = result.toJSON();
-    res.status(201).json(distributorWithoutPassword);
-}));
+//     const { password: _, ...distributorWithoutPassword } = result.toJSON();
+//     res.status(201).json(distributorWithoutPassword);
+// }));
 
 // Create new distributor (by admin)
 router.post('/create-by-admin', asyncHandler(async (req, res) => {
