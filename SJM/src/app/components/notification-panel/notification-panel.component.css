@@ -126,7 +126,7 @@
 
   &.unread {
     background-color: #f8f9ff;
-    border-left: 3px solid #333;
+    border-left: 3px solid var(--primary-color);
   }
 
   &:hover {
@@ -208,7 +208,6 @@
   visibility: hidden;
   transition: all 0.3s ease-in-out;
   z-index: 1040;
-  backdrop-filter: blur(2px);
 
   &.show {
     opacity: 1;
