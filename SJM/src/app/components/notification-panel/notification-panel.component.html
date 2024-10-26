@@ -1,27 +1,32 @@
 <div class="notification-panel" [class.show]="isVisible">
   <div class="notification-header">
-    <h5>Notifications</h5>
-    <div class="notification-actions">
-      <button class="btn btn-link" (click)="markAllAsRead()" *ngIf="hasUnread">
-        Mark all as read
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Notifications</h5>
+      <button class="btn-close" (click)="close()"></button>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="filterType === 'unread'" (click)="filterType = 'unread'">
+        Unread
       </button>
-      <button class="btn btn-link text-danger" (click)="close()">
-        <i class="fas fa-times"></i>
+      <button class="filter-tab" [class.active]="filterType === 'all'" (click)="filterType = 'all'">
+        All
       </button>
     </div>
   </div>
 
   <div class="notification-content">
-    <ng-container *ngIf="notifications.length > 0; else noNotifications">
-      <div class="notification-item" *ngFor="let notification of notifications"
-        [class.unread]="notification.status === 'unread'" (click)="markAsRead([notification.notif_id])">
-        <div class="notification-title">
-          {{ notification.header }}
-          <small class="notification-time">
-            {{ notification.createdAt | date:'medium' }}
-          </small>
+    <ng-container *ngIf="filteredNotifications.length > 0; else noNotifications">
+      <div class="notification-item" *ngFor="let notification of filteredNotifications"
+        [class.unread]="notification.status === 'unread'" (click)="onNotificationClick(notification)">
+        <div class="notification-item-content">
+          <div class="notification-title">{{ notification.header }}</div>
+          <div class="notification-message">{{ notification.message }}</div>
+          <div class="notification-time">{{ formatTimeAgo(notification.createdAt) }}</div>
         </div>
-        <div class="notification-message">{{ notification.message }}</div>
+        <button class="btn btn-link delete-btn" (click)="deleteNotification($event, notification.notif_id)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
       </div>
     </ng-container>
     <ng-template #noNotifications>
@@ -29,6 +34,12 @@
         No notifications to display
       </div>
     </ng-template>
+  </div>
+
+  <div class="notification-footer" *ngIf="notifications.length > 0">
+    <button class="btn btn-link text-danger" (click)="deleteAll()">
+      Delete All
+    </button>
   </div>
 </div>
 

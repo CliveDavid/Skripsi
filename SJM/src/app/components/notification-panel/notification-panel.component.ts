@@ -17,6 +17,7 @@ export class NotificationPanelComponent implements OnInit {
     notifications: Notification[] = [];
     hasUnread: boolean = false;
     distributor_id: number;
+    filterType: 'unread' | 'all' = 'all';
 
     constructor(
         private notificationService: NotificationService,
@@ -67,6 +68,63 @@ export class NotificationPanelComponent implements OnInit {
             error: (error) => {
                 console.error('Error marking all notifications as read:', error);
                 this.toastr.error('Failed to mark all notifications as read');
+            }
+        });
+    }
+
+    get filteredNotifications() {
+        return this.filterType === 'unread'
+            ? this.notifications.filter(n => n.status === 'unread')
+            : this.notifications;
+    }
+
+    formatTimeAgo(date: string): string {
+        const now = new Date();
+        const notifDate = new Date(date);
+        const diffInHours = Math.floor((now.getTime() - notifDate.getTime()) / (1000 * 60 * 60));
+
+        if (diffInHours < 1) {
+            const diffInMinutes = Math.floor((now.getTime() - notifDate.getTime()) / (1000 * 60));
+            return `${diffInMinutes} minutes ago`;
+        } else if (diffInHours < 24) {
+            return `${diffInHours} hours ago`;
+        } else {
+            const diffInDays = Math.floor(diffInHours / 24);
+            return `${diffInDays} days ago`;
+        }
+    }
+
+    onNotificationClick(notification: Notification) {
+        if (notification.status === 'unread') {
+            this.markAsRead([notification.notif_id]);
+        }
+    }
+
+    deleteNotification(event: Event, notif_id: number) {
+        event.stopPropagation();
+        this.notificationService.deleteNotifications(this.distributor_id, [notif_id]).subscribe({
+            next: () => {
+                this.loadNotifications();
+                this.notificationService.refreshUnreadCount();
+                this.toastr.success('Notification deleted');
+            },
+            error: (error) => {
+                console.error('Error deleting notification:', error);
+                this.toastr.error('Failed to delete notification');
+            }
+        });
+    }
+
+    deleteAll() {
+        this.notificationService.deleteAllNotifications(this.distributor_id).subscribe({
+            next: () => {
+                this.loadNotifications();
+                this.notificationService.refreshUnreadCount();
+                this.toastr.success('All notifications deleted');
+            },
+            error: (error) => {
+                console.error('Error deleting all notifications:', error);
+                this.toastr.error('Failed to delete all notifications');
             }
         });
     }
