@@ -45,6 +45,9 @@ interface DisplayStats {
   delivered: { value: number; change: string };
 }
 
+type OrderStatus = 'All' | 'Pending' | 'Processing' | 'Invoiced';
+
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -58,11 +61,15 @@ export class DashboardComponent implements OnInit {
     delivered: { value: 0, change: '0%' }
   };
   topProducts: any[] = [];
-  filteredStatus: 'Pending' | 'Processing' | 'Invoiced' = 'Pending';
   recentOrders: Order[] = [];
   notifications: Notification[] = [];
   unreadCount: number = 0;
   showNotifications: boolean = false;
+
+  showStatusFilter = false;
+  filteredStatus: OrderStatus = 'All';
+
+  statusOptions: OrderStatus[] = ['All', 'Pending', 'Processing', 'Invoiced'];
 
   constructor(private dashboardService: DashboardService) { }
 
@@ -184,5 +191,15 @@ export class DashboardComponent implements OnInit {
       shipping: 'text-blue-500'
     };
     return colors[status.toLowerCase()] || 'text-gray-500';
+  }
+
+
+  toggleStatusFilter() {
+    this.showStatusFilter = !this.showStatusFilter;
+  }
+
+  setStatus(status: OrderStatus) {
+    this.filteredStatus = status;
+    this.showStatusFilter = false;
   }
 }
