@@ -1,17 +1,22 @@
 <div class="dashboard-container">
   <div class="stats-row">
     <!-- Stats Card -->
+    <!-- Stats Card -->
     <div class="stats-card">
       <div class="icon-wrapper">
         <i class="fas fa-box icon"></i>
       </div>
-      <div class="card-title mb-2">Total Shipments</div>
-      <div class="value">6,521</div>
+      <div class="card-title mb-2">Total Distributor</div>
+      <div class="value">{{ stats.shipments.value | number }}</div>
       <div class="stats-footer">
         <span class="time-period">vs Last Week</span>
-        <span class="percentage positive">+1.3%</span>
+        <span class="percentage"
+          [ngClass]="{'positive': stats.shipments.change.includes('+'), 'negative': stats.shipments.change.includes('-')}">
+          {{ stats.shipments.change }}
+        </span>
       </div>
     </div>
+
     <div class="stats-card">
       <div class="icon-wrapper">
         <i class="fas fa-shopping-cart icon"></i>
@@ -26,26 +31,34 @@
         </span>
       </div>
     </div>
+
     <div class="stats-card">
       <div class="icon-wrapper">
         <i class="fas fa-dollar-sign icon"></i>
       </div>
       <div class="card-title mb-2">Revenue</div>
-      <div class="value">$12,167</div>
+      <div class="value">{{ formatCurrency(stats.revenue.value) }}</div>
       <div class="stats-footer">
         <span class="time-period">vs Last Week</span>
-        <span class="percentage positive">+1.3%</span>
+        <span class="percentage"
+          [ngClass]="{'positive': stats.revenue.change.includes('+'), 'negative': stats.revenue.change.includes('-')}">
+          {{ stats.revenue.change }}
+        </span>
       </div>
     </div>
+
     <div class="stats-card">
       <div class="icon-wrapper">
         <i class="fas fa-check-circle icon"></i>
       </div>
       <div class="card-title mb-2">Delivered</div>
-      <div class="value">1,840</div>
+      <div class="value">{{ stats.delivered.value | number }}</div>
       <div class="stats-footer">
         <span class="time-period">vs Last Week</span>
-        <span class="percentage negative">-3.1%</span>
+        <span class="percentage"
+          [ngClass]="{'positive': stats.delivered.change.includes('+'), 'negative': stats.delivered.change.includes('-')}">
+          {{ stats.delivered.change }}
+        </span>
       </div>
     </div>
   </div>

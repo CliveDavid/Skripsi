@@ -2,80 +2,127 @@ const express = require('express');
 const router = express.Router();
 const { Order, OrderItem, Distributor, Product, OrderAddress, sequelize } = require('../models');
 const { Op } = require('sequelize');
-const { ERROR_MESSAGES } = require('../constants');
 
 const asyncHandler = (fn) => (req, res, next) =>
     Promise.resolve(fn(req, res, next)).catch(next);
 
+function getWeekRange(date) {
+    const startOfWeek = new Date(date);
+    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setDate(date.getDate() - date.getDay()); // Start of week (Sunday)
+    
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // End of week (Saturday)
+    endOfWeek.setHours(23, 59, 59, 999);
+    
+    return { startOfWeek, endOfWeek };
+}
+
+function calculatePercentageChange(current, previous) {
+    if (current === 0 && previous === 0) return '0%';
+    if (previous === 0 && current > 0) return '+100%';
+    if (current === 0 && previous > 0) return '-99.9%';
+    const change = ((current - previous) / previous) * 100;
+    if (change < -99.9) return '-99.9%';
+    return `${change > 0 ? '+' : ''}${change.toFixed(1)}%`;
+}
+
 router.post('/stats', asyncHandler(async (req, res) => {
-    const today = new Date();
-    const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const twoWeeksAgo = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const now = new Date();
+    const currentWeekRange = getWeekRange(now);
+    
+    // Get last week's range
+    const lastWeekStart = new Date(currentWeekRange.startOfWeek);
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(currentWeekRange.endOfWeek);
+    lastWeekEnd.setDate(lastWeekEnd.getDate() - 7);
 
-    // Current week stats
-    const currentWeekStats = await Order.findAll({
-        attributes: [
-            [sequelize.fn('COUNT', sequelize.col('order_id')), 'totalOrders'],
-            [sequelize.fn('SUM', sequelize.col('total_price')), 'totalRevenue'],
-            [sequelize.fn('COUNT', sequelize.literal("CASE WHEN status = 'Delivered' THEN 1 END")), 'deliveredOrders']
-        ],
-        where: {
-            createdAt: {
-                [Op.gte]: lastWeek
-            }
-        }
-    });
-
-    // Previous week stats for comparison
-    const previousWeekStats = await Order.findAll({
-        attributes: [
-            [sequelize.fn('COUNT', sequelize.col('order_id')), 'totalOrders'],
-            [sequelize.fn('SUM', sequelize.col('total_price')), 'totalRevenue'],
-            [sequelize.fn('COUNT', sequelize.literal("CASE WHEN status = 'Delivered' THEN 1 END")), 'deliveredOrders']
-        ],
-        where: {
-            createdAt: {
-                [Op.between]: [twoWeeksAgo, lastWeek]
-            }
-        }
-    });
-
-    // Total distributors
-    const totalDistributors = await Distributor.count({
+    // Get total distributors for current week (all active distributors)
+    const currentWeekDistributors = await Distributor.count({
         where: {
             is_active: true
         }
     });
 
-    // Improved percentage change calculation
-    const calculatePercentageChange = (current, previous) => {
-        if (!previous || previous === 0) {
-            return current > 0 ? '100%' : '0%';
+    // Get total distributors for previous week (excluding distributors created this week)
+    const previousWeekDistributors = await Distributor.count({
+        where: {
+            is_active: true,
+            createdAt: {
+                [Op.lt]: currentWeekRange.startOfWeek
+            }
         }
-        return `${((current - previous) / previous * 100).toFixed(2)}%`;
+    });
+
+    // Current Week Stats
+    const currentWeekOrders = await Order.findAll({
+        where: {
+            createdAt: {
+                [Op.between]: [currentWeekRange.startOfWeek, currentWeekRange.endOfWeek]
+            }
+        }
+    });
+
+    // Previous Week Stats
+    const previousWeekOrders = await Order.findAll({
+        where: {
+            createdAt: {
+                [Op.between]: [lastWeekStart, lastWeekEnd]
+            }
+        }
+    });
+
+    // Calculate current week stats
+    const currentWeekStats = {
+        totalDistributors: currentWeekDistributors,
+        totalOrders: currentWeekOrders.length,
+        totalRevenue: currentWeekOrders.reduce((sum, order) => sum + parseFloat(order.total_price || 0), 0).toFixed(2),
+        deliveredOrders: currentWeekOrders.filter(order => order.status === 'Delivered').length
     };
 
-    const stats = {
-        currentWeek: currentWeekStats[0],
-        previousWeek: previousWeekStats[0],
-        percentageChanges: {
-            orders: calculatePercentageChange(
-                currentWeekStats[0].totalOrders,
-                previousWeekStats[0].totalOrders
-            ),
-            revenue: calculatePercentageChange(
-                currentWeekStats[0].totalRevenue || 0,
-                previousWeekStats[0].totalRevenue || 0
-            ),
-            delivered: calculatePercentageChange(
-                currentWeekStats[0].deliveredOrders,
-                previousWeekStats[0].deliveredOrders
-            )
+    // Calculate previous week stats
+    const previousWeekStats = {
+        totalDistributors: previousWeekDistributors,
+        totalOrders: previousWeekOrders.length,
+        totalRevenue: previousWeekOrders.reduce((sum, order) => sum + parseFloat(order.total_price || 0), 0).toFixed(2),
+        deliveredOrders: previousWeekOrders.filter(order => order.status === 'Delivered').length
+    };
+
+    // Calculate percentage changes
+    const percentageChanges = {
+        distributors: calculatePercentageChange(
+            currentWeekStats.totalDistributors, 
+            previousWeekStats.totalDistributors
+        ),
+        orders: calculatePercentageChange(
+            currentWeekStats.totalOrders, 
+            previousWeekStats.totalOrders
+        ),
+        revenue: calculatePercentageChange(
+            parseFloat(currentWeekStats.totalRevenue), 
+            parseFloat(previousWeekStats.totalRevenue)
+        ),
+        delivered: calculatePercentageChange(
+            currentWeekStats.deliveredOrders,
+            previousWeekStats.deliveredOrders
+        )
+    };
+
+    res.json({
+        currentWeek: {
+            totalDistributors: currentWeekStats.totalDistributors.toString(),
+            totalOrders: currentWeekStats.totalOrders.toString(),
+            totalRevenue: currentWeekStats.totalRevenue,
+            deliveredOrders: currentWeekStats.deliveredOrders.toString()
         },
-        totalDistributors
-    };
-
-    res.json(stats);
+        previousWeek: {
+            totalDistributors: previousWeekStats.totalDistributors.toString(),
+            totalOrders: previousWeekStats.totalOrders.toString(),
+            totalRevenue: previousWeekStats.totalRevenue,
+            deliveredOrders: previousWeekStats.deliveredOrders.toString()
+        },
+        percentageChanges
+    });
 }));
 
 router.post('/top-products', asyncHandler(async (req, res) => {

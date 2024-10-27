@@ -3,21 +3,23 @@ import { DashboardService } from 'src/app/shared/services/dashboard-service';
 
 interface DashboardStats {
   currentWeek: {
+    totalDistributors: string;
     totalOrders: string;
     totalRevenue: string;
     deliveredOrders: string;
   };
   previousWeek: {
+    totalDistributors: string;
     totalOrders: string;
-    totalRevenue: string | null;
+    totalRevenue: string;
     deliveredOrders: string;
   };
   percentageChanges: {
+    distributors: string;
     orders: string;
     revenue: string;
     delivered: string;
   };
-  totalDistributors: number;
 }
 
 interface Order {
@@ -82,8 +84,8 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getStats().subscribe((data: DashboardStats) => {
       this.stats = {
         shipments: {
-          value: data.totalDistributors,
-          change: '0%'
+          value: parseInt(data.currentWeek.totalDistributors),
+          change: data.percentageChanges.distributors
         },
         orders: {
           value: parseInt(data.currentWeek.totalOrders),

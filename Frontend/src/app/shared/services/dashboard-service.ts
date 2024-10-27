@@ -5,21 +5,23 @@ import { BASE_URL } from '../../constants';
 
 interface DashboardStats {
     currentWeek: {
+        totalDistributors: string;
         totalOrders: string;
         totalRevenue: string;
         deliveredOrders: string;
     };
     previousWeek: {
+        totalDistributors: string;
         totalOrders: string;
-        totalRevenue: string | null;
+        totalRevenue: string;
         deliveredOrders: string;
     };
     percentageChanges: {
+        distributors: string;
         orders: string;
         revenue: string;
         delivered: string;
     };
-    totalDistributors: number;
 }
 
 interface NotificationCount {
