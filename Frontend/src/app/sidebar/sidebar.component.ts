@@ -16,7 +16,7 @@ export class SidebarComponent implements OnInit {
     { label: 'Products', icon: 'fa-cube', route: '/product' }, // cube or box
     { label: 'Orders', icon: 'fa-box', route: '/order' },
     { label: 'Invoice', icon: 'fa-receipt', route: '/invoice' },
-    { label: 'Additional Settings', icon: 'fa-receipt', route: '/additional-settings' },
+    { label: 'Additional Settings', icon: 'fa-cog', route: '/additional-settings' },
     // Add more items as needed
   ];
 
