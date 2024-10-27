@@ -90,6 +90,7 @@
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
+  min-height: 75px;
 }
 
 .content-header .title {

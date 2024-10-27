@@ -118,25 +118,27 @@
               all</button>
           </div>
         </div>
-        <div class="notification-list">
-          <div class="notification-item" *ngFor="let notification of notifications"
-            [class.unread]="notification.status === 'unread'">
-            <div class="notification-content">
-              {{ notification.message }}
+        <div class="content-body">
+          <div class="notification-list">
+            <div class="notification-item" *ngFor="let notification of notifications"
+              [class.unread]="notification.status === 'unread'">
+              <div class="notification-content">
+                {{ notification.message }}
+              </div>
+              <div class="notification-time">{{ notification.time }}</div>
+              <div class="notification-actions">
+                <button class="btn-action" (click)="markAsRead(notification.notif_id)"
+                  *ngIf="notification.status === 'unread'">
+                  Mark as read
+                </button>
+                <button class="btn-action danger" (click)="deleteNotification(notification.notif_id)">Delete</button>
+              </div>
             </div>
-            <div class="notification-time">{{ notification.time }}</div>
-            <div class="notification-actions">
-              <button class="btn-action" (click)="markAsRead(notification.notif_id)"
-                *ngIf="notification.status === 'unread'">
-                Mark as read
-              </button>
-              <button class="btn-action danger" (click)="deleteNotification(notification.notif_id)">Delete</button>
+            <div class="empty-state" *ngIf="notifications.length === 0">
+              <i class="fas fa-bell-slash empty-icon"></i>
+              <p>No Notifications</p>
+              <span class="empty-message">You're all caught up! Check back later for updates</span>
             </div>
-          </div>
-          <div class="empty-state" *ngIf="notifications.length === 0">
-            <i class="fas fa-bell-slash empty-icon"></i>
-            <p>No Notifications</p>
-            <span class="empty-message">You're all caught up! Check back later for updates</span>
           </div>
         </div>
       </div>
