@@ -60,16 +60,48 @@
             Ongoing Orders
           </div>
           <div class="actions">
-            <button class="btn-action">
-              <i class="fas fa-filter"></i> Filter
-            </button>
+            <div class="filter-buttons">
+              <button class="btn-action" [class.active]="filteredStatus === 'Pending'"
+                (click)="filterOrders('Pending')">
+                Pending
+              </button>
+              <button class="btn-action" [class.active]="filteredStatus === 'Processing'"
+                (click)="filterOrders('Processing')">
+                Processing
+              </button>
+              <button class="btn-action" [class.active]="filteredStatus === 'Invoiced'"
+                (click)="filterOrders('Invoiced')">
+                Invoiced
+              </button>
+            </div>
           </div>
         </div>
         <div class="content-body">
-          <div *ngFor="let order of recentOrders">
-            <!-- Add your order item template here -->
+          <div class="orders-list">
+            <div class="order-item" *ngFor="let order of recentOrders | filterByStatus:filteredStatus">
+              <div class="order-details">
+                <div class="order-header">
+                  <div class="order-number">{{ order.order_number }}</div>
+                  <div class="order-date">{{ formatDate(order.order_dt) }}</div>
+                </div>
+                <div class="order-info">
+                  <div class="price">{{ formatCurrency(order.total_price) }}</div>
+                  <div class="status" [ngClass]="getStatusColor(order.status)">
+                    {{ order.status }}
+                  </div>
+                </div>
+              </div>
+              <div class="shipment-image">
+                <img *ngIf="order.shipment_code === 'FS'" src="assets/images/truck-a.png" alt="Full Service Shipping"
+                  class="shipping-icon">
+                <img *ngIf="order.shipment_code === 'CD'" src="assets/images/truck-b.png" alt="Custom Delivery"
+                  class="shipping-icon">
+              </div>
+            </div>
+            <div class="empty-state" *ngIf="(recentOrders | filterByStatus:filteredStatus).length === 0">
+              No orders found
+            </div>
           </div>
-          <!-- Order items here -->
         </div>
       </div>
 

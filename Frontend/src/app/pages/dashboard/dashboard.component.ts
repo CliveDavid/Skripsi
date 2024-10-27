@@ -20,6 +20,14 @@ interface DashboardStats {
   totalDistributors: number;
 }
 
+interface Order {
+  order_number: string;
+  order_dt: string;
+  status: 'Pending' | 'Processing' | 'Invoiced';
+  total_price: string;
+  shipment_code: 'FS' | 'CD';
+}
+
 interface Notification {
   notif_id: number;
   admin_id: string;
@@ -50,7 +58,8 @@ export class DashboardComponent implements OnInit {
     delivered: { value: 0, change: '0%' }
   };
   topProducts: any[] = [];
-  recentOrders: any[] = [];
+  filteredStatus: 'Pending' | 'Processing' | 'Invoiced' = 'Pending';
+  recentOrders: Order[] = [];
   notifications: Notification[] = [];
   unreadCount: number = 0;
   showNotifications: boolean = false;
@@ -91,6 +100,18 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getRecentOrders().subscribe(data => {
       this.recentOrders = data;
     });
+  }
+
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  filterOrders(status: 'Pending' | 'Processing' | 'Invoiced') {
+    this.filteredStatus = status;
   }
 
   loadNotifications() {
@@ -144,11 +165,16 @@ export class DashboardComponent implements OnInit {
     this.showNotifications = !this.showNotifications;
   }
 
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('en-US', {
+  formatCurrency(value: string | number): string {
+    const numValue = typeof value === 'string' ? Number(value) : value;
+    return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'USD'
-    }).format(value);
+      currency: 'IDR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(numValue)
+      .replace('IDR', 'Rp')
+      .replace(/\s+/g, ' ');
   }
 
   getStatusColor(status: string): string {
