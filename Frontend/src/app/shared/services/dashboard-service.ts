@@ -3,6 +3,29 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BASE_URL } from '../../constants';
 
+interface DashboardStats {
+    currentWeek: {
+        totalOrders: string;
+        totalRevenue: string;
+        deliveredOrders: string;
+    };
+    previousWeek: {
+        totalOrders: string;
+        totalRevenue: string | null;
+        deliveredOrders: string;
+    };
+    percentageChanges: {
+        orders: string;
+        revenue: string;
+        delivered: string;
+    };
+    totalDistributors: number;
+}
+
+interface NotificationCount {
+    count: number;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -16,8 +39,8 @@ export class DashboardService {
         return localStorage.getItem('admin_id') || '';
     }
 
-    getStats(): Observable<any> {
-        return this.http.post(`${this.dashboardApi}/stats`, {});
+    getStats(): Observable<DashboardStats> {
+        return this.http.post<DashboardStats>(`${this.dashboardApi}/stats`, {});
     }
 
     getRecentOrders(): Observable<any> {
@@ -37,8 +60,8 @@ export class DashboardService {
         return this.http.post(`${this.notificationApi}/get-unread`, { admin_id: this.getAdminId() });
     }
 
-    getNotificationCount(): Observable<any> {
-        return this.http.post(`${this.notificationApi}/get-count`, { admin_id: this.getAdminId() });
+    getNotificationCount(): Observable<NotificationCount> {
+        return this.http.post<NotificationCount>(`${this.notificationApi}/get-count`, { admin_id: this.getAdminId() });
     }
 
     markNotificationsAsRead(notifIds: number[]): Observable<any> {

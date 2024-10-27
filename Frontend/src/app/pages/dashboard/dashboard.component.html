@@ -17,10 +17,13 @@
         <i class="fas fa-shopping-cart icon"></i>
       </div>
       <div class="card-title mb-2">Total Orders</div>
-      <div class="value">10,105</div>
+      <div class="value">{{ stats.orders.value | number }}</div>
       <div class="stats-footer">
         <span class="time-period">vs Last Week</span>
-        <span class="percentage negative">-2.1%</span>
+        <span class="percentage"
+          [ngClass]="{'positive': stats.orders.change.includes('+'), 'negative': stats.orders.change.includes('-')}">
+          {{ stats.orders.change }}
+        </span>
       </div>
     </div>
     <div class="stats-card">
@@ -63,6 +66,9 @@
           </div>
         </div>
         <div class="content-body">
+          <div *ngFor="let order of recentOrders">
+            <!-- Add your order item template here -->
+          </div>
           <!-- Order items here -->
         </div>
       </div>
@@ -73,24 +79,32 @@
           <div class="title">
             <i class="fas fa-bell title-icon"></i>
             Notifications
+            <span class="notification-count" *ngIf="unreadCount > 0">({{ unreadCount }})</span>
           </div>
           <div class="actions">
-            <button class="btn-action">Mark all as read</button>
-            <button class="btn-action">Clear all</button>
+            <button class="btn-action" (click)="markAllAsRead()" *ngIf="unreadCount > 0">Mark all as read</button>
+            <button class="btn-action" (click)="deleteAllNotifications()" *ngIf="notifications.length > 0">Clear
+              all</button>
           </div>
         </div>
         <div class="notification-list">
-          <div class="notification-item unread">
+          <div class="notification-item" *ngFor="let notification of notifications"
+            [class.unread]="notification.status === 'unread'">
             <div class="notification-content">
-              New order #001234ABCD has been placed
+              {{ notification.message }}
             </div>
-            <div class="notification-time">2 minutes ago</div>
+            <div class="notification-time">{{ notification.time }}</div>
             <div class="notification-actions">
-              <button class="btn-action">Mark as read</button>
-              <button class="btn-action danger">Delete</button>
+              <button class="btn-action" (click)="markAsRead(notification.notif_id)"
+                *ngIf="notification.status === 'unread'">
+                Mark as read
+              </button>
+              <button class="btn-action danger" (click)="deleteNotification(notification.notif_id)">Delete</button>
             </div>
           </div>
-          <!-- More notification items -->
+          <div class="empty-state" *ngIf="notifications.length === 0">
+            No notifications available
+          </div>
         </div>
       </div>
     </div>
