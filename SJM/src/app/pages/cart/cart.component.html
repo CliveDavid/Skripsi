@@ -17,6 +17,10 @@
                   </label>
                 </div>
               </div>
+
+              <button class="addr-btn mt-3" (click)="openNotesPopup()">
+                <i class="fas fa-edit"></i> Add Delivery Notes
+              </button>
             </div>
           </div>
         </div>
@@ -101,6 +105,26 @@
 <app-address-change *ngIf="showAddressChangePopup" (addressChanged)="onAddressChanged($event)"
   (cancelled)="onAddressChangeCancelled()">
 </app-address-change>
+
+<!-- Notes Popup -->
+<div class="modal" [class.show]="showNotesPopup" [style.display]="showNotesPopup ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delivery Notes</h5>
+        <button type="button" class="btn-close" (click)="closeNotesPopup()"></button>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control" rows="4" [(ngModel)]="deliveryNotes"
+          placeholder="Enter any special delivery instructions here..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeNotesPopup()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveNotes()">Save Notes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <app-toastr></app-toastr>

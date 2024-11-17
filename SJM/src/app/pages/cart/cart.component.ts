@@ -65,6 +65,8 @@ export class CartComponent implements OnInit {
   placeholderImage = 'assets/images/placeholder-image.png';
   totalQuantity = 0;
   showAddressChangePopup = false;
+  showNotesPopup = false;
+  deliveryNotes = '';
 
   constructor(
     private cartService: CartService,
@@ -168,6 +170,20 @@ export class CartComponent implements OnInit {
     this.showAddressChangePopup = false;
   }
 
+  openNotesPopup() {
+    this.showNotesPopup = true;
+  }
+
+  closeNotesPopup() {
+    this.showNotesPopup = false;
+  }
+
+  saveNotes() {
+    this.toastr.success('Delivery notes saved');
+    this.closeNotesPopup();
+  }
+
+
   proceedToCheckout() {
     if (this.isValidOrder()) {
       if (this.authService.isLoggedIn()) {
@@ -188,7 +204,7 @@ export class CartComponent implements OnInit {
       order_dt: new Date().toISOString(),
       total_price: this.total,
       shipment_code: this.selectedShippingMethod,
-      notes: '',
+      notes: this.deliveryNotes,
       orderItems: this.cartItems.map((item: CartItem) => ({
         product_id: item.product.prod_id,
         box_type_code: item.boxType,

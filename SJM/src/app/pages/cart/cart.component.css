@@ -81,3 +81,21 @@
 .addr-btn:hover {
   text-decoration: underline;
 }
+
+/* notes */
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-dialog {
+  margin-top: 10vh;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}

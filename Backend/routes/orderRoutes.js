@@ -3,7 +3,9 @@ const router = express.Router();
 const { format } = require('date-fns');
 const { sequelize, Order, OrderItem, OrderAddress, Distributor, ShipmentMethod, Product, BoxType, OrderStatusHistory, Invoice } = require('../models');
 const { STATUS, ERROR_MESSAGES } = require('../constants');
-const notificationService = require('../services/notificationService')
+const notificationService = require('../services/notificationService');
+const emailService = require('../services/emailService');
+
 
 // Middleware to handle errors
 const asyncHandler = (fn) => (req, res, next) =>
