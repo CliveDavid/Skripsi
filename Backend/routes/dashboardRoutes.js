@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Order, OrderItem, Distributor, Product, OrderAddress, sequelize } = require('../models');
+const { STATUS, ERROR_MESSAGES } = require('../constants');
 const { Op } = require('sequelize');
 
 const asyncHandler = (fn) => (req, res, next) =>
@@ -163,15 +164,21 @@ router.post('/top-products', asyncHandler(async (req, res) => {
 
 router.post('/recent-orders', asyncHandler(async (req, res) => {
     const recentOrders = await Order.findAll({
+        where: {
+            status: {
+                [Op.in]: [STATUS.PENDING, STATUS.PROCESSING, STATUS.INVOICED]
+            }
+        },
         include: [{
             model: OrderAddress,
             as: 'addresses'
         }],
-        order: [['createdAt', 'DESC']],
+        order: [['order_dt', 'ASC']],
         limit: 10
     });
 
     res.json(recentOrders);
 }));
+
 
 module.exports = router;
