@@ -239,6 +239,7 @@
   border-radius: 8px;
   transition: all 0.2s;
   margin: 0 !important;
+  cursor: pointer;
 }
 
 .order-item:hover {
@@ -394,4 +395,42 @@
   .stats-card {
     flex: 1 1 100% !important;
   }
+}
+
+.orders-list::-webkit-scrollbar,
+.notification-list::-webkit-scrollbar {
+  width: 8px;
+  /* Width of the scrollbar */
+  height: 8px;
+  /* Height of the scrollbar (for horizontal scrollbars) */
+}
+
+.orders-list::-webkit-scrollbar-track,
+.notification-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  /* Track background color */
+  border-radius: 10px;
+  /* Rounded edges */
+}
+
+.orders-list::-webkit-scrollbar-thumb,
+.notification-list::-webkit-scrollbar-thumb {
+  background: gray;
+  /* Thumb color */
+  border-radius: 10px;
+  /* Rounded edges */
+  border: 2px solid #f1f5f9;
+  /* Add padding-like effect */
+}
+
+.orders-list::-webkit-scrollbar-thumb:hover,
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: gray;
+  /* Darker color on hover */
+}
+
+.orders-list::-webkit-scrollbar-corner,
+.notification-list::-webkit-scrollbar-corner {
+  background: #f1f5f9;
+  /* Corner color for scrollbars */
 }

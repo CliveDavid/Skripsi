@@ -23,6 +23,7 @@ interface DashboardStats {
 }
 
 interface Order {
+  order_id: number;
   order_number: string;
   order_dt: string;
   status: 'Pending' | 'Processing' | 'Invoiced';

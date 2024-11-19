@@ -91,7 +91,8 @@
 
         <div class="content-body">
           <div class="orders-list">
-            <div class="order-item" *ngFor="let order of recentOrders | filterByStatus:filteredStatus">
+            <div class="order-item" *ngFor="let order of recentOrders | filterByStatus:filteredStatus"
+              [routerLink]="['/order/form']" [queryParams]="{ id: order.order_id }">
               <div class="order-content">
                 <div class="order-info">
                   <div class="order-date">{{ formatDate(order.order_dt) }}</div>
