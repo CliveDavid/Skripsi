@@ -20,10 +20,9 @@ const {
 } = require('./models');
 
 async function syncModels() {
-    const transaction = await sequelize.transaction(); // Start a transaction
+    const transaction = await sequelize.transaction();
 
     try {
-        // Synchronize the models in order
         await DistributorAddress.sync({ alter: true, transaction });
         await Admin.sync({ alter: true, transaction });
         await AdminNotif.sync({ alter: true, transaction });

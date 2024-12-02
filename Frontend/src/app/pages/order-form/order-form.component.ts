@@ -470,7 +470,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
     this.http.post(`${this.apiUrl}/invoices/create`, invoiceData).subscribe(
       (response: any) => {
-        this.toastr.success('Invoice created successfully');
+        // this.toastr.success('Invoice created successfully');
         this.router.navigate(['/order']);
       },
       error => {

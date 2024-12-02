@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router'; // Import Router
 import { ToastrComponent } from '../../shared/toastr/toastr.component';
 import { ToastrService } from '../../services/toastr.service';
+import { take } from 'rxjs';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { ToastrService } from '../../services/toastr.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email: string = '';
   password: string = '';
   rememberMe: boolean = false;
@@ -29,18 +30,40 @@ export class LoginComponent {
     private toastr: ToastrService
   ) { }
 
+  ngOnInit() {
+    // Check if we're already logged in
+    this.authService.authState$.pipe(take(1)).subscribe(isLoggedIn => {
+      if (isLoggedIn) {
+        this.handleRedirect();
+      }
+    });
+  }
+
+  private handleRedirect() {
+    // First check sessionStorage
+    const storedReturnUrl = sessionStorage.getItem('returnUrl');
+    if (storedReturnUrl) {
+      sessionStorage.removeItem('returnUrl');
+      this.router.navigate([storedReturnUrl]);
+      return;
+    }
+
+    // Then check query params
+    const queryReturnUrl = this.route.snapshot.queryParams['returnUrl'];
+    if (queryReturnUrl) {
+      this.router.navigate([queryReturnUrl]);
+      return;
+    }
+
+    // Default redirect
+    this.router.navigate(['/']);
+  }
+
   onSubmit() {
     this.authService.login(this.email, this.password).subscribe({
       next: (result) => {
         if (result.success) {
-          const redirectUrl = localStorage.getItem('redirectUrl');
-          if (redirectUrl) {
-            localStorage.removeItem('redirectUrl');
-            this.router.navigateByUrl(redirectUrl);
-          } else {
-            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-            this.router.navigateByUrl(returnUrl);
-          }
+          this.handleRedirect();
         } else {
           this.errorMessage = result.message || 'Login failed. Please try again.';
           this.toastr.error(this.errorMessage);
@@ -48,7 +71,6 @@ export class LoginComponent {
       },
       error: (error) => {
         console.error('Login error', error);
-        // Use the message from the error response
         this.errorMessage = error.error?.message || 'An unknown error occurred';
         this.toastr.error(this.errorMessage);
       }

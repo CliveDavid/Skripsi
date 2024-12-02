@@ -120,7 +120,7 @@ export class NotificationPanelComponent implements OnInit {
             next: () => {
                 this.loadNotifications();
                 this.notificationService.refreshUnreadCount();
-                this.toastr.success('All notifications deleted');
+                // this.toastr.success('All notifications deleted');
             },
             error: (error) => {
                 console.error('Error deleting all notifications:', error);
