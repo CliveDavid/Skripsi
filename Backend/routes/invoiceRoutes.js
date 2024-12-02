@@ -62,7 +62,7 @@ router.post('/create', asyncHandler(async (req, res) => {
         let invoice = await Invoice.findOne({ where: { order_id } });
         
         if (invoice) {
-            // First check if there are any real differences in the data
+            // Check for changes
             const hasChanges = 
                 parseFloat(invoice.subtotal) !== parseFloat(subtotal) ||
                 parseFloat(invoice.discount || 0) !== parseFloat(discount || 0) ||
@@ -75,7 +75,7 @@ router.post('/create', asyncHandler(async (req, res) => {
                 return res.status(200).json(invoice);
             }
 
-            // Only update dates and recalculate if there are actual changes
+            // Only update dates and recalculate if there are changes
             const currentDate = new Date();
             const dueDate = new Date(currentDate);
             dueDate.setDate(dueDate.getDate() + 7);

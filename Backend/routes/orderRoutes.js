@@ -164,12 +164,10 @@ router.post('/get-by-id', asyncHandler(async (req, res) => {
         ]
     });
 
-    // If no order is found, return 404
     if (!order) {
         return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Return the full order object with all associated data
     res.json(order);
 }));
 

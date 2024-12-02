@@ -10,7 +10,6 @@ const asyncHandler = (fn) => (req, res, next) =>
 router.post('/create', asyncHandler(async (req, res) => {
     const { order_id, address, city, province, zipcode } = req.body;
 
-    // Create a new order address
     const newOrderAddress = await OrderAddress.create({
         order_id,
         address,
@@ -22,11 +21,9 @@ router.post('/create', asyncHandler(async (req, res) => {
     res.status(201).json(newOrderAddress);
 }));
 
-// Get all addresses for a specific order
 router.post('/get-order-addresses', asyncHandler(async (req, res) => {
     const { orderId } = req.body;
 
-    // Fetch all addresses for a specific order
     const orderAddresses = await OrderAddress.findAll({
         where: { order_id: orderId }
     });
