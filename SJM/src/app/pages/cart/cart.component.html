@@ -15,9 +15,11 @@
                   <label class="form-check-label" [for]="'shipping' + i">
                     {{ method.shipment_name }} (min {{ method.capacity }} boxes)
                   </label>
+                  <span *ngIf="totalQuantity < method.capacity" class="text-danger">
+                    {{ method.capacity - totalQuantity }} boxes left
+                  </span>
                 </div>
               </div>
-
               <button class="addr-btn mt-3" (click)="openNotesPopup()">
                 <i class="fas fa-edit"></i> Add Delivery Notes
               </button>
