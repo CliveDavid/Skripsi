@@ -32,4 +32,8 @@ export class OrderService {
     getOrderDetails(orderNumber: string): Observable<any> {
         return this.http.post(`${BASE_URL}/orders/get-by-order-number`, { order_number: orderNumber });
     }
+
+    cancelOrder(orderNumber: string): Observable<any> {
+        return this.http.post(`${BASE_URL}/orders/cancel`, { order_number: orderNumber });
+    }
 }

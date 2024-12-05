@@ -72,9 +72,11 @@ app.use((req, res, next) => {
     }
 });
 
+//#region Session
 // Create the session tables if they don't exist
 // adminSessionStore.sync();
 // distributorSessionStore.sync();
+//#endregion
 
 // Import Routes
 const adminRoutes = require('./routes/adminRoutes');

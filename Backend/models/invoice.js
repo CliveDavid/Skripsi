@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         subtotal: {
-            type: DataTypes.DECIMAL(10, 2),
+            type: DataTypes.DECIMAL(15, 2),
             allowNull: false
         },
         discount: {
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0
         },
         additional_fee: {
-            type: DataTypes.DECIMAL(10, 2),
+            type: DataTypes.DECIMAL(15, 2),
             allowNull: false,
             defaultValue: 0
         },

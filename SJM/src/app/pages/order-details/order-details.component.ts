@@ -47,6 +47,7 @@ export class OrderDetailsComponent implements OnInit {
   total_price: number = 0;
   invoice: Invoice | null = null;
   placeholderImage: string = 'assets/images/placeholder-image.png';
+  canCancelOrder: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -75,6 +76,9 @@ export class OrderDetailsComponent implements OnInit {
         this.orderItems = orderDetails.items;
         this.total_price = orderDetails.total_price;
         this.invoice = orderDetails.invoice;
+
+        this.canCancelOrder = this.orderStatusHistory.length > 0 &&
+          this.orderStatusHistory[this.orderStatusHistory.length - 1].status === 'Pending';
 
         this.loadProductImages();
       },
@@ -105,5 +109,19 @@ export class OrderDetailsComponent implements OnInit {
         URL.revokeObjectURL(item.imageUrl);
       }
     });
+  }
+
+  cancelOrder(): void {
+    if (confirm('Are you sure you want to cancel this order?')) {
+      this.orderService.cancelOrder(this.orderNumber).subscribe({
+        next: () => {
+          this.toastr.success('Order cancelled successfully');
+          this.loadOrderDetails(this.orderNumber);
+        },
+        error: (error: any) => {
+          this.toastr.error('Error cancelling order');
+        }
+      });
+    }
   }
 }

@@ -453,6 +453,50 @@ router.post('/update', asyncHandler(async (req, res) => {
     }
 }));
 
+
+router.post('/cancel', asyncHandler(async (req, res) => {
+    const { order_number } = req.body;
+
+    if (!order_number) {
+        return res.status(400).json({ message: ERROR_MESSAGES.MISSING_REQUIRED_FIELDS });
+    }
+
+    try {
+        const result = await sequelize.transaction(async (transaction) => {
+            const order = await Order.findOne({
+                where: { order_number },
+                include: [{ 
+                    model: Distributor,
+                    attributes: ['distributor_id', 'name', 'email'],
+                    as: 'distributor'
+                }],
+                transaction
+            });
+
+            if (!order) throw new Error('Order not found');
+
+            const previousStatus = order.status;
+
+            await order.update({ status: STATUS.CANCELLED }, { transaction });
+
+            await notificationService.notifyOrderStatusChange(
+                order.order_number,
+                order.distributor_id,
+                previousStatus,
+                STATUS.CANCELLED,
+                transaction
+            );
+
+            return order;
+        });
+
+        res.json(result);
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        res.status(500).json({ message: "Error cancelling order", error: error.message });
+    }
+}));
+
 //#endregion
 
 module.exports = router;

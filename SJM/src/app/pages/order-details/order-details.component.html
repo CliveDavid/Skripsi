@@ -1,6 +1,10 @@
 <div class="container mt-4">
-  <h4 class="order-details-title mb-5">Order Number <span class="order-number">#{{ orderNumber }}</span></h4>
-
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h4 class="order-details-title">Order Number <span class="order-number">#{{ orderNumber }}</span></h4>
+    <button *ngIf="canCancelOrder" class="btn btn-outline-danger cancel-button" (click)="cancelOrder()">
+      Cancel Order
+    </button>
+  </div>
   <div class="row">
     <div class="col-md-8">
       <div class="row">
