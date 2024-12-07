@@ -2,11 +2,11 @@
     { header: 'Order Number', field: 'order_number', alignment: 'left', type: 'text' },
     { header: 'Distributor ID', field: 'distributor_id', alignment: 'left', type: 'text' },
     { header: 'Distributor Name', field: 'distributor_name', alignment: 'left', type: 'text' },
-    { header: 'Order Date', field: 'order_dt', alignment: 'left', type: 'date' },
+    { header: 'Order Date', field: 'order_dt', alignment: 'center', type: 'date' },
     { header: 'Status', field: 'status', alignment: 'left', type: 'status' },
     { header: 'Total Price', field: 'total_price', alignment: 'left', type: 'currency' },
     { header: 'Shipment', field: 'shipment_name', alignment: 'left', type: 'text' },
-    { header: 'Invoice', field: 'invoice_id', alignment: 'left', type: 'link', path: '/invoice/detail', logo: 'fa-file-invoice' },
+    { header: 'Invoice', field: 'invoice_id', alignment: 'center', type: 'link', path: '/invoice/detail', logo: 'fa-file-invoice' },
 
   ]" [url]="'orders/get-all'" [editButton]="true" [primaryKey]="'order_id'"
   [shouldShowActionButtons]="shouldShowActionButtons" [filterField]="'status'" [filterOptions]="filterOptions">

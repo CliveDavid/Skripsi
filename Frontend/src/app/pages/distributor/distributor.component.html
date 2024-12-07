@@ -1,9 +1,9 @@
 <app-paging [tableTitle]="'Distributor Records'" [addButton]="true" [columns]="[
   { header: 'Name', field: 'name', alignment: 'left', type: 'text' },
   { header: 'Email', field: 'email', alignment: 'left', type: 'text' },
-  { header: 'Address', field: 'distributor_id', alignment: 'left', type: 'link', path: '/distributor-address/detail', logo: 'fa-map-marker-alt' },
-  { header: 'Active', field: 'is_active', alignment: 'left', type: 'boolean'},
-  { header: 'Created At', field: 'createdAt', alignment: 'left', type: 'date' },
-  { header: 'Updated At', field: 'updatedAt', alignment: 'left', type: 'date' }
+  { header: 'Address', field: 'distributor_id', alignment: 'center', type: 'link', path: '/distributor-address/detail', logo: 'fa-map-marker-alt' },
+  { header: 'Active', field: 'is_active', alignment: 'center', type: 'boolean'},
+  { header: 'Created At', field: 'createdAt', alignment: 'center', type: 'date' },
+  { header: 'Updated At', field: 'updatedAt', alignment: 'center', type: 'date' }
   ]" [url]="'distributor/get-all'" [editButton]="true" [primaryKey]="'distributor_id'">
 </app-paging>

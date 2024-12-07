@@ -99,10 +99,42 @@ async function generateInvoicePDF(invoice_id) {
         // Set the content of the page to be the modified HTML template
         await page.setContent(templateHtml);
 
-        // Generate PDF
-        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+        await page.evaluate(() => {
+            const footer = document.querySelectorAll('.footer');
+            footer.forEach(f => {
+                const pageNumber = document.createElement('div');
+                pageNumber.className = 'page-number';
+                pageNumber.innerHTML = '<span class="current-page"></span>';
+                f.appendChild(pageNumber);
+            });
+        });
 
-        // Close the browser
+        // Before generating PDF
+        await page.evaluateHandle('document.fonts.ready');
+
+        // Add this to your page settings
+        await page.emulateMediaType('print');
+
+        // Generate PDF
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            margin: {
+                    top: '0mm',     
+                    right: '0mm',
+                    bottom: '0mm',
+                    left: '0mm'
+            },
+            displayHeaderFooter: true,
+            headerTemplate: '<div></div>',
+            footerTemplate: `
+                <div style="font-size: 10px; text-align: right; width: 100%; padding: 0 20px;">
+                    <span class="pageNumber"></span> of <span class="totalPages"></span>
+                </div>
+            `,
+            preferCSSPageSize: true
+        });
+
         await browser.close();
 
         return { pdfBuffer, invoice };

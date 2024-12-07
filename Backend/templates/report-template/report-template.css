@@ -23,8 +23,7 @@ body {
 .report-container {
     width: 210mm;
     min-height: 297mm;
-    padding: 20mm;
-    margin: 0 auto;
+    padding: 15mm 20mm;
     background: white;
     position: relative;
 }
@@ -125,10 +124,9 @@ body {
 
 /* Order Details */
 .order-details {
-    margin-top: 20px;
+    margin-top: 40px;
+    padding: 20px 0;
 }
-
-/* Existing styles for order sections remain the same */
 
 /* Footer */
 .footer {
@@ -159,8 +157,7 @@ body {
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
-    margin-bottom: 24px;
-    overflow: hidden;
+    margin: 24px 0;
     page-break-inside: avoid;
 }
 
@@ -250,4 +247,37 @@ body {
 .status-cancelled {
     background: #fef2f2;
     color: #b91c1c;
+}
+
+@media print {
+    @page {
+        margin: 10mm 0 0 0;
+        size: A4;
+    }
+
+    .order-section {
+        margin: 40px 0;
+        page-break-inside: avoid;
+        page-break-before: auto;
+    }
+
+    .order-details {
+        margin-top: 60px;
+    }
+
+    .stats-section,
+    .executive-summary {
+        margin-bottom: 40px;
+        page-break-after: auto;
+    }
+
+    h2 {
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
+}
+
+/* Adjust table spacing */
+.order-details-table {
+    margin: 20px 0;
 }
