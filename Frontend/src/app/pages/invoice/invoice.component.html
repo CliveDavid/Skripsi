@@ -4,10 +4,10 @@
     { header: 'Invoice Date', field: 'invoice_dt', alignment: 'left', type: 'date' },
     { header: 'Due Date', field: 'due_dt', alignment: 'left', type: 'date' },
     { header: 'Order ID', field: 'order_id', alignment: 'left', type: 'text' },
-    { header: 'Subtotal', field: 'subtotal', alignment: 'left', type: 'currency' },
+    { header: 'Subtotal', field: 'subtotal', alignment: 'right', type: 'currency' },
     { header: 'Discount', field: 'discount', alignment: 'left', type: 'currency' },
     { header: 'Additional Fee', field: 'additional_fee', alignment: 'left', type: 'currency' },
-    { header: 'Total', field: 'total', alignment: 'left', type: 'currency' },
+    { header: 'Total', field: 'total', alignment: 'right', type: 'currency' },
     { header: 'Payment Status', field: 'payment_status', alignment: 'left', type: 'text' }
   ]" [url]="'invoices/get-all'" [editButton]="false" [primaryKey]="'invoice_id'" [filterField]="'payment_status'"
   [filterOptions]="[
