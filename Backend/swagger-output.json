@@ -2775,32 +2775,20 @@
     "/dashboard/stats": {
       "post": {
         "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "period": {
+                  "example": "any"
+                }
+              }
+            }
           }
-        },
-        "tags": [
-          "Dashboard"
-        ]
-      }
-    },
-    "/dashboard/top-products": {
-      "post": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "tags": [
-          "Dashboard"
-        ]
-      }
-    },
-    "/dashboard/recent-orders": {
-      "post": {
-        "description": "",
+        ],
         "responses": {
           "200": {
             "description": "OK"

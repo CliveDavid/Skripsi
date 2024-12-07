@@ -41,8 +41,8 @@ export class DashboardService {
         return localStorage.getItem('admin_id') || '';
     }
 
-    getStats(): Observable<DashboardStats> {
-        return this.http.post<DashboardStats>(`${this.dashboardApi}/stats`, {});
+    getStats(period: 'DAY' | 'WEEK' | 'MONTH' | 'YEAR' = 'WEEK'): Observable<DashboardStats> {
+        return this.http.post<DashboardStats>(`${this.dashboardApi}/stats`, { period });
     }
 
     getRecentOrders(): Observable<any> {

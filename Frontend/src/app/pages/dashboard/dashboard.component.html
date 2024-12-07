@@ -1,7 +1,6 @@
 <div class="dashboard-container">
   <div class="stats-row">
     <!-- Stats Card -->
-    <!-- Stats Card -->
     <div class="stats-card">
       <div class="icon-wrapper">
         <i class="fas fa-box icon"></i>
@@ -9,7 +8,7 @@
       <div class="card-title mb-2">Total Distributor</div>
       <div class="value">{{ stats.shipments.value | number }}</div>
       <div class="stats-footer">
-        <span class="time-period">vs Last Week</span>
+        <span class="time-period">vs Last {{ selectedPeriod | titleCase }}</span>
         <span class="percentage"
           [ngClass]="{'positive': stats.shipments.change.includes('+'), 'negative': stats.shipments.change.includes('-')}">
           {{ stats.shipments.change }}
@@ -24,7 +23,7 @@
       <div class="card-title mb-2">Total Orders</div>
       <div class="value">{{ stats.orders.value | number }}</div>
       <div class="stats-footer">
-        <span class="time-period">vs Last Week</span>
+        <span class="time-period">vs Last {{ selectedPeriod | titleCase }}</span>
         <span class="percentage"
           [ngClass]="{'positive': stats.orders.change.includes('+'), 'negative': stats.orders.change.includes('-')}">
           {{ stats.orders.change }}
@@ -39,7 +38,7 @@
       <div class="card-title mb-2">Revenue</div>
       <div class="value">{{ formatCurrency(stats.revenue.value) }}</div>
       <div class="stats-footer">
-        <span class="time-period">vs Last Week</span>
+        <span class="time-period">vs Last {{ selectedPeriod | titleCase }}</span>
         <span class="percentage"
           [ngClass]="{'positive': stats.revenue.change.includes('+'), 'negative': stats.revenue.change.includes('-')}">
           {{ stats.revenue.change }}
@@ -54,7 +53,7 @@
       <div class="card-title mb-2">Delivered</div>
       <div class="value">{{ stats.delivered.value | number }}</div>
       <div class="stats-footer">
-        <span class="time-period">vs Last Week</span>
+        <span class="time-period">vs Last {{ selectedPeriod | titleCase }}</span>
         <span class="percentage"
           [ngClass]="{'positive': stats.delivered.change.includes('+'), 'negative': stats.delivered.change.includes('-')}">
           {{ stats.delivered.change }}
@@ -62,6 +61,17 @@
       </div>
     </div>
   </div>
+
+  <div class="filter-period">
+    <label for="period">Select Period: </label>
+    <select id="period" [(ngModel)]="selectedPeriod" (change)="changePeriod()">
+      <option value="WEEK">Week</option>
+      <option value="DAY">Day</option>
+      <option value="MONTH">Month</option>
+      <option value="YEAR">Year</option>
+    </select>
+  </div>
+
   <div class="content-container">
     <!-- Content Section -->
     <div class="content-container">

@@ -35,6 +35,7 @@ import { AddressChangeComponent } from './pages/address-change/address-change.co
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 import { AdditionalSettingsComponent } from './pages/additional-settings/additional-settings.component';
 import { StatusFilterPipe } from './shared/services/status-filter-pipe';
+import { TitleCasePipe } from './shared/services/title-case-pipe';
 
 
 
@@ -51,6 +52,7 @@ import { StatusFilterPipe } from './shared/services/status-filter-pipe';
     DateFormatPipe,
     HighlightPipe,
     RupiahPipe,
+    TitleCasePipe,
     AdminComponent,
     FormsComponent,
     AdminFormComponent,

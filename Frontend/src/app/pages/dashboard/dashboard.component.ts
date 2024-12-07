@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { DashboardService } from 'src/app/shared/services/dashboard-service';
 
 interface DashboardStats {
-  currentWeek: {
+  currentPeriod: {
     totalDistributors: string;
     totalOrders: string;
     totalRevenue: string;
     deliveredOrders: string;
   };
-  previousWeek: {
+  previousPeriod: {
     totalDistributors: string;
     totalOrders: string;
     totalRevenue: string;
@@ -49,6 +49,7 @@ interface DisplayStats {
 }
 
 type OrderStatus = 'All' | 'Pending' | 'Processing' | 'Invoiced';
+type TimePeriod = 'DAY' | 'WEEK' | 'MONTH' | 'YEAR';
 
 
 @Component({
@@ -71,8 +72,10 @@ export class DashboardComponent implements OnInit {
 
   showStatusFilter = false;
   filteredStatus: OrderStatus = 'All';
-
   statusOptions: OrderStatus[] = ['All', 'Pending', 'Processing', 'Invoiced'];
+
+  selectedPeriod: TimePeriod = 'WEEK';  // Default to 'WEEK'
+  timePeriodOptions: TimePeriod[] = ['DAY', 'WEEK', 'MONTH', 'YEAR'];
 
   constructor(private dashboardService: DashboardService) { }
 
@@ -82,22 +85,22 @@ export class DashboardComponent implements OnInit {
   }
 
   loadDashboardData() {
-    this.dashboardService.getStats().subscribe((data: DashboardStats) => {
+    this.dashboardService.getStats(this.selectedPeriod).subscribe((data: any) => {
       this.stats = {
         shipments: {
-          value: parseInt(data.currentWeek.totalDistributors),
+          value: parseInt(data.currentPeriod.totalDistributors),
           change: data.percentageChanges.distributors
         },
         orders: {
-          value: parseInt(data.currentWeek.totalOrders),
+          value: parseInt(data.currentPeriod.totalOrders),
           change: data.percentageChanges.orders
         },
         revenue: {
-          value: parseFloat(data.currentWeek.totalRevenue),
+          value: parseFloat(data.currentPeriod.totalRevenue),
           change: data.percentageChanges.revenue
         },
         delivered: {
-          value: parseInt(data.currentWeek.deliveredOrders),
+          value: parseInt(data.currentPeriod.deliveredOrders),
           change: data.percentageChanges.delivered
         }
       };
@@ -204,5 +207,14 @@ export class DashboardComponent implements OnInit {
   setStatus(status: OrderStatus) {
     this.filteredStatus = status;
     this.showStatusFilter = false;
+  }
+
+  changePeriod() {
+    this.loadDashboardData();
+  }
+
+  setTimePeriod(period: TimePeriod) {
+    this.selectedPeriod = period;
+    this.loadDashboardData();
   }
 }
