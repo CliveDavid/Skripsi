@@ -2,6 +2,7 @@
     --primary-blue: #0A0F29;
     --border-color: #e0e0e0;
     --text-color: #333;
+    --section-spacing: 40px;
 }
 
 @page {
@@ -12,10 +13,11 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20mm;
+    padding: 0;
     color: var(--text-color);
     background: white;
     font-size: 14px;
+    line-height: 1.6;
 }
 
 .report-container {
@@ -24,112 +26,210 @@ body {
     padding: 20mm;
     margin: 0 auto;
     background: white;
+    position: relative;
 }
 
+/* Header Styles */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 40px;
-}
-
-.header-content {
-    flex-grow: 1;
+    margin-bottom: var(--section-spacing);
     text-align: center;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 20px;
 }
 
-.company-section {
-    text-align: right;
+.logo {
+    height: 50px;
+    margin-bottom: 20px;
 }
 
-.company-section img {
-    height: 40px;
-    margin-bottom: 10px;
+.header h1 {
+    font-size: 24px;
+    color: var(--primary-blue);
+    margin: 0 0 15px 0;
 }
 
-.date-range {
-    color: #666;
-    font-size: 14px;
-    margin-top: 10px;
+.report-info {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 15px;
 }
 
-.stats-section {
-    margin: 40px 0;
+.info-item {
+    display: flex;
+    gap: 10px;
 }
 
-.stats-grid {
+.info-item .label {
+    font-weight: bold;
+    color: var(--primary-blue);
+}
+
+/* Section Styles */
+.section {
+    margin-bottom: var(--section-spacing);
+}
+
+.section h2 {
+    color: var(--primary-blue);
+    font-size: 18px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Executive Summary */
+.executive-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.executive-summary ul {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+}
+
+.executive-summary li {
+    margin-bottom: 8px;
+}
+
+/* Metrics Grid */
+.metrics-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     margin-bottom: 30px;
 }
 
-.stat-card {
-    padding: 15px;
+.metric-card {
     background: #f8f9fa;
-    border: 1px solid var(--border-color);
+    padding: 20px;
     border-radius: 8px;
-    text-align: center;
+    border: 1px solid var(--border-color);
 }
 
+.metric-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.metric-card .value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-bottom: 5px;
+}
+
+/* Order Details */
 .order-details {
-    margin-top: 40px;
-    page-break-before: always;
+    margin-top: 20px;
+}
+
+/* Existing styles for order sections remain the same */
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 20mm;
+    left: 20mm;
+    right: 20mm;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #666;
+    background: white;
+}
+
+/* Page numbers */
+.pageNumber:before {
+    content: counter(page);
+}
+
+.totalPages:before {
+    content: counter(pages);
 }
 
 .order-section {
-    margin-bottom: 40px;
-    border: 1px solid var(--border-color);
+    background: white;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
+    margin-bottom: 24px;
     overflow: hidden;
+    page-break-inside: avoid;
 }
 
-.order-header {
-    background: #f8f9fa;
-    padding: 15px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
+.order-info {
+    padding: 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.items-table {
+.order-header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 0;
 }
 
-.items-table th,
-.items-table td {
+.order-header-table td {
+    padding: 4px 8px;
+}
+
+.header-label {
+    font-weight: 600;
+    color: #374151;
+    width: 100px;
+}
+
+.order-details-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-details-table th,
+.order-details-table td {
     padding: 12px;
     text-align: left;
-    font-size: 14px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.items-table th {
-    background: #f8f9fa;
-    font-weight: bold;
-    color: var(--text-color);
+.order-details-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
 }
 
-.calculation-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 15px;
-    font-size: 14px;
+.order-summary {
+    padding: 16px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
 }
 
-.calculation-row.total {
-    font-weight: bold;
-    font-size: 16px;
-    border-top: 2px solid var(--border-color);
-    background: #f8f9fa;
+.summary-table {
+    margin-left: auto;
+    border-collapse: collapse;
+    width: 300px;
+}
+
+.summary-table td {
+    padding: 8px;
+    text-align: right;
+}
+
+.summary-table .total-row {
+    font-weight: 600;
+    border-top: 2px solid #e5e7eb;
 }
 
 .status-badge {
-    padding: 4px 12px;
-    border-radius: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
     font-size: 12px;
+    font-weight: 500;
 }
 
 .status-pending {
@@ -137,12 +237,17 @@ body {
     color: #9a3412;
 }
 
-.status-processing {
-    background: #eff6ff;
-    color: #1e40af;
+.status-invoiced {
+    background: #f0f9ff;
+    color: #0369a1;
 }
 
-.status-invoiced {
-    background: #ecfdf5;
-    color: #047857;
+.status-delivered {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.status-cancelled {
+    background: #fef2f2;
+    color: #b91c1c;
 }

@@ -132,7 +132,8 @@ async function generateReportPDF(period) {
                     model: OrderItem,
                     include: [{ model: Product }]
                 },
-                { model: ShipmentMethod }
+                { model: ShipmentMethod },
+                { model: Invoice }  
             ],
             order: [['order_dt', 'DESC']]
         });
@@ -174,36 +175,64 @@ async function generateReportPDF(period) {
         // Prepare orders HTML
         let ordersHtml = '';
         orders.forEach((order) => {
-            let orderItemsHtml = '';
+            const orderTotal = order.invoice ? parseFloat(order.invoice.total) : 
+                order.order_items.reduce((sum, item) => sum + parseFloat(item.total_item_price), 0);
+            
+            let orderItemsHtml = `
+            <table class="items-table">
+                <thead>
+                    <tr class="table-header">
+                        <th>No</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Box Type</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+        
             order.order_items.forEach((item, index) => {
+                const unitPrice = parseFloat(item.total_item_price) / parseFloat(item.qty);
                 orderItemsHtml += `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${item.product ? item.product.prod_name : 'Produk tidak diketahui'}</td>
                         <td>${item.qty}</td>
                         <td>${item.box_type_code}</td>
-                        <td>Rp ${formatNumber(item.total_item_price / item.qty)}</td>
+                        <td>Rp ${formatNumber(unitPrice)}</td>
                         <td>Rp ${formatNumber(item.total_item_price)}</td>
                     </tr>
                 `;
             });
-
+        
+            orderItemsHtml += '</tbody></table>';
+        
             ordersHtml += `
                 <div class="order-section">
-                    <div class="order-header">
-                        <div>
-                            <strong>Order #:</strong> ${order.order_number}
-                            <br>
-                            <strong>Date:</strong> ${formatDate(order.order_dt)}
-                        </div>
-                        <div>
-                            <strong>Distributor:</strong> ${order.distributor.name}
-                            <br>
-                            <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
-                        </div>
+                    <div class="order-info">
+                        <table class="order-header-table">
+                            <tbody>
+                                <tr>
+                                    <td class="header-label">Order #:</td>
+                                    <td class="header-value">${order.order_number}</td>
+                                    <td class="header-label">Date:</td>
+                                    <td class="header-value">${formatDate(order.order_dt)}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-label">Distributor:</td>
+                                    <td class="header-value">${order.distributor.name}</td>
+                                    <td class="header-label">Status:</td>
+                                    <td class="header-value">
+                                        <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <table class="items-table">
+                    <table class="order-details-table">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -215,49 +244,62 @@ async function generateReportPDF(period) {
                             </tr>
                         </thead>
                         <tbody>
-                            ${orderItemsHtml}
+                            ${order.order_items.map((item, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.product ? item.product.prod_name : 'Unknown Product'}</td>
+                                    <td>${item.qty}</td>
+                                    <td>${item.box_type_code}</td>
+                                    <td>Rp ${formatNumber(item.total_item_price / item.qty)}</td>
+                                    <td>Rp ${formatNumber(item.total_item_price)}</td>
+                                </tr>
+                            `).join('')}
                         </tbody>
                     </table>
 
-                    <div class="calculations">
-                        <div class="calculation-row">
-                            <span>Subtotal</span>
-                            <span>Rp ${formatNumber(order.subtotal)}</span>
-                        </div>
-                        <div class="calculation-row">
-                            <span>Additional Fee</span>
-                            <span>Rp ${formatNumber(order.additional_fee || 0)}</span>
-                        </div>
-                        <div class="calculation-row">
-                            <span>Discount</span>
-                            <span>Rp ${formatNumber(order.discount || 0)}</span>
-                        </div>
-                        <div class="calculation-row total">
-                            <span>Total</span>
-                            <span>Rp ${formatNumber(order.total)}</span>
-                        </div>
+                    <div class="order-summary">
+                        <table class="summary-table">
+                            <tbody>
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td>Rp ${formatNumber(order.invoice?.subtotal || order.total || 0)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Additional Fee</td>
+                                    <td>Rp ${formatNumber(order.invoice?.additional_fee || 0)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Discount</td>
+                                    <td>Rp ${formatNumber(order.invoice?.discount || 0)}</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>Total</td>
+                                    <td>Rp ${formatNumber(order.invoice?.total || order.total || 0)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            `;
+                `;
         });
-
         // Get dynamic port and host
         const port = process.env.PORT || 3000;
         const imageUrl = `http://localhost:${port}/public/images/SJM.png`;
 
         // Replace placeholders in template
         templateHtml = templateHtml
-            .replace('{{ period }}', period)
-            .replace('{{ start_date }}', formatDate(startDate))
-            .replace('{{ end_date }}', formatDate(endDate))
-            .replace('{{ total_distributors }}', totalDistributors)
-            .replace('{{ total_orders }}', currentPeriodStats.totalOrders)
-            .replace('{{ total_revenue }}', `Rp ${formatNumber(currentPeriodStats.totalRevenue)}`)
-            .replace('{{ delivered_orders }}', currentPeriodStats.deliveredOrders)
-            .replace('{{ orders_change }}', percentageChanges.orders)
-            .replace('{{ revenue_change }}', percentageChanges.revenue)
-            .replace('{{ orders }}', ordersHtml)
-            .replace('src="images/SJM.png"', `src="${imageUrl}"`);
+        .replace(/\{\{\s*period\s*\}\}/g, period)
+        .replace(/\{\{\s*start_date\s*\}\}/g, formatDate(startDate))
+        .replace(/\{\{\s*end_date\s*\}\}/g, formatDate(endDate))
+        .replace(/\{\{\s*total_distributors\s*\}\}/g, totalDistributors)
+        .replace(/\{\{\s*total_orders\s*\}\}/g, currentPeriodStats.totalOrders)
+        .replace(/\{\{\s*total_revenue\s*\}\}/g, `Rp ${formatNumber(currentPeriodStats.totalRevenue)}`)
+        .replace(/\{\{\s*delivered_orders\s*\}\}/g, currentPeriodStats.deliveredOrders)
+        .replace(/\{\{\s*orders_change\s*\}\}/g, percentageChanges.orders)
+        .replace(/\{\{\s*revenue_change\s*\}\}/g, percentageChanges.revenue)
+        .replace(/\{\{\s*orders\s*\}\}/g, ordersHtml)
+        .replace(/\{\{\s*generated_date\s*\}\}/g, formatDate(new Date()))
+        .replace(/src="images\/SJM.png"/g, `src="${imageUrl}"`);
 
         // Launch Puppeteer
         const browser = await puppeteer.launch();
@@ -309,9 +351,19 @@ function getDateRange(period) {
 }
 
 function calculatePeriodStats(orders) {
+    let totalRevenue = 0;
+    orders.forEach(order => {
+        if (order.invoice) {
+            totalRevenue += parseFloat(order.invoice.total) || 0;
+        } else {
+            totalRevenue += (order.order_items || []).reduce((sum, item) => 
+                sum + (parseFloat(item.total_item_price) || 0), 0);
+        }
+    });
+
     return {
         totalOrders: orders.length,
-        totalRevenue: orders.reduce((sum, order) => sum + order.total, 0),
+        totalRevenue: totalRevenue,
         deliveredOrders: orders.filter(order => order.status === 'Delivered').length
     };
 }

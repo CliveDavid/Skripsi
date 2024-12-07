@@ -148,3 +148,99 @@ body {
     padding-top: 15px;
     background: white;
 }
+
+/* Order Section Styles */
+.order-section {
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    page-break-inside: avoid;
+}
+
+/* Order Header Table */
+.order-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f8f9fa;
+}
+
+.order-info-table th,
+.order-info-table td {
+    padding: 12px;
+    text-align: left;
+    border: none;
+}
+
+.order-info-table th {
+    width: 120px;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Items Table */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.items-table th,
+.items-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.items-table .table-header {
+    background: #f8f9fa;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.items-table th {
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Order Summary */
+.order-summary {
+    background: #f8f9fa;
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.summary-table {
+    width: 300px;
+    margin-left: auto;
+    border-collapse: collapse;
+}
+
+.summary-table td {
+    padding: 8px;
+    text-align: right;
+}
+
+.summary-table td:first-child {
+    color: #6b7280;
+}
+
+.total-row {
+    font-weight: 600;
+    font-size: 16px;
+    border-top: 2px solid var(--border-color);
+}
+
+.total-row td {
+    padding-top: 12px;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
