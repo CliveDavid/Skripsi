@@ -176,7 +176,7 @@
 
 /* Container wrapper */
 .dashboard-container {
-  padding: 20px 0px;
+  padding: 0px 0px 20px 0px;
   margin: 0 auto;
   max-width: 100%;
 
@@ -308,7 +308,8 @@
   position: relative;
 }
 
-.btn-filter {
+.btn-filter,
+.btn-print {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -346,6 +347,20 @@
 
 .filter-item.active {
   background-color: #f3f4f6;
+}
+
+/* Dashboard Header Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 /* Empty State Styles */

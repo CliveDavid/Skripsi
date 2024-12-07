@@ -1,4 +1,28 @@
 <div class="dashboard-container">
+  <div class="dashboard-header">
+    <div class="header-actions">
+      <!-- Period Filter -->
+      <div class="filter-dropdown" [class.active]="showPeriodFilter">
+        <button class="btn-filter" (click)="togglePeriodFilter()">
+          <i class="fas fa-calendar"></i>
+          {{ selectedPeriod | titleCase }}
+          <i class="fas fa-chevron-down ml-2"></i>
+        </button>
+        <div class="filter-menu" *ngIf="showPeriodFilter">
+          <div class="filter-item" *ngFor="let period of timePeriodOptions" [class.active]="selectedPeriod === period"
+            (click)="setPeriod(period)">
+            {{ period | titleCase }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Print Button -->
+      <button class="btn-print" (click)="printReport()">
+        <i class="fas fa-print"></i>
+        Print
+      </button>
+    </div>
+  </div>
   <div class="stats-row">
     <!-- Stats Card -->
     <div class="stats-card">
@@ -60,16 +84,6 @@
         </span>
       </div>
     </div>
-  </div>
-
-  <div class="filter-period">
-    <label for="period">Select Period: </label>
-    <select id="period" [(ngModel)]="selectedPeriod" (change)="changePeriod()">
-      <option value="WEEK">Week</option>
-      <option value="DAY">Day</option>
-      <option value="MONTH">Month</option>
-      <option value="YEAR">Year</option>
-    </select>
   </div>
 
   <div class="content-container">
@@ -169,3 +183,5 @@
     </div>
   </div>
 </div>
+
+<app-message></app-message>

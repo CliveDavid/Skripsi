@@ -1,5 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { BASE_URL } from 'src/app/constants';
 import { DashboardService } from 'src/app/shared/services/dashboard-service';
+import { ToastrService } from 'src/app/shared/services/toastr.service';
 
 interface DashboardStats {
   currentPeriod: {
@@ -64,6 +67,7 @@ export class DashboardComponent implements OnInit {
     revenue: { value: 0, change: '0%' },
     delivered: { value: 0, change: '0%' }
   };
+  private apiUrl = BASE_URL;
   topProducts: any[] = [];
   recentOrders: Order[] = [];
   notifications: Notification[] = [];
@@ -71,13 +75,18 @@ export class DashboardComponent implements OnInit {
   showNotifications: boolean = false;
 
   showStatusFilter = false;
+  showPeriodFilter = false;
   filteredStatus: OrderStatus = 'All';
   statusOptions: OrderStatus[] = ['All', 'Pending', 'Processing', 'Invoiced'];
 
   selectedPeriod: TimePeriod = 'WEEK';  // Default to 'WEEK'
   timePeriodOptions: TimePeriod[] = ['DAY', 'WEEK', 'MONTH', 'YEAR'];
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(
+    private http: HttpClient,
+    private dashboardService: DashboardService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit() {
     this.loadDashboardData();
@@ -213,8 +222,68 @@ export class DashboardComponent implements OnInit {
     this.loadDashboardData();
   }
 
-  setTimePeriod(period: TimePeriod) {
+  togglePeriodFilter() {
+    this.showPeriodFilter = !this.showPeriodFilter;
+  }
+
+  setPeriod(period: TimePeriod) {
     this.selectedPeriod = period;
-    this.loadDashboardData();
+    this.showPeriodFilter = false;
+    this.changePeriod();
+  }
+
+  printReport() {
+    if (this.stats) {
+      this.http.post(`${this.apiUrl}/dashboard/generate-pdf`,
+        {
+          period: this.selectedPeriod,
+          stats: this.stats,
+          orders: this.recentOrders,
+          notifications: this.notifications
+        },
+        { responseType: 'blob' }
+      ).subscribe(
+        (response: Blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const arr = new Uint8Array(reader.result as ArrayBuffer).subarray(0, 5);
+            const header = String.fromCharCode.apply(null, arr as any);
+            if (header !== "%PDF-") {
+              console.error('Invalid PDF header');
+              this.toastr.error('Invalid PDF format');
+              return;
+            }
+            this.proceedWithDownload(response);
+          };
+          reader.readAsArrayBuffer(response.slice(0, 5));
+        },
+        (error) => {
+          this.toastr.error('Error downloading PDF');
+        }
+      );
+    }
+  }
+
+  private proceedWithDownload(blob: Blob) {
+    const url = window.URL.createObjectURL(blob);
+
+    // Open the PDF in a new tab
+    const newTab = window.open();
+    if (newTab) {
+      newTab.location.href = url;
+    }
+
+    // Download PDF
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `dashboard-report-${this.selectedPeriod.toLowerCase()}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Clean up the object URL after 100ms
+    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+
+    this.toastr.success('PDF downloaded successfully');
   }
 }
