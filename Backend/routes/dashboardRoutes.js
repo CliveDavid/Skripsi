@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { generateReportPDF } = require('../utils/pdfGenerator');
 const { Order, OrderItem, Distributor, Product, OrderAddress, sequelize } = require('../models');
 const { STATUS, ERROR_MESSAGES } = require('../constants');
 const { Op } = require('sequelize');
@@ -142,6 +143,91 @@ router.post('/stats', asyncHandler(async (req, res) => {
         },
         percentageChanges
     });
+}));
+
+router.post('/top-products', asyncHandler(async (req, res) => {
+    const topProducts = await OrderItem.findAll({
+        attributes: [
+            'product_id',
+            [sequelize.fn('COUNT', sequelize.col('order_item.order_item_id')), 'orderCount']
+        ],
+        include: [{
+            model: Product,
+            attributes: ['prod_name', 'prod_id'],
+            required: true
+        }],
+        where: {
+            '$product.is_active$': true 
+        },
+        group: [
+            'order_item.order_item_id', 
+            'order_item.product_id', 
+            'product.prod_id', 
+            'product.prod_name'
+        ],
+        order: [[sequelize.literal('COUNT(order_item.order_item_id)'), 'DESC']],
+        limit: 5,
+        raw: true,
+        nest: true,
+        subQuery: false
+    });
+    
+    const formattedProducts = topProducts.map(item => ({
+        product_id: item.product_id,
+        product_name: item.product.prod_name,
+        order_count: parseInt(item.orderCount)
+    }));
+
+    res.json(formattedProducts);
+}));
+
+router.post('/recent-orders', asyncHandler(async (req, res) => {
+    const recentOrders = await Order.findAll({
+        where: {
+            status: {
+                [Op.in]: [STATUS.PENDING, STATUS.PROCESSING, STATUS.INVOICED]
+            }
+        },
+        include: [{
+            model: OrderAddress,
+            as: 'addresses'
+        }],
+        order: [['order_dt', 'ASC']],
+        limit: 10
+    });
+
+    res.json(recentOrders);
+}));
+
+router.post('/generate-pdf', asyncHandler(async (req, res) => {
+    const { period } = req.body;
+    
+    // Validate period
+    const validPeriods = ['DAY', 'WEEK', 'MONTH', 'YEAR'];
+    if (!validPeriods.includes(period)) {
+        return res.status(400).send('Invalid period specified');
+    }
+
+    try {
+        // Generate PDF from the data
+        const pdfBuffer = await generateReportPDF(period);
+
+        // Convert to Buffer if necessary
+        const validBuffer = Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
+
+        // Set headers for file download
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=report-${period.toLowerCase()}.pdf`);
+        res.setHeader('Content-Length', validBuffer.length);
+
+        // Send the PDF buffer
+        res.end(validBuffer);
+
+        console.log(`${period} report PDF generated successfully`);
+    } catch (error) {
+        console.error('Error in dashboard PDF generation:', error);
+        res.status(500).send('Error generating dashboard report: ' + error.message);
+    }
 }));
 
 

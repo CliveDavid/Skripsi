@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Report</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="report-template.css">
+</head>
+
+<body>
+    <div class="report-container">
+        <div class="header">
+            <img src="images/SJM.png" alt="Company Logo" class="logo">
+            <div class="header-content">
+                <h1>Performance Report</h1>
+                <h2>{{ period }}</h2>
+                <p class="date-range">{{ start_date }} - {{ end_date }}</p>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2>Performance Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Distributors</h3>
+                    <div class="value">{{ total_distributors }}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <div class="value">{{ total_orders }}</div>
+                    <div class="change {{ orders_change.includes('+') ? 'positive' : 'negative' }}">
+                        {{ orders_change }}
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Revenue</h3>
+                    <div class="value">{{ total_revenue }}</div>
+                    <div class="change {{ revenue_change.includes('+') ? 'positive' : 'negative' }}">
+                        {{ revenue_change }}
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Delivered Orders</h3>
+                    <div class="value">{{ delivered_orders }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-details">
+            <h2>Order Details</h2>
+            {{#each orders}}
+            <div class="order-section">
+                <div class="order-header">
+                    <div>
+                        <strong>Order #:</strong> {{order_number}}
+                        <br>
+                        <strong>Date:</strong> {{formatDate order_dt}}
+                    </div>
+                    <div>
+                        <strong>Distributor:</strong> {{distributor.name}}
+                        <br>
+                        <span class="status-badge status-{{toLowerCase status}}">{{status}}</span>
+                    </div>
+                </div>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Box Type</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each order_items}}
+                        <tr>
+                            <td>{{increment @index}}</td>
+                            <td>{{product.prod_name}}</td>
+                            <td>{{qty}}</td>
+                            <td>{{box_type_code}}</td>
+                            <td>Rp {{formatNumber (divide total_item_price qty)}}</td>
+                            <td>Rp {{formatNumber total_item_price}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+
+                <div class="calculations">
+                    <div class="calculation-row">
+                        <span>Subtotal</span>
+                        <span>Rp {{formatNumber subtotal}}</span>
+                    </div>
+                    <div class="calculation-row">
+                        <span>Additional Fee</span>
+                        <span>Rp {{formatNumber additional_fee}}</span>
+                    </div>
+                    <div class="calculation-row">
+                        <span>Discount</span>
+                        <span>Rp {{formatNumber discount}}</span>
+                    </div>
+                    <div class="calculation-row total">
+                        <span>Total</span>
+                        <span>Rp {{formatNumber total}}</span>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+
+</html>
