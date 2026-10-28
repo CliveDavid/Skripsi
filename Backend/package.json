@@ -4,6 +4,7 @@
   "description": "Backend server for SJM",
   "main": "app.js",
   "scripts": {
+    "setup:db": "node setup-db.js",
     "prestart": "node swagger.js",
     "start": "node app.js",
     "dev": "nodemon app.js",
