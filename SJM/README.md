@@ -46,7 +46,26 @@ The port argument matters: both Angular projects default to 4200. This guide res
 
 Verification activates the account; this self-registration flow does not include a separate admin approval step. A distributor account that has been deactivated cannot sign in.
 
-There are no default customer credentials supplied by these instructions. An admin login from port 4200 cannot be used here. If staff created your distributor account, ask them for that account's email and temporary password instead.
+Customer accounts are not created automatically; you can create the optional local dummy account below. An admin login from port 4200 cannot be used here. If staff created your distributor account, ask them for that account's email and temporary password instead.
+
+## Local dummy account
+
+For local testing, sign in at <http://localhost:4201/login> with:
+
+- **Email:** `user@example.com`
+- **Password:** `password`
+- **Account name:** `user`
+
+To create this account or restore its password, open a terminal in the repository root:
+
+```powershell
+cd Backend
+npm run seed:demo
+```
+
+Configure `Backend/.env` and create the database tables with `npm run setup:db` first if needed. The command connects directly to your local PostgreSQL database, stores the password using bcrypt, activates the dummy distributor, and creates a blank address record. No verification email or OTP is needed. Running it again resets the same dummy account to `password` and keeps its existing address.
+
+The dummy account is stored in the database, so it must be created again for a new database after cloning the project. The command only works with a local database outside production mode and refuses an email collision with a differently named account. After signing in, complete the address in **Profile** before ordering. See the [backend guide](../Backend/README.md#local-dummy-account) for the full explanation.
 
 ## Find your way around
 

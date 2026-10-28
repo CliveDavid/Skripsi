@@ -117,9 +117,31 @@ After sign-in, the sidebar provides **Dashboard**, **Admin**, **Distributor**, *
 
 Open <http://localhost:4201/register>, enter your account and address details, and complete the emailed six-digit OTP verification. OTP means one-time password; the code expires after **15 minutes**. Verification activates the account. Then sign in at <http://localhost:4201/login> using your email and chosen password.
 
-An admin account cannot be used to sign in to the customer website. There is no default customer account either. Normal customer registration requires working backend email settings and internet access for the address dropdowns.
+An admin account cannot be used to sign in to the customer website. Customer accounts are not created automatically. Normal customer registration requires working backend email settings and internet access for the address dropdowns; the optional local dummy account below does not require email.
 
 For local testing without email, the backend also supports an admin-created distributor: use Swagger's **POST `/distributor/create-by-admin`** with a name, email, and `is_active: true`, and save the returned `tempPassword`. That email and temporary password can sign in to the customer website. The current admin form does not display this returned password, so use the API response for this workflow. See the [backend account guide](Backend/README.md#customerdistributor).
+
+### Local dummy account: create it or reset its password
+
+Use this account to try the customer website:
+
+- **Login page:** <http://localhost:4201/login>
+- **Name:** `user`
+- **Email to enter at login:** `user@example.com`
+- **Password:** `password`
+
+If the account is missing or you forget its password, open a terminal in the repository root and run:
+
+```powershell
+cd Backend
+npm run seed:demo
+```
+
+First configure `Backend/.env`, start PostgreSQL, and run `npm run setup:db` inside `Backend` if the database tables have not been created. The backend and customer website must be running when you sign in.
+
+The dummy was originally created directly in the local PostgreSQL database. [`Backend/seed-demo.js`](Backend/seed-demo.js) repeats that process: it stores a bcrypt hash of `password`, marks the distributor active, and creates a blank address record. It sends no email and does not require an OTP. Running the command again resets that same dummy account to `password` and reactivates it while keeping its existing address.
+
+This command is for local development and refuses production mode or a nonlocal database host. It also refuses to overwrite a differently named account using the dummy email. The account lives in PostgreSQL, so copying or cloning the Git repository does not copy it; run the command for each new local database. Complete the dummy's address in **Profile** before placing an order. See the [backend dummy account guide](Backend/README.md#local-dummy-account) for details.
 
 ## Try the project for the first time
 

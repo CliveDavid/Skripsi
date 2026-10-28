@@ -99,6 +99,7 @@ Keep the terminal running while using either website. Press **Ctrl+C** to stop i
 
 - `npm start`: regenerates `swagger-output.json`, then runs `app.js`.
 - `npm run setup:db`: creates missing application and session tables without altering existing table definitions.
+- `npm run seed:demo`: creates or restores the optional local dummy distributor account described below.
 - `npm run dev`: runs Nodemon and restarts the backend after code changes. It does not regenerate Swagger.
 - `node swagger.js`: regenerates the API documentation separately.
 - `node test-db.js`: manually checks database connectivity.
@@ -106,7 +107,7 @@ Keep the terminal running while using either website. Press **Ctrl+C** to stop i
 
 ## 4. Create accounts and open the websites
 
-There are **no default login credentials or seeded accounts** in this repository.
+Accounts are **not created automatically** by installation, database setup, or server startup. You can register accounts normally or run the optional local dummy account command below.
 
 ### Administrator
 
@@ -128,6 +129,32 @@ Self-registration starts with an inactive account. Successful OTP verification a
 For local testing without OTP email, use `POST /distributor/create-by-admin` through Swagger or an API client. It accepts `name`, `email` and `is_active`, and returns a generated `tempPassword`. Set `is_active` to `true` and save the response so you can sign in with that email/password and complete the address/profile. The current administrator creation form does not display the generated password; use the API response if you need those login credentials.
 
 For a new database, use the administrator website to enter product types, box types, prices, shipment methods, products and company details before trying the full order/invoice workflow.
+
+### Local dummy account
+
+The customer website uses an email address for login. The local dummy distributor has:
+
+- **Name:** `user`
+- **Login email:** `user@example.com`
+- **Password:** `password`
+- **Login page:** <http://localhost:4201/login>
+
+To create it or restore its password, first configure `.env`, start PostgreSQL, and create missing tables with `npm run setup:db`. Then run this command from `Backend`:
+
+```powershell
+npm run seed:demo
+```
+
+This runs [`seed-demo.js`](seed-demo.js). The original dummy account was created directly through the application's Sequelize models in PostgreSQL; this script makes those steps repeatable:
+
+1. Connect to the local database configured in `.env`.
+2. Hash `password` with bcrypt using 10 salt rounds.
+3. Create the distributor named `user` with email `user@example.com` and `is_active: true`.
+4. Create a blank associated address record so profile and cart address requests can find it.
+
+The account is already active, so no email or OTP is needed. On another run, the command resets that same dummy account's password to `password` and reactivates it. Existing address details are preserved, and a missing address record is created. Other accounts are left unchanged. If the dummy email belongs to a differently named account, the command stops instead of overwriting it.
+
+The script refuses `NODE_ENV=production` and database hosts other than `localhost`, `127.0.0.1`, or `::1`. It does not run automatically when the server starts or when tables are initialized. The account is database data, so cloning this repository does not copy it; run the command for a new local database. Fill in the dummy's delivery address through the customer website's **Profile** page before ordering.
 
 ## Email and PDF requirements
 
@@ -172,6 +199,7 @@ Swagger's generated host is `localhost:3000`. If changing the API port, update `
 - `app.js`: server setup, sessions and route mounting.
 - `config/database.js`: PostgreSQL connection configuration.
 - `setup-db.js`: initialization of missing application and session tables.
+- `seed-demo.js`: optional local dummy distributor creation and password reset.
 - `models/`: Sequelize table definitions and relationships.
 - `routes/`: API operations.
 - `services/emailService.js`: email configuration and sending.

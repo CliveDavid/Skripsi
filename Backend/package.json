@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "setup:db": "node setup-db.js",
+    "seed:demo": "node seed-demo.js",
     "prestart": "node swagger.js",
     "start": "node app.js",
     "dev": "nodemon app.js",
